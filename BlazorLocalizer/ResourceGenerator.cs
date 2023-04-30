@@ -7,7 +7,7 @@ public static class ResourceGenerator
     // Implement code to create a resx file if it doesn't exist
 // and add the resource keys and values to it.
 
-    public static async Task CreateResxFile(Dictionary<string, string> resourceKeys, string razorFileName, string language = "")
+    public static async Task CreateResxFile(Dictionary<string, string> resourceKeys, string razorFileName)
     {
         // Check if there are any resource keys
         if (resourceKeys.Count == 0)
@@ -19,7 +19,8 @@ public static class ResourceGenerator
         string resxFileName;
         bool translate = false;
         // Check if the language is specified and modify file name accordingly
-        if (!string.IsNullOrEmpty(language))
+        string language = Translator.targetLanguage;
+        if (!string.IsNullOrEmpty(language) && language != "en")
         {
             resxFileName = Path.ChangeExtension(razorFileName, $".{language}.resx");
             translate = true;
@@ -58,7 +59,7 @@ public static class ResourceGenerator
 
                 if (translate)
                 {
-                    var response = await pair.Value.Translate(language);
+                    var response = await pair.Value.Translate();
                     valueNode.InnerText = response;
                 }
                 else
@@ -76,8 +77,13 @@ public static class ResourceGenerator
 // Check if target file exists and if it does, load it and translate only missing keys
 // Do not create dictionary, just translate missing keys
 // If it doesn't exist, create it and translate all keys
-    public static async Task TranslateResourceFile(string Source, string language)
+    public static async Task TranslateResourceFile(string Source)
     {
+        string language = Translator.targetLanguage;
+        if (string.IsNullOrEmpty(language) || language == "en")
+        {
+            Console.WriteLine("No language specified or language is English. No translation will be done.");
+        }
         // Get the resx file name from the razor file name
         string resxFileName = Path.ChangeExtension(Source, ".resx");
         string resxFileNameTranslated = Path.ChangeExtension(Source, $".{language}.resx");
@@ -119,7 +125,7 @@ public static class ResourceGenerator
                 dataNode.Attributes.Append(docTranslated.CreateAttribute("name")).Value = node.Attributes["name"].Value;
                 XmlNode valueNode = dataNode.AppendChild(docTranslated.CreateElement("value"));
 
-                var response = await node.InnerText.Translate(language);
+                var response = await node.InnerText.Translate();
                 valueNode.InnerText = response;
             }
         }

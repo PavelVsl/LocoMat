@@ -1,4 +1,10 @@
+using System.Diagnostics;
+using System.Text.Json;
 using System.Xml;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
+using Microsoft.Extensions.Configuration.CommandLine;
+using RazorLocalizerTests;
 using static BlazorRazorLocalizer.RazorProcessor;
 
 namespace BlazorRazorLocalizer
@@ -7,80 +13,84 @@ namespace BlazorRazorLocalizer
     {
         static async Task Main(string[] args)
         {
-// Default parameters            
-            // Project path to update recursively
-            var filePath = ".";
-            //path to resource file
-            var resourcePath = "./Resources/SharedResources.resx";
+// Create a configuration object and configure it with the command line arguments
+            var configurationBuilder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("BlazorLocalizerSettings.json", optional: true)
+                .AddCommandLine(args);
+            var configuration = configurationBuilder.Build();
 
-            // target language
-            var targetLanguage = "cs-CZ";
-            
-            // list of .razor files to process exclude
-            var ExcludeFiles = new List<string>
-            {
-                "App.razor",
-                "_Imports.razor",
-                "RedirectToLogin.razor", 
-                "CulturePicker.razor",
-            };
-// End of default parameters
+// Get the values of the command line arguments using the configuration object
+            var command = args[0] ?? configuration.GetValue<string>("command");
+            var projectPath = configuration.GetValue<string>("projectPath");
+            var resourcePath = configuration.GetValue<string>("resourcePath");
+            var excludeFiles = configuration.GetValue<string>("excludeFiles")?.Split(",").ToList();
+            var targetLanguage = configuration.GetValue<string>("targetLanguage");
+            Translator.Email = configuration.GetValue<string>("email");
 
-            // Gather parameters from command line
-            // use syntax BlazorRazorLocalizer command parameters 
-            // or BlazorRazorLocalizer -h for help
-            // commands :
-            // localize [projectPath] [resourcePath] [targetLanguage] [excludeFiles]
-            // translate [resourcePath] [targetLanguage]
-            // help
-            if (args.Length > 0)
+            switch (command)
             {
-                switch (args[0])
-                {
-                    case "localize":
-                        if (args.Length > 1)
+                case "localize":
+                    await Localize(projectPath, resourcePath, excludeFiles);
+                    break;
+
+                case "translate":
+                    await ResourceGenerator.TranslateResourceFile(resourcePath);
+                    break;
+                case "settings":
+                    // Create default settings file in current directory if it doesn't exist
+                    if (!File.Exists("BlazorLocalizerSettings.json"))
+                    {
+                        var appSettings = new Dictionary<string, object>
                         {
-                            filePath = args[1];
-                        }
-                        if (args.Length > 2)
+                            { "Command", "help" },
+                            { "ProjectPath", "./" },
+                            { "ResourcePath", "./Resources/SharedResources.resx" },
+                            { "ExcludeFiles", "App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor" },
+                            { "TargetLanguage", "cs-CZ" },
+                            { "Email", "sample@email.com" }
+                        };
+
+                        var options = new JsonSerializerOptions
                         {
-                            resourcePath = args[2];
-                        }
-                        if (args.Length > 3)
-                        {
-                            targetLanguage = args[3];
-                        }
-                        if (args.Length > 4)
-                        {
-                            ExcludeFiles = args[4].Split(",").ToList();
-                        }
-                        break;
-                    case "translate":
-                        if (args.Length > 1)
-                        {
-                            resourcePath = args[1];
-                        }
-                        if (args.Length > 2)
-                        {
-                            targetLanguage = args[2];
-                        }
-                        break;
-                    case "help":
-                        Console.WriteLine("BlazorRazorLocalizer command parameters");
-                        Console.WriteLine("localize [projectPath] [resourcePath] [targetLanguage] [excludeFiles]");
-                        Console.WriteLine("translate [resourcePath] [targetLanguage]");
-                        Console.WriteLine("help");
-                        return;
-                    default:
-                        Console.WriteLine("Unknown command");
-                        Console.WriteLine("BlazorRazorLocalizer command parameters");
-                        Console.WriteLine("localize [projectPath] [resourcePath] [targetLanguage] [excludeFiles]");
-                        Console.WriteLine("translate [resourcePath] [targetLanguage]");
-                        Console.WriteLine("help");
-                        return;
-                }
+                            WriteIndented = true
+                        };
+
+                        var jsonString = JsonSerializer.Serialize(appSettings, options);
+
+                        File.WriteAllText("BlazorLocalizerSettings.json", jsonString);
+                        Console.WriteLine("Default settings file created: BlazorLocalizerSettings.json");
+                        Console.WriteLine(jsonString);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Settings file already exists: BlazorLocalizerSettings.json");
+                        Console.WriteLine(File.ReadAllText("BlazorLocalizerSettings.json"));
+                    }
+                    break;
+
+                case "help":
+                    ConsoleHelp();
+                    break;
+
+                default:
+                    Console.WriteLine("Unknown command");
+                    ConsoleHelp();
+                    break;
             }
+        }
 
+        private static void ConsoleHelp()
+        {
+            Console.WriteLine("Usage: BlazorLocalizer command parameters");
+            Console.WriteLine("Commands:");
+            Console.WriteLine("localize --projectPath <projectPath> --resourcePath <resourcePath> [--excludeFiles <excludeFiles>] --targetLanguage <targetLanguage> [--email <email>]");
+            Console.WriteLine("translate --resourcePath <resourcePath> --targetLanguage <targetLanguage> [--email <email>]");
+            Console.WriteLine("help");
+        }
+
+        private static async Task Localize(string filePath, string resourcePath, List<string> ExcludeFiles)
+        {
             Dictionary<string, string> modelKeys = new Dictionary<string, string>();
             string formClassTItem = null;
             List<(string ComponentType, Func<string, string> CustomAction)> customActions = new List<(string ComponentType, Func<string, string> CustomAction)>
@@ -117,11 +127,6 @@ namespace BlazorRazorLocalizer
                     }
                 ),
             };
-
-            if (args.Length == 1)
-            {
-                filePath = args[0];
-            }
             //if resource at modelPath exists, load it  
             if (File.Exists(resourcePath))
             {
@@ -144,6 +149,7 @@ namespace BlazorRazorLocalizer
                     {
                         continue;
                     }
+
                     formClassTItem = null;
                     Console.WriteLine("Processing file: " + file);
                     await ProcessRazorFile(modelKeys, file, resourcePath, customActions);
@@ -151,6 +157,7 @@ namespace BlazorRazorLocalizer
 
                 return;
             }
+
             await ProcessRazorFile(modelKeys, filePath, resourcePath, customActions);
         }
     }

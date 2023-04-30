@@ -145,8 +145,9 @@ namespace RazorLocalizerTests
         {
             // Arrange
             var SourceFile = "/Users/pavel/projects/sg/igp/src/igp/Resources/Resources.resx";
+            Translator.targetLanguage = "cs-CZ";
             //Act
-            await ResourceGenerator.TranslateResourceFile(SourceFile, "cs-CZ");
+            await ResourceGenerator.TranslateResourceFile(SourceFile);
             
 
         }
