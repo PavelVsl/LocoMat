@@ -3,11 +3,11 @@ using System.Xml;
 namespace BlazorRazorLocalizer;
 
 public static class ResourceGenerator
-{
-    // Implement code to create a resx file if it doesn't exist
-// and add the resource keys and values to it.
+{ 
 
-    public static async Task CreateResxFile(Dictionary<string, string> resourceKeys, string razorFileName)
+    // Implement code to create a resx file if it doesn't exist
+    // and add the resource keys and values to it.
+    public static async Task CreateResxFile(Dictionary<string, string> resourceKeys, string baseFileName)
     {
         // Check if there are any resource keys
         if (resourceKeys.Count == 0)
@@ -22,12 +22,12 @@ public static class ResourceGenerator
         string language = Translator.targetLanguage;
         if (!string.IsNullOrEmpty(language) && language != "en")
         {
-            resxFileName = Path.ChangeExtension(razorFileName, $".{language}.resx");
+            resxFileName = Path.ChangeExtension(baseFileName, $".{language}.resx");
             translate = true;
         }
         else
         {
-            resxFileName = Path.ChangeExtension(razorFileName, ".resx");
+            resxFileName = Path.ChangeExtension(baseFileName, ".resx");
         }
 
         // Create the resx file if it doesn't exist
