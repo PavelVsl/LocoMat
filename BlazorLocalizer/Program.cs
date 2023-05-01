@@ -27,7 +27,7 @@ namespace BlazorLocalizer
             switch (command)
             {
                 case "localize":
-                    await Localize(projectPath, resourcePath, excludeFiles);
+                    await Localize(projectPath, resourcePath, excludeFiles, targetLanguage);
                     break;
 
                 case "translate":
@@ -86,7 +86,7 @@ namespace BlazorLocalizer
             Console.WriteLine("help");
         }
 
-        private static async Task Localize(string filePath, string resourcePath, List<string> ExcludeFiles)
+        private static async Task Localize(string filePath, string resourcePath, List<string> ExcludeFiles, string targetLanguage)
         {
             Dictionary<string, string> modelKeys = new Dictionary<string, string>();
             string formClassTItem = null;
@@ -158,7 +158,12 @@ namespace BlazorLocalizer
             }
             if (modelKeys.Count > 0)
             {
-                await ResourceGenerator.GenerateResourceFile(resourcePath, modelKeys);
+                await ResourceGenerator.CreateResxFile(modelKeys,resourcePath);
+                //check if target language is set and translate the resource file
+                if (!string.IsNullOrEmpty(targetLanguage))
+                {
+                    await ResourceGenerator.TranslateResourceFile(resourcePath, targetLanguage);
+                }
             }
         }
     }
