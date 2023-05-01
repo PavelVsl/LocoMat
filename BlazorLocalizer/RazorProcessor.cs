@@ -1,26 +1,10 @@
-using System.Text;
+using System.Globalization;
 using System.Text.RegularExpressions;
-using System.Xml;
 
-namespace BlazorRazorLocalizer;
+namespace BlazorLocalizer;
 
 public static class RazorProcessor
 {
-    //public const string attributePattern = @"(?<name>\S+)\s*=\s*""(?<value>(?:(?<!\\)""[^""]*?(?<!\\)"")|(?<bracket>@@)|(?<at>@@?@[^""\s>]+?(?<!\\))|(?<plain>[^""]+))""";
-    //public const string attributePattern = @"(?<name>\S+)\s*=\s*""(?<value>[^""]*)""";
-    
-    // public const string attributePattern = @"(?<name>\S+)\s*=\s*""(?<value>[^""]*|[^""]*=>[^""]*)""";
-    // public const string attributePattern = @"(?<name>\S+)\s*=\s*""(?<value>[^""\\]*(?:\\.[^""\\]*)*)""";
-     //public const string attributePattern = @"(?<name>\S+)\s*=\s*""(?<value>[^""]*|@""[^""]*""|[^""]*=>[^""]*)""";
-    public const string attributePattern = @"(?<name>\S+)\s*=\s*""(?<value>(?:\\.|(?!\\"").)*)""";
-    // public const string attributePattern = @"(?<name>\S+)\s*=\s*(""(?<value>(?:\\.|(?!\\"").)*)""|(?<value>@\(.*\)))";
-    //public const string attributePattern = @"(?<name>\S+)\s*=\s*(""(?<value>(?:\\.|(?!\\"").)*)""|'(?<value>(?:\\.|(?!\\').)*))";
-    // public const string attributePattern = @"(?<name>\S+)\s*=\s*""(?<value>[^""]*)""";
-    // public const string attributePattern = @"(?<name>\S+)\s*=\s*""(?<value>[^""]*|[^""]*=>[^""]*)""";
-    // public const string attributePattern = @"(?<name>\S+)\s*=\s*""(?<value>[^""\\]*(?:\\.[^""\\]*)*)""";
-    // public const string attributePattern = @"(?<name>\S+)\s*=\s*""(?<value>[^""]*|@""[^""]*""|[^""]*=>[^""]*)""";
-
-
     public static string SetAttributeValue(this string tag, string attributeName, string key)
     {
         // Find attributes ending with Text or Title
@@ -44,7 +28,7 @@ public static class RazorProcessor
     public static async Task ProcessRazorFile(Dictionary<string, string> modelKeys, string razorFileName, string modelPath, List<(string ComponentType, Func<string, string> CustomAction)> customActions)
     {
         // Step 1: Open razor file
-        string razorContent = File.ReadAllText(razorFileName);
+        string razorContent = await File.ReadAllTextAsync(razorFileName);
         string className = Path.GetFileNameWithoutExtension(razorFileName);
 
         // Step 2: Add localizer injection                                                                                                                      
@@ -54,13 +38,8 @@ public static class RazorProcessor
         newRazorContent = ReplaceTagAttributes(customActions, newRazorContent);
         newRazorContent = ReplaceLocalizableStrings(modelKeys, newRazorContent, className);
 
-
         // Step 4: Write the modified razor content back to the file
-        File.WriteAllText(razorFileName, newRazorContent);
-
-        // Step 5: Make model keys and create resx file
-        await ResourceGenerator.CreateResxFile(modelKeys, modelPath);
-        //await CreateResxFile(modelKeys, modelPath, "cs-CZ");
+        await File.WriteAllTextAsync(razorFileName, newRazorContent);
     }
 
     public static string  ReplaceGridColumnStrings(string tag, Dictionary<string, string> modelKeys)
@@ -156,9 +135,12 @@ public static class RazorProcessor
 
     private static string GenerateResourceKey(string value)
     {
-        // Implement your resource key generation logic here.
-        // For simplicity, we'll just return the same value without spaces.
-        return value.Replace(" ", "");
+        // Convert non-ASCII characters to ASCII characters using the IdnMapping class.
+        value = new IdnMapping().GetAscii(value);
+        // Remove invalid characters from the string using the Regex class.
+        value = Regex.Replace(value, "[^a-zA-Z0-9_.]+", "_");
+        // Return the resulting string as the resource key.
+        return value;
     }
 
     public static string ReplaceTagAttributes(List<(string ComponentType, Func<string,string> CustomAction)> customActions, string razorContent)

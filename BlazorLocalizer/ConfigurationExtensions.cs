@@ -1,6 +1,6 @@
-namespace RazorLocalizerTests;
-
 using Microsoft.Extensions.Configuration;
+
+namespace BlazorLocalizer;
 
 public static class ConfigurationExtensions
 {

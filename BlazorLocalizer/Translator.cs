@@ -1,6 +1,6 @@
 using Newtonsoft.Json.Linq;
 
-namespace BlazorRazorLocalizer;
+namespace BlazorLocalizer;
 
 public static class Translator
 {
@@ -8,15 +8,15 @@ public static class Translator
     public static string targetLanguage { get; set; } = "en";
 
 
-    public static async Task<string> Translate(this string text)
+    public static async Task<string> Translate(this string text, string languageCode)
     {
-        if (targetLanguage == "en")
+        if (languageCode == "en")
         {
             return text;
         }
         else
         {
-            return await TranslateText(text, targetLanguage);
+            return await TranslateText(text, languageCode);
         }
     }
 

@@ -4,7 +4,7 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Nullable>annotations</Nullable>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>BlazorLocalizer</ToolCommandName>
         <PackageOutputPath>../nupkg</PackageOutputPath>
@@ -16,5 +16,6 @@
       <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="ResXResourceReader.NetStandard" Version="1.1.0" />
     </ItemGroup>
 </Project>

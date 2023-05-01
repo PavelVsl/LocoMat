@@ -1,13 +1,9 @@
-using System.Diagnostics;
 using System.Text.Json;
 using System.Xml;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
-using Microsoft.Extensions.Configuration.CommandLine;
-using RazorLocalizerTests;
-using static BlazorRazorLocalizer.RazorProcessor;
+using static BlazorLocalizer.RazorProcessor;
 
-namespace BlazorRazorLocalizer
+namespace BlazorLocalizer
 {
     class Program
     {
@@ -35,7 +31,7 @@ namespace BlazorRazorLocalizer
                     break;
 
                 case "translate":
-                    await ResourceGenerator.TranslateResourceFile(resourcePath);
+                    await ResourceGenerator.TranslateResourceFile(resourcePath, targetLanguage);
                     break;
                 case "settings":
                     // Create default settings file in current directory if it doesn't exist
@@ -67,6 +63,7 @@ namespace BlazorRazorLocalizer
                         Console.WriteLine("Settings file already exists: BlazorLocalizerSettings.json");
                         Console.WriteLine(File.ReadAllText("BlazorLocalizerSettings.json"));
                     }
+
                     break;
 
                 case "help":
@@ -154,11 +151,15 @@ namespace BlazorRazorLocalizer
                     Console.WriteLine("Processing file: " + file);
                     await ProcessRazorFile(modelKeys, file, resourcePath, customActions);
                 }
-
-                return;
             }
-
-            await ProcessRazorFile(modelKeys, filePath, resourcePath, customActions);
+            else
+            {
+                await ProcessRazorFile(modelKeys, filePath, resourcePath, customActions);
+            }
+            if (modelKeys.Count > 0)
+            {
+                await ResourceGenerator.GenerateResourceFile(resourcePath, modelKeys);
+            }
         }
     }
 }

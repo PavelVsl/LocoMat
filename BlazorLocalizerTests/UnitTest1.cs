@@ -1,9 +1,8 @@
 using System.Diagnostics;
-using System.Text;
 using System.Text.RegularExpressions;
-using BlazorRazorLocalizer;
-using static BlazorRazorLocalizer.RazorProcessor;
-namespace RazorLocalizerTests
+using BlazorLocalizer;
+using static BlazorLocalizer.RazorProcessor;
+namespace BlazorLocalizerTests
 {
  
 
@@ -147,7 +146,7 @@ namespace RazorLocalizerTests
             var SourceFile = "/Users/pavel/projects/sg/igp/src/igp/Resources/Resources.resx";
             Translator.targetLanguage = "cs-CZ";
             //Act
-            await ResourceGenerator.TranslateResourceFile(SourceFile);
+            await ResourceGenerator.TranslateResourceFile(SourceFile, "cs-CZ");
             
 
         }
