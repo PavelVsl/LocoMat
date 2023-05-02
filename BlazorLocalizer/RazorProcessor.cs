@@ -280,8 +280,8 @@ public static class RazorProcessor
 
         if (modelKeys.Count > 0)
         {
-            ResourceGenerator.GenerateCsFile(config);
             await ResourceGenerator.CreateResxFile(modelKeys, config);
+            ResourceGenerator.GenerateCsFile(config);
             await ResourceGenerator.TranslateResourceFile(config);
         }
     }
