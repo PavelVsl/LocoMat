@@ -1,5 +1,7 @@
+using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Xml;
 using Microsoft.Extensions.Configuration;
 
@@ -8,7 +10,6 @@ namespace BlazorLocalizer
 {
     class Program
     {
-        
         static async Task Main(string[] args)
         {
             var configuration = BuildConfiguration(args);
@@ -19,11 +20,13 @@ namespace BlazorLocalizer
             {
                 case "localize":
                 case "l":
-                    await RazorProcessor.Localize(configData);
+                    if (CheckConfiguration(configData))
+                        await RazorProcessor.Localize(configData);
                     break;
                 case "translate":
                 case "t":
-                    await ResourceGenerator.TranslateResourceFile(configData);
+                    if (CheckConfiguration(configData))
+                        await ResourceGenerator.TranslateResourceFile(configData);
                     break;
                 case "settings":
                 case "s":
@@ -66,8 +69,8 @@ namespace BlazorLocalizer
             var config = new ConfigurationData
             {
                 Command = args.Length > 0 ? args[0] : "help",
-                ProjectPath = configuration["projectPath"] ,
-                ResourcePath = configuration["resourcePath"]?? "Resources/SharedResources.resx",
+                ProjectPath = configuration["projectPath"] ?? "./",
+                ResourcePath = configuration["resourcePath"] ?? "Resources/SharedResources.resx",
                 ExcludeFiles = configuration["excludeFiles"]?.Split(",").ToList() ?? "App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor".Split(",").ToList(),
                 TargetLanguages = configuration["targetLanguages"] ?? "",
                 Email = configuration["email"],
@@ -75,18 +78,71 @@ namespace BlazorLocalizer
                 TestMode = configuration["testMode"] != null,
                 VerboseOutput = configuration["verboseOutput"] != null,
             };
-            
+
             //fix for relative paths
             if (!string.IsNullOrEmpty(config.ProjectPath) && !Path.IsPathRooted(config.ProjectPath))
             {
                 config.ProjectPath = Path.Combine(Directory.GetCurrentDirectory(), config.ProjectPath);
             }
+
             //fix for relative paths
             if (!string.IsNullOrEmpty(config.ResourcePath) && !Path.IsPathRooted(config.ResourcePath))
             {
                 config.ResourcePath = Path.Combine(Path.GetDirectoryName(config.ProjectPath), config.ResourcePath);
             }
+
             return config;
+        }
+
+        private static bool CheckConfiguration(ConfigurationData config)
+        {
+            var result = true;
+            //check if project file exists and is valid
+            if (!File.Exists(config.ProjectPath))
+            {
+                Console.WriteLine("Project file does not exist: " + config.ProjectPath);
+                result =  false;
+            }
+
+            if (string.IsNullOrEmpty(config.ResourcePath))
+            {
+                Console.WriteLine("ResourcePath is not set");
+                result =  false;
+            }
+
+            //if languages is set, check if it is valid
+            if (!string.IsNullOrEmpty(config.TargetLanguages))
+            {
+                var languages = config.TargetLanguages.Split(",");
+                foreach (var language in languages)
+                {
+                    if (!CultureInfo.GetCultures(CultureTypes.AllCultures).Any(c => c.Name == language))
+                    {
+                        Console.WriteLine("Invalid language: " + language);
+                        result =  false;
+                    }
+                }
+            }
+
+            //if languages is set, check if email is valid
+            if (!string.IsNullOrEmpty(config.TargetLanguages) && !IsValidEmail(config.Email))
+            {
+                Console.WriteLine("Email is not set or is not valid");
+                result =  false;
+            }
+
+            return result;
+        }
+
+        public static bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+                return false;
+
+            // RFC 2822 compliant regex pattern for email validation
+            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+
+            return Regex.IsMatch(email, pattern);
         }
 
 
@@ -107,12 +163,12 @@ namespace BlazorLocalizer
         {
             var appSettings = new Dictionary<string, object>
             {
-                { "ProjectPath", "./MyProject.csproj" },                 // Relative to current directory or absolute
-                { "ResourcePath", "Resources/SharedResources.resx" },   // Relative to ProjectPath or absolute
+                { "ProjectPath", "./MyProject.csproj" }, // Relative to current directory or absolute
+                { "ResourcePath", "Resources/SharedResources.resx" }, // Relative to ProjectPath or absolute
                 { "ExcludeFiles", "App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor" }, //Comma separated list of files to exclude
                 { "IncludeFiles", "*.razor" }, // Default: *.razor
-                { "TargetLanguages", "cs-CZ" },   // Comma separated list of languages to translate to
-                { "Email", "sample@email.com" }   // Email for translated.net translation service 
+                { "TargetLanguages", "cs-CZ" }, // Comma separated list of languages to translate to
+                { "Email", "sample@email.com" } // Email for translated.net translation service 
             };
 
             var options = new JsonSerializerOptions
@@ -133,7 +189,8 @@ namespace BlazorLocalizer
             Console.WriteLine($"BlazorLocalizer v{Assembly.GetExecutingAssembly().GetName().Version}");
             Console.WriteLine();
             Console.WriteLine(@"Commands:");
-            Console.WriteLine(@"  localize (l)   --projectPath (-p) <projectPath> --resourcePath (-r) <resourcePath> [--includeFiles (-i) <includeFiles>] [--excludeFiles (-x) <excludeFiles>] --targetLanguages (-t) <targetLanguages> [--email (-e) <email>]");
+            Console.WriteLine(
+                @"  localize (l)   --projectPath (-p) <projectPath> --resourcePath (-r) <resourcePath> [--includeFiles (-i) <includeFiles>] [--excludeFiles (-x) <excludeFiles>] --targetLanguages (-t) <targetLanguages> [--email (-e) <email>]");
             Console.WriteLine(@"  translate (t)  --resourcePath (-r) <resourcePath> --targetLanguages (-t) <targetLanguages> [--email (-e) <email>]");
             Console.WriteLine(@"  settings (s)");
             Console.WriteLine(@"  help (h)");

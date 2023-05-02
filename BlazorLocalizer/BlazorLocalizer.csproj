@@ -8,7 +8,7 @@
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>BlazorLocalizer</ToolCommandName>
         <PackageOutputPath>../nupkg</PackageOutputPath>
-        <Version>1.0.4</Version>
+        <Version>1.0.6</Version>
     </PropertyGroup>
     <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
