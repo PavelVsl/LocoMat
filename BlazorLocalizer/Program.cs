@@ -1,170 +1,142 @@
+using System.Reflection;
 using System.Text.Json;
 using System.Xml;
 using Microsoft.Extensions.Configuration;
-using static BlazorLocalizer.RazorProcessor;
+
 
 namespace BlazorLocalizer
 {
     class Program
     {
+        
         static async Task Main(string[] args)
         {
-// Create a configuration object and configure it with the command line arguments
-            var configurationBuilder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("BlazorLocalizerSettings.json", optional: true)
-                .AddCommandLine(args);
-            var configuration = configurationBuilder.Build();
+            var configuration = BuildConfiguration(args);
+            var configData = GetParametersFromArgs(args, configuration);
+            Translator.Email = configData.Email;
 
-// Get the values of the command line arguments using the configuration object
-            var command = args[0] ?? configuration.GetValue<string>("command");
-            var projectPath = configuration.GetValue<string>("projectPath");
-            var resourcePath = configuration.GetValue<string>("resourcePath");
-            var excludeFiles = configuration.GetValue<string>("excludeFiles")?.Split(",").ToList();
-            var targetLanguage = configuration.GetValue<string>("targetLanguage");
-            Translator.Email = configuration.GetValue<string>("email");
-
-            switch (command)
+            switch (configData.Command)
             {
                 case "localize":
-                    await Localize(projectPath, resourcePath, excludeFiles, targetLanguage);
+                case "l":
+                    await RazorProcessor.Localize(configData);
                     break;
-
                 case "translate":
-                    await ResourceGenerator.TranslateResourceFile(resourcePath, targetLanguage);
+                case "t":
+                    await ResourceGenerator.TranslateResourceFile(configData);
                     break;
                 case "settings":
-                    // Create default settings file in current directory if it doesn't exist
-                    if (!File.Exists("BlazorLocalizerSettings.json"))
-                    {
-                        var appSettings = new Dictionary<string, object>
-                        {
-                            { "Command", "help" },
-                            { "ProjectPath", "./" },
-                            { "ResourcePath", "./Resources/SharedResources.resx" },
-                            { "ExcludeFiles", "App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor" },
-                            { "TargetLanguage", "cs-CZ" },
-                            { "Email", "sample@email.com" }
-                        };
-
-                        var options = new JsonSerializerOptions
-                        {
-                            WriteIndented = true
-                        };
-
-                        var jsonString = JsonSerializer.Serialize(appSettings, options);
-
-                        File.WriteAllText("BlazorLocalizerSettings.json", jsonString);
-                        Console.WriteLine("Default settings file created: BlazorLocalizerSettings.json");
-                        Console.WriteLine(jsonString);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Settings file already exists: BlazorLocalizerSettings.json");
-                        Console.WriteLine(File.ReadAllText("BlazorLocalizerSettings.json"));
-                    }
-
+                case "s":
+                    HandleSettings();
                     break;
-
                 case "help":
-                    ConsoleHelp();
-                    break;
-
+                case "h":
                 default:
-                    Console.WriteLine("Unknown command");
                     ConsoleHelp();
                     break;
             }
         }
 
-        private static void ConsoleHelp()
+        private static IConfigurationRoot BuildConfiguration(string[] args)
         {
-            Console.WriteLine("Usage: BlazorLocalizer command parameters");
-            Console.WriteLine("Commands:");
-            Console.WriteLine("localize --projectPath <projectPath> --resourcePath <resourcePath> [--excludeFiles <excludeFiles>] --targetLanguage <targetLanguage> [--email <email>]");
-            Console.WriteLine("translate --resourcePath <resourcePath> --targetLanguage <targetLanguage> [--email <email>]");
-            Console.WriteLine("help");
+            return new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("BlazorLocalizerSettings.json", optional: true)
+                .AddCommandLine(args, GetSwitchMappings())
+                .Build();
         }
 
-        private static async Task Localize(string filePath, string resourcePath, List<string> ExcludeFiles, string targetLanguage)
+        private static Dictionary<string, string> GetSwitchMappings()
         {
-            Dictionary<string, string> modelKeys = new Dictionary<string, string>();
-            string formClassTItem = null;
-            List<(string ComponentType, Func<string, string> CustomAction)> customActions = new List<(string ComponentType, Func<string, string> CustomAction)>
+            return new Dictionary<string, string>
             {
-                ("RadzenTemplateForm", (tag) =>
-                {
-                    formClassTItem = GetClassNameFromTag(tag, "TItem");
-                    return tag;
-                }),
-                ("RadzenDropDownDataGridColumn", tag => ReplaceGridColumnStrings(tag, modelKeys)),
-                ("RadzenDataGridColumn", tag => ReplaceGridColumnStrings(tag, modelKeys)),
-                ("RadzenLabel", tag =>
-                {
-                    var key = $"{formClassTItem}.{tag.GetAttributeValue("Component")}";
-                    return tag.ReplaceAttributeWithKey(modelKeys, "Text", key);
-                }),
-                ("RadzenRequiredValidator", tag =>
-                {
-                    var component = tag.GetAttributeValue("Component");
-                    var key = $"{formClassTItem}.{component}.RequiredValidator";
-                    return tag.ReplaceAttributeWithKey(modelKeys, "Text", key);
-                }),
-                ("RadzenButton", tag =>
-                {
-                    var text = tag.GetAttributeValue("Text");
-                    var key = $"Button.{text}";
-                    return tag.ReplaceAttributeWithKey(modelKeys, "Text", key);
-                }),
-                ("RadzenPanelMenuItem", tag =>
-                    {
-                        var text = tag.GetAttributeValue("Text");
-                        var key = $"Menu.{text}";
-                        return tag.ReplaceAttributeWithKey(modelKeys, "Text", key);
-                    }
-                ),
+                { "-p", "projectPath" },
+                { "-r", "resourcePath" },
+                { "-x", "excludeFiles" },
+                { "-t", "targetLanguages" },
+                { "-e", "email" },
+                { "-i", "includeFiles" },
+                { "-test", "testMode" },
+                { "-v", "verboseOutput" },
             };
-            //if resource at modelPath exists, load it  
-            if (File.Exists(resourcePath))
+        }
+
+        private static ConfigurationData GetParametersFromArgs(string[] args, IConfigurationRoot configuration)
+        {
+            var config = new ConfigurationData
             {
-                var doc = new XmlDocument();
-                doc.Load(resourcePath);
-                var elemList = doc.GetElementsByTagName("data");
-                foreach (XmlNode node in elemList)
-                {
-                    modelKeys.TryAdd(node.Attributes["name"].Value, node.InnerText);
-                }
+                Command = args.Length > 0 ? args[0] : "help",
+                ProjectPath = configuration["projectPath"] ,
+                ResourcePath = configuration["resourcePath"]?? "Resources/SharedResources.resx",
+                ExcludeFiles = configuration["excludeFiles"]?.Split(",").ToList() ?? "App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor".Split(",").ToList(),
+                TargetLanguages = configuration["targetLanguages"] ?? "",
+                Email = configuration["email"],
+                IncludeFiles = configuration["includeFiles"] ?? "*.razor",
+                TestMode = configuration["testMode"] != null,
+                VerboseOutput = configuration["verboseOutput"] != null,
+            };
+            
+            //fix for relative paths
+            if (!string.IsNullOrEmpty(config.ProjectPath) && !Path.IsPathRooted(config.ProjectPath))
+            {
+                config.ProjectPath = Path.Combine(Directory.GetCurrentDirectory(), config.ProjectPath);
             }
-
-            // recurse through the directory filePath   
-            if (Directory.Exists(filePath))
+            //fix for relative paths
+            if (!string.IsNullOrEmpty(config.ResourcePath) && !Path.IsPathRooted(config.ResourcePath))
             {
-                string[] files = Directory.GetFiles(filePath, "*.razor", SearchOption.AllDirectories);
-                foreach (var file in files)
-                {
-                    if (ExcludeFiles.Contains(Path.GetFileName(file)))
-                    {
-                        continue;
-                    }
+                config.ResourcePath = Path.Combine(Path.GetDirectoryName(config.ProjectPath), config.ResourcePath);
+            }
+            return config;
+        }
 
-                    formClassTItem = null;
-                    Console.WriteLine("Processing file: " + file);
-                    await ProcessRazorFile(modelKeys, file, resourcePath, customActions);
-                }
+
+        private static void HandleSettings()
+        {
+            if (!File.Exists("BlazorLocalizerSettings.json"))
+            {
+                CreateDefaultSettingsFile();
             }
             else
             {
-                await ProcessRazorFile(modelKeys, filePath, resourcePath, customActions);
+                Console.WriteLine("Settings file already exists: BlazorLocalizerSettings.json");
+                Console.WriteLine(File.ReadAllText("BlazorLocalizerSettings.json"));
             }
-            if (modelKeys.Count > 0)
+        }
+
+        private static void CreateDefaultSettingsFile()
+        {
+            var appSettings = new Dictionary<string, object>
             {
-                await ResourceGenerator.CreateResxFile(modelKeys,resourcePath);
-                //check if target language is set and translate the resource file
-                if (!string.IsNullOrEmpty(targetLanguage))
-                {
-                    await ResourceGenerator.TranslateResourceFile(resourcePath, targetLanguage);
-                }
-            }
+                { "ProjectPath", "./MyProject.csproj" },                 // Relative to current directory or absolute
+                { "ResourcePath", "Resources/SharedResources.resx" },   // Relative to ProjectPath or absolute
+                { "ExcludeFiles", "App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor" }, //Comma separated list of files to exclude
+                { "IncludeFiles", "*.razor" }, // Default: *.razor
+                { "TargetLanguages", "cs-CZ" },   // Comma separated list of languages to translate to
+                { "Email", "sample@email.com" }   // Email for translated.net translation service 
+            };
+
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+
+            var jsonString = JsonSerializer.Serialize(appSettings, options);
+
+            File.WriteAllText("BlazorLocalizerSettings.json", jsonString);
+            Console.WriteLine("Default settings file created: BlazorLocalizerSettings.json");
+            Console.WriteLine(jsonString);
+        }
+
+
+        private static void ConsoleHelp()
+        {
+            Console.WriteLine($"BlazorLocalizer v{Assembly.GetExecutingAssembly().GetName().Version}");
+            Console.WriteLine();
+            Console.WriteLine(@"Commands:");
+            Console.WriteLine(@"  localize (l)   --projectPath (-p) <projectPath> --resourcePath (-r) <resourcePath> [--includeFiles (-i) <includeFiles>] [--excludeFiles (-x) <excludeFiles>] --targetLanguages (-t) <targetLanguages> [--email (-e) <email>]");
+            Console.WriteLine(@"  translate (t)  --resourcePath (-r) <resourcePath> --targetLanguages (-t) <targetLanguages> [--email (-e) <email>]");
+            Console.WriteLine(@"  settings (s)");
+            Console.WriteLine(@"  help (h)");
         }
     }
 }

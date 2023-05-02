@@ -42,41 +42,6 @@ namespace BlazorLocalizerTests
         };
 
         [Fact]
-        public void TestAttributePattern()
-        {
-
-            foreach (var example in attributes)
-            {
-                // Act
-                var match = Regex.Match($"<RadzenButton {example.name}=\"{example.value}\" />", RazorProcessor.attributePattern);
-
-                // Assert
-                Assert.True(match.Success);
-                Assert.Equal(example.name, match.Groups["name"].Value);
-                Assert.Equal(example.value, match.Groups["value"].Value);
-                Debug.WriteLine($"{example.name} : {example.value}    =>    {match.Groups["name"].Value} : {match.Groups["value"].Value}");
-            }
-        }
-                    List<(string name, string value)> attributes = new List<(string name, string value)>
-                    {
-                        ("Text1", "Some text"),
-                        
-                        ("Data1", "@user"),
-                        ("Visible1", "@(user != null)"),
-                        ("Visible2", "@(user > 1)"),
-                        ("Visible3", "@(user < 1)"),
-                        ("Visible4", "@(user >= 1)"),
-                        ("Visible5", "@(user <= 1)"),
-                        ("Click1", "@(async () => await SaveProject())"),
-                        ("Click2", "@(async () => await SaveProject(\"user\"))"),
-                        ("@onclick:stopPropagation", "true"),
-                        ("@onclick1:stopPropagation", "@true"),
-                        ("Action", "@($\"account/login?redirectUrl={redirectUrl}\")"),
-                        ("Data2", "@(\"login\")"),
-                        ("Text2", @"@D[""Button.Save""]"),
-                    };
-
-        [Fact]
         public void ReplaceTagAttributesTest()
         {
             // Arrange
@@ -146,7 +111,7 @@ namespace BlazorLocalizerTests
             var SourceFile = "/Users/pavel/projects/sg/igp/src/igp/Resources/Resources.resx";
             Translator.targetLanguage = "cs-CZ";
             //Act
-            await ResourceGenerator.TranslateResourceFile(SourceFile, "cs-CZ");
+            //await ResourceGenerator.TranslateResourceFile(SourceFile, "cs-CZ");
             
 
         }

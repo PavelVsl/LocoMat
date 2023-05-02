@@ -1,5 +1,9 @@
 using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
+using System.Xml.Linq;
+using Newtonsoft.Json.Converters;
 
 namespace BlazorLocalizer;
 
@@ -24,8 +28,8 @@ public static class RazorProcessor
         var newTag = attributeRegex.Match(tag).Value;
         return newTag;
     }
-    
-    public static async Task ProcessRazorFile(Dictionary<string, string> modelKeys, string razorFileName, string modelPath, List<(string ComponentType, Func<string, string> CustomAction)> customActions)
+
+    public static async Task ProcessRazorFile(string razorFileName, Dictionary<string, string> modelKeys, List<(string ComponentType, Func<string, string> CustomAction)> customActions, string modelPath, bool testMode)
     {
         // Step 1: Open razor file
         string razorContent = await File.ReadAllTextAsync(razorFileName);
@@ -39,29 +43,37 @@ public static class RazorProcessor
         newRazorContent = ReplaceLocalizableStrings(modelKeys, newRazorContent, className);
 
         // Step 4: Write the modified razor content back to the file
-        await File.WriteAllTextAsync(razorFileName, newRazorContent);
+        if (testMode)
+        {
+            Console.WriteLine($"Changes to {razorFileName} not written to disk.");
+            Console.WriteLine(newRazorContent);
+        }
+        else
+        {
+            await File.WriteAllTextAsync(razorFileName, newRazorContent);
+        }
     }
 
-    public static string  ReplaceGridColumnStrings(string tag, Dictionary<string, string> modelKeys)
+    public static string ReplaceGridColumnStrings(string tag, Dictionary<string, string> modelKeys)
     {
-        var attributeName= "Title";
+        var attributeName = "Title";
         if (DoNotReplace(tag, attributeName)) return tag;
-        string className = GetClassNameFromTag(tag,"TItem");
-        string property = GetAttributeValue(tag,"Property");
+        string className = GetClassNameFromTag(tag, "TItem");
+        string property = GetAttributeValue(tag, "Property");
         string key = $"{className}.{property}";
-        modelKeys.TryAdd(key, GetAttributeValue(tag,attributeName));
+        modelKeys.TryAdd(key, GetAttributeValue(tag, attributeName));
         return SetAttributeValue(tag, attributeName, key);
     }
 
-    public static string ReplaceAttributeWithKey(this string tag,Dictionary<string, string> modelKeys,  string attributeName, string key)
+    public static string ReplaceAttributeWithKey(this string tag, Dictionary<string, string> modelKeys, string attributeName, string key)
     {
         if (DoNotReplace(tag, attributeName)) return tag;
         var value = GetAttributeValue(tag, attributeName);
         modelKeys.TryAdd(key, value);
-        return  SetAttributeValue(tag, attributeName, key);
+        return SetAttributeValue(tag, attributeName, key);
     }
 
-    private static bool DoNotReplace(string tag,string attributeName)
+    private static bool DoNotReplace(string tag, string attributeName)
     {
         return GetAttributeValue(tag, attributeName).StartsWith("@");
     }
@@ -79,7 +91,7 @@ public static class RazorProcessor
         string className = Path.GetFileNameWithoutExtension(razorFileName);
 
         // Check if the localizer is already injected
-        string pattern = $@"@inject\s+IStringLocalizer<SharedResources>\s+D\b";
+        string pattern = $@"@inject\s+Microsoft.Extensions.Localization.IStringLocalizer<SharedResources>\s+D\b";
         Regex regex = new Regex(pattern);
 
         if (regex.IsMatch(razorContent))
@@ -88,9 +100,10 @@ public static class RazorProcessor
         }
 
         // Prepend the localizer injection directive
-        string localizerInjection = $"@inject IStringLocalizer<SharedResources> D{Environment.NewLine}";
+        string localizerInjection = $"@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> D{Environment.NewLine}";
         return localizerInjection + razorContent;
     }
+
 
     private static string ReplaceLocalizableStrings(Dictionary<string, string> resourceKeys, string razorContent, string className)
     {
@@ -133,17 +146,51 @@ public static class RazorProcessor
         return razorContent;
     }
 
+    private static string RemoveDiacritics(string text)
+    {
+        var normalizedString = text.Normalize(NormalizationForm.FormD);
+        var stringBuilder = new StringBuilder();
+
+        foreach (var c in normalizedString)
+        {
+            var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+            if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+            {
+                stringBuilder.Append(c);
+            }
+        }
+
+        return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+    }
+
+    private static string RemoveNonAsciiCharacters(string text)
+    {
+        return Regex.Replace(text, @"[^\u0000-\u007F]", string.Empty);
+    }
+
     private static string GenerateResourceKey(string value)
     {
-        // Convert non-ASCII characters to ASCII characters using the IdnMapping class.
-        value = new IdnMapping().GetAscii(value);
-        // Remove invalid characters from the string using the Regex class.
-        value = Regex.Replace(value, "[^a-zA-Z0-9_.]+", "_");
+        // Remove diacritics (accents)
+        value = RemoveDiacritics(value);
+        // Remove any remaining non-ASCII characters or invalid characters
+        value = RemoveNonAsciiCharacters(value);
+        // Replace any remaining whitespace with an underscore
+        value = value.Replace(" ", "");
+        // Remove any remaining non-word characters
+        value = Regex.Replace(value, @"[^\w]", "");
+        // Remove any remaining underscores
+        value = value.Replace("_", "");
+        // Remove leading and trailing underscores
+        value = value.Trim('_');
+        // Convert to lowercase
+        value = value.ToLowerInvariant();
+        // Truncate to 40 characters
+        value = value.Substring(0, Math.Min(value.Length, 40));
         // Return the resulting string as the resource key.
         return value;
     }
 
-    public static string ReplaceTagAttributes(List<(string ComponentType, Func<string,string> CustomAction)> customActions, string razorContent)
+    public static string ReplaceTagAttributes(List<(string ComponentType, Func<string, string> CustomAction)> customActions, string razorContent)
     {
         foreach (var customAction in customActions)
         {
@@ -151,12 +198,91 @@ public static class RazorProcessor
             Regex componentTypeRegex = new Regex(componentTypePattern, RegexOptions.Singleline);
             razorContent = componentTypeRegex.Replace(razorContent, match =>
             {
-                Console.WriteLine($"ComponentMatch: {match.Groups[0].Value}");
+                //Console.WriteLine($"ComponentMatch: {match.Groups[0].Value}");
                 // Call custom action to modify attribute dictionary
                 string modifiedTag = customAction.CustomAction(match.Value);
                 return modifiedTag;
             });
         }
+
         return razorContent;
+    }
+
+    public static async Task Localize(ConfigurationData config)
+    {
+        Dictionary<string, string> modelKeys = new Dictionary<string, string>();
+        string formClassTItem = null;
+        List<(string ComponentType, Func<string, string> CustomAction)> customActions = new List<(string ComponentType, Func<string, string> CustomAction)>
+        {
+            ("RadzenTemplateForm", (tag) =>
+            {
+                formClassTItem = GetClassNameFromTag(tag, "TItem");
+                return tag;
+            }),
+            ("RadzenDropDownDataGridColumn", tag => ReplaceGridColumnStrings(tag, modelKeys)),
+            ("RadzenDataGridColumn", tag => ReplaceGridColumnStrings(tag, modelKeys)),
+            ("RadzenLabel", tag =>
+            {
+                var key = $"{formClassTItem}.{tag.GetAttributeValue("Component")}";
+                return tag.ReplaceAttributeWithKey(modelKeys, "Text", key);
+            }),
+            ("RadzenRequiredValidator", tag =>
+            {
+                var component = tag.GetAttributeValue("Component");
+                var key = $"{formClassTItem}.{component}.RequiredValidator";
+                return tag.ReplaceAttributeWithKey(modelKeys, "Text", key);
+            }),
+            ("RadzenButton", tag =>
+            {
+                var text = tag.GetAttributeValue("Text");
+                var key = $"Button.{text}";
+                return tag.ReplaceAttributeWithKey(modelKeys, "Text", key);
+            }),
+            ("RadzenPanelMenuItem", tag =>
+                {
+                    var text = tag.GetAttributeValue("Text");
+                    var key = $"Menu.{text}";
+                    return tag.ReplaceAttributeWithKey(modelKeys, "Text", key);
+                }
+            ),
+        };
+        //if resource at modelPath exists, load it  
+        if (File.Exists(config.ResourcePath))
+        {
+            var doc = new XmlDocument();
+            doc.Load(config.ResourcePath);
+            var elemList = doc.GetElementsByTagName("data");
+            foreach (XmlNode node in elemList)
+            {
+                modelKeys.TryAdd(node.Attributes["name"].Value, node.InnerText);
+            }
+        }
+
+        //get folderPath folder name  from config.ProjectPath project file name
+        string folderPath = Path.GetDirectoryName(config.ProjectPath);
+
+        // recurse through the directory folderPath   
+        if (Directory.Exists(folderPath))
+        {
+            string[] files = Directory.GetFiles(folderPath, config.IncludeFiles, SearchOption.AllDirectories);
+            foreach (var file in files)
+            {
+                if (config.ExcludeFiles.Contains(Path.GetFileName(file)))
+                {
+                    continue;
+                }
+
+                formClassTItem = null;
+                Console.WriteLine("Processing file: " + file);
+                await ProcessRazorFile(file, modelKeys, customActions, config.ResourcePath, config.TestMode);
+            }
+        }
+
+        if (modelKeys.Count > 0)
+        {
+            ResourceGenerator.GenerateCsFile(config);
+            await ResourceGenerator.CreateResxFile(modelKeys, config);
+            await ResourceGenerator.TranslateResourceFile(config);
+        }
     }
 }

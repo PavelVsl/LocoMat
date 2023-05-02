@@ -6,6 +6,13 @@ This program is focused on providing localization support for applications built
 
 Supported Radzen Blazor components:
 RadzenTemplateForm, RadzenDropDownDataGridColumn, RadzenDataGridColumn, RadzenLabel, RadzenRequiredValidator, RadzenButton, and RadzenPanelMenuItem
+## Features
+
+* Generate resource files from .razor files in your Blazor application
+* Translate resource files to different languages using Translator API
+* Exclude specific files from localization
+* Create default localization settings
+* Easy-to-use command-line interface with shortcuts for faster input
 
 ## Installation
 
@@ -21,81 +28,79 @@ git clone https://github.com/chlupac/BlazorLocalizer.git
 dotnet build
 ```
 
-3. Run the program:
-
-```sh
-dotnet run --project BlazorLocalizer.csproj
-```
-
-4. (Optional) Install the program as dotnet tool:
+3. (Optional) Install the program as dotnet tool:
 
 ```sh 
 dotnet pack
 dotnet tool install --global --add-source ./nupkg BlazorLocalizer
 ```
-5. (Optional) Run the program as dotnet tool:
-
-```sh
-BlazorLocalizer localize /path/to/project ./Resources/Resources.resx fr-FR  
-```
-6. (Optional) Uninstall the program as dotnet tool:
+4. (Optional) Uninstall the program as dotnet tool:
 
 ```sh
 dotnet tool uninstall --global BlazorLocalizer
 ```
-7. (Optional) Update the program as dotnet tool:
+5. (Optional) Update the program as dotnet tool:
 
 ```sh
 dotnet tool update --global --add-source ./nupkg BlazorLocalizer
 ```
 
-
 ## Usage
 
-### Command line parameters
+Use the command-line interface to perform localization tasks:
 
-BlazorLocalizer supports the following command line parameters:
+```
+BlazorLocalizer <command> [parameters]
+```
 
-- `localize [projectPath] [resourcePath] [targetLanguage] [excludeFiles]` - localize Blazor Razor components in a project recursively.
-    - `projectPath` - (optional) The path to the project to update recursively. Default is the current directory.
-    - `resourcePath` - (optional) The path to the resource file to update. Default is `./Resources/SharedResources.resx`.
-    - `targetLanguage` - (optional) The target language to localize. Default is `cs-CZ`.
-    - `email` - (optional) The email address to use for the translation service. Default is `null`. When not specified, the translation service will have lower daily quota usage.
-    - `excludeFiles` - (optional) A comma-separated list of files to exclude from processing. Default is `App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor`.
+### Commands
 
-- `translate [resourcePath] [targetLanguage]` - translate an existing resource file to a target language.
-    - `resourcePath` - (optional) The path to the resource file to translate. Default is `./Resources/SharedResources.resx`.
-    - `targetLanguage` - (optional) The target language to translate to. Default is `cs-CZ`.
-    - `email` - (optional) The email address to use for the translation service. Default is `null`. When not specified, the translation service will have lower daily quota usage.
+| Command       | Shortcut | Description |
+| ------------- |:--------:| ----------- |
+| localize      | l        | Localize a Blazor project by generating resource files with translations. |
+| translate     | t        | Translate an existing resource file to the specified target language. |
+| settings      | s        | Manage localization settings. Creates a default settings file if none exists. |
+| help          | h        | Display usage information and available commands. |
 
-- `help` - display help information.
+### Parameters
+
+| Parameter         | Shortcut | Description |
+| ----------------- |:--------:| ----------- |
+| --projectPath     |    -p    | Path to the Blazor project directory. |
+| --resourcePath    |    -r    | Path to the main resource file. |
+| --excludeFiles    |    -x    | List of files to exclude from localization, separated by commas. |
+| --targetLanguage  |    -t    | Language code for translation. |
+| --email           |    -e    | Email address for the Translator API. |
 
 ### Examples
 
-Localize Blazor Razor components in the current directory:
+### Examples
 
-```sh
-BlazorLocalizer localize
+
+Localize a Blazor project and generate resource files:
+
+```
+BlazorLocalizer l -p ./MyBlazorProject -r ./MyBlazorProject/Resources/SharedResources.resx -e App.razor,_Imports.razor -t de-DE -m my@email.com
 ```
 
-Localize Blazor Razor components in a specific project:
+Translate an existing resource file to French:
 
-```sh
-BlazorLocalizer localize /path/to/project/
+```
+BlazorLocalizer t -r ./MyBlazorProject/Resources/SharedResources.resx -t fr-FR -m my@email.com
 ```
 
-Localize Blazor Razor components in a specific project, using a custom resource file and target language:
+Create a default localization settings file:
 
-```sh
-BlazorLocalizer localize /path/to/project/ ./Resources/Resources.resx fr-FR
+```
+BlazorLocalizer s
 ```
 
-Translate an existing resource file to a target language:
+Display help information:
 
-```sh
-BlazorLocalizer translate ./Resources/Resources.resx de-DE
+```
+BlazorLocalizer h
 ```
 
 ## License
 
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+BlazorLocalizer is released under the [MIT License](LICENSE).
