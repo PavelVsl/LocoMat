@@ -4,41 +4,72 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 
 namespace BlazorLocalizer
 {
     class Program
     {
-        static async Task Main(string[] args)
-        {
-            var configuration = BuildConfiguration(args);
-            var configData = GetParametersFromArgs(args, configuration);
-            Translator.Email = configData.Email;
+static async Task Main(string[] args)
+{
+    var configuration = BuildConfiguration(args);
+    var configData = GetParametersFromArgs(args, configuration);
+    Translator.Email = configData.Email;
 
-            switch (configData.Command)
+    // Replace Console.WriteLine with ILogger
+    var loggerFactory = CreateLoggerFactory(configData.VerboseOutput);
+    var logger = loggerFactory.CreateLogger<Program>();
+
+    logger.LogInformation("Application started.");
+
+    switch (configData.Command)
+    {
+        case "localize":
+        case "l":
+            if (CheckConfiguration(configData))
             {
-                case "localize":
-                case "l":
-                    if (CheckConfiguration(configData))
-                        await RazorProcessor.Localize(configData);
-                    break;
-                case "translate":
-                case "t":
-                    if (CheckConfiguration(configData))
-                        await ResourceGenerator.TranslateResourceFile(configData);
-                    break;
-                case "settings":
-                case "s":
-                    HandleSettings();
-                    break;
-                case "help":
-                case "h":
-                default:
-                    ConsoleHelp();
-                    break;
+                logger.LogInformation("Localizing...");
+                await RazorProcessor.Localize(configData);
+                logger.LogInformation("Localization complete.");
             }
-        }
+            break;
+        case "translate":
+        case "t":
+            if (CheckConfiguration(configData))
+            {
+                logger.LogInformation("Translating resources...");
+                await ResourceGenerator.TranslateResourceFile(configData);
+                logger.LogInformation("Translation complete.");
+            }
+            break;
+        case "settings":
+        case "s":
+            HandleSettings();
+            break;
+        case "help":
+        case "h":
+        default:
+            logger.LogInformation("Help requested.");
+            ConsoleHelp();
+            break;
+    }
+
+    logger.LogInformation("Application exiting.");
+}
+private static ILoggerFactory CreateLoggerFactory(bool verboseOutput)
+{
+    var loggerFactory = LoggerFactory.Create(builder =>
+    {
+        // Add console logging
+        builder.AddConsole();
+
+        // Set minimum log level based on verbose output configuration option
+        builder.SetMinimumLevel(verboseOutput ? LogLevel.Debug : LogLevel.Information);
+    });
+
+    return loggerFactory;
+}
 
         private static IConfigurationRoot BuildConfiguration(string[] args)
         {
