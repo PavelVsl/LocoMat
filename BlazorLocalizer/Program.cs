@@ -1,75 +1,94 @@
+using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Xml;
+using System.Threading.Tasks;
+using BlazorLocalizer.Translation;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-
 
 namespace BlazorLocalizer
 {
     class Program
     {
-static async Task Main(string[] args)
-{
-    var configuration = BuildConfiguration(args);
-    var configData = GetParametersFromArgs(args, configuration);
-    Translator.Email = configData.Email;
+        private readonly ILogger<Program> _logger;
+        private readonly IConfigurationRoot _configuration;                                 
+        private readonly ConfigurationData _configData;
+        private readonly RazorProcessor _razorProcessor;
+        private readonly ResourceGenerator _resourceGenerator;
 
-    // Replace Console.WriteLine with ILogger
-    var loggerFactory = CreateLoggerFactory(configData.VerboseOutput);
-    var logger = loggerFactory.CreateLogger<Program>();
+        public Program(ILogger<Program> logger, IConfigurationRoot configuration, ConfigurationData configData, RazorProcessor razorProcessor, ResourceGenerator resourceGenerator)
+        {
+            _logger = logger;
+            _configuration = configuration;
+            _configData = configData;
+            _razorProcessor = razorProcessor;
+            _resourceGenerator = resourceGenerator;
+        }
 
-    logger.LogInformation("Application started.");
+        static void Main(string[] args)
+        {
+            var config = BuildConfiguration(args);
+            var configData = GetParametersFromArgs(args, config);
+            
+            var services = new ServiceCollection()
+                .AddCustomLogging(configData.LogLevel)
+                .AddSingleton(config)
+                .AddSingleton(configData)
+                .AddSingleton<RazorProcessor>()
+                .AddSingleton<ResourceGenerator>()
+                .AddSingleton<ResourceKeys>()
+                .AddSingleton<CustomActions>()
+                .AddSingleton<Translator>()
+                .AddTransient<Program>()
+                .BuildServiceProvider();
 
-    switch (configData.Command)
-    {
-        case "localize":
-        case "l":
-            if (CheckConfiguration(configData))
+            var program = services.GetRequiredService<Program>();
+            program.Run();
+        }
+
+        private void Run()
+        {
+            _logger.LogDebug("Application started.");
+            switch (_configData.Command)
             {
-                logger.LogInformation("Localizing...");
-                await RazorProcessor.Localize(configData);
-                logger.LogInformation("Localization complete.");
+                case "localize":
+                case "l":
+                    if (CheckConfiguration(_configData))
+                    {
+                        _logger.LogDebug("Localizing...");
+                        _razorProcessor.Localize().Wait();
+                        _logger.LogDebug("Localization complete.");
+                    }
+                    break;
+                case "translate":
+                case "t":
+                    if (CheckConfiguration(_configData))
+                    {
+                        _logger.LogDebug("Translating resources...");
+                        _resourceGenerator.TranslateResourceFile().Wait();
+                        _logger.LogDebug("Translation complete.");
+                    }
+                    break;
+                case "settings":
+                case "s":
+                    HandleSettings();
+                    break;
+                case "help":
+                case "h":
+                default:
+                    _logger.LogDebug("Help requested.");
+                    ConsoleHelp();
+                    break;
             }
-            break;
-        case "translate":
-        case "t":
-            if (CheckConfiguration(configData))
-            {
-                logger.LogInformation("Translating resources...");
-                await ResourceGenerator.TranslateResourceFile(configData);
-                logger.LogInformation("Translation complete.");
-            }
-            break;
-        case "settings":
-        case "s":
-            HandleSettings();
-            break;
-        case "help":
-        case "h":
-        default:
-            logger.LogInformation("Help requested.");
-            ConsoleHelp();
-            break;
-    }
-
-    logger.LogInformation("Application exiting.");
-}
-private static ILoggerFactory CreateLoggerFactory(bool verboseOutput)
-{
-    var loggerFactory = LoggerFactory.Create(builder =>
-    {
-        // Add console logging
-        builder.AddConsole();
-
-        // Set minimum log level based on verbose output configuration option
-        builder.SetMinimumLevel(verboseOutput ? LogLevel.Debug : LogLevel.Information);
-    });
-
-    return loggerFactory;
-}
+            _logger.LogDebug("Application exiting.");
+        }
 
         private static IConfigurationRoot BuildConfiguration(string[] args)
         {
@@ -125,31 +144,31 @@ private static ILoggerFactory CreateLoggerFactory(bool verboseOutput)
             return config;
         }
 
-        private static bool CheckConfiguration(ConfigurationData config)
+        private bool CheckConfiguration(ConfigurationData config)
         {
             var result = true;
             //check if project file exists and is valid
             if (!File.Exists(config.ProjectPath))
             {
-                Console.WriteLine("Project file does not exist: " + config.ProjectPath);
+                _logger.LogError("Project file does not exist: " + config.ProjectPath);
                 result =  false;
             }
 
             if (string.IsNullOrEmpty(config.ResourcePath))
             {
-                Console.WriteLine("ResourcePath is not set");
+                _logger.LogError("ResourcePath is not set");
                 result =  false;
             }
 
             //if languages is set, check if it is valid
-            if (!string.IsNullOrEmpty(config.TargetLanguages))
+    if (!string.IsNullOrEmpty(config.TargetLanguages))
             {
                 var languages = config.TargetLanguages.Split(",");
                 foreach (var language in languages)
                 {
                     if (!CultureInfo.GetCultures(CultureTypes.AllCultures).Any(c => c.Name == language))
                     {
-                        Console.WriteLine("Invalid language: " + language);
+                        _logger.LogError("Invalid language: " + language);
                         result =  false;
                     }
                 }
@@ -158,7 +177,7 @@ private static ILoggerFactory CreateLoggerFactory(bool verboseOutput)
             //if languages is set, check if email is valid
             if (!string.IsNullOrEmpty(config.TargetLanguages) && !IsValidEmail(config.Email))
             {
-                Console.WriteLine("Email is not set or is not valid");
+                _logger.LogError("Email is not set or is not valid");
                 result =  false;
             }
 
@@ -177,7 +196,7 @@ private static ILoggerFactory CreateLoggerFactory(bool verboseOutput)
         }
 
 
-        private static void HandleSettings()
+        private void HandleSettings()
         {
             if (!File.Exists("BlazorLocalizerSettings.json"))
             {
@@ -185,12 +204,12 @@ private static ILoggerFactory CreateLoggerFactory(bool verboseOutput)
             }
             else
             {
-                Console.WriteLine("Settings file already exists: BlazorLocalizerSettings.json");
-                Console.WriteLine(File.ReadAllText("BlazorLocalizerSettings.json"));
+                _logger.LogInformation("Settings file already exists: BlazorLocalizerSettings.json");
+                _logger.LogInformation(File.ReadAllText("BlazorLocalizerSettings.json"));
             }
         }
 
-        private static void CreateDefaultSettingsFile()
+        private void CreateDefaultSettingsFile()
         {
             var appSettings = new Dictionary<string, object>
             {
@@ -210,12 +229,12 @@ private static ILoggerFactory CreateLoggerFactory(bool verboseOutput)
             var jsonString = JsonSerializer.Serialize(appSettings, options);
 
             File.WriteAllText("BlazorLocalizerSettings.json", jsonString);
-            Console.WriteLine("Default settings file created: BlazorLocalizerSettings.json");
-            Console.WriteLine(jsonString);
+            _logger.LogInformation("Default settings file created: BlazorLocalizerSettings.json");
+            _logger.LogInformation(jsonString);
         }
 
 
-        private static void ConsoleHelp()
+        private void ConsoleHelp()
         {
             Console.WriteLine($"BlazorLocalizer v{Assembly.GetExecutingAssembly().GetName().Version}");
             Console.WriteLine();

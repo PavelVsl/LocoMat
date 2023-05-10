@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 namespace BlazorLocalizer;
 
 public class ConfigurationData
@@ -11,4 +13,5 @@ public class ConfigurationData
     public string IncludeFiles { get; set; }
     public bool TestMode { get; set; }
     public bool VerboseOutput { get; set; }
+    public LogLevel LogLevel => VerboseOutput ? LogLevel.Debug : LogLevel.Information;
 }
