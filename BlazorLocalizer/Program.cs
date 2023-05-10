@@ -18,15 +18,13 @@ namespace BlazorLocalizer
     class Program
     {
         private readonly ILogger<Program> _logger;
-        private readonly IConfigurationRoot _configuration;                                 
         private readonly ConfigurationData _configData;
         private readonly RazorProcessor _razorProcessor;
         private readonly ResourceGenerator _resourceGenerator;
 
-        public Program(ILogger<Program> logger, IConfigurationRoot configuration, ConfigurationData configData, RazorProcessor razorProcessor, ResourceGenerator resourceGenerator)
+        public Program(ILogger<Program> logger, ConfigurationData configData, RazorProcessor razorProcessor, ResourceGenerator resourceGenerator)
         {
             _logger = logger;
-            _configuration = configuration;
             _configData = configData;
             _razorProcessor = razorProcessor;
             _resourceGenerator = resourceGenerator;
@@ -55,7 +53,7 @@ namespace BlazorLocalizer
 
         private void Run()
         {
-            _logger.LogDebug("Application started.");
+            _logger.LogDebug($"Starting BlazorLocalizer v{Assembly.GetExecutingAssembly().GetName().Version}");
             switch (_configData.Command)
             {
                 case "localize":
@@ -111,6 +109,7 @@ namespace BlazorLocalizer
                 { "-i", "includeFiles" },
                 { "-test", "testMode" },
                 { "-v", "verboseOutput" },
+                {"-s", "save"}
             };
         }
 
@@ -119,7 +118,7 @@ namespace BlazorLocalizer
             var config = new ConfigurationData
             {
                 Command = args.Length > 0 ? args[0] : "help",
-                ProjectPath = configuration["projectPath"] ?? "./",
+                Project = configuration["projectPath"] ?? GetProjectFileName() ?? "./",
                 ResourcePath = configuration["resourcePath"] ?? "Resources/SharedResources.resx",
                 ExcludeFiles = configuration["excludeFiles"]?.Split(",").ToList() ?? "App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor".Split(",").ToList(),
                 TargetLanguages = configuration["targetLanguages"] ?? "",
@@ -130,27 +129,35 @@ namespace BlazorLocalizer
             };
 
             //fix for relative paths
-            if (!string.IsNullOrEmpty(config.ProjectPath) && !Path.IsPathRooted(config.ProjectPath))
+            if (!string.IsNullOrEmpty(config.Project) && !Path.IsPathRooted(config.Project))
             {
-                config.ProjectPath = Path.Combine(Directory.GetCurrentDirectory(), config.ProjectPath);
+                config.Project = Path.Combine(Directory.GetCurrentDirectory(), config.Project);
             }
 
             //fix for relative paths
             if (!string.IsNullOrEmpty(config.ResourcePath) && !Path.IsPathRooted(config.ResourcePath))
             {
-                config.ResourcePath = Path.Combine(Path.GetDirectoryName(config.ProjectPath), config.ResourcePath);
+                config.ResourcePath = Path.Combine(Path.GetDirectoryName(config.Project), config.ResourcePath);
             }
 
             return config;
         }
 
+        private static string GetProjectFileName()
+        {
+            //check current dir for csproj file, must be only one, if here more csproj files or does not exists return null
+            
+            var files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.csproj");
+            return files.Length == 1 ? files[0] : null;
+        }
+        
         private bool CheckConfiguration(ConfigurationData config)
         {
             var result = true;
             //check if project file exists and is valid
-            if (!File.Exists(config.ProjectPath))
+            if (!File.Exists(config.Project))
             {
-                _logger.LogError("Project file does not exist: " + config.ProjectPath);
+                _logger.LogError("Project file does not exist: " + config.Project);
                 result =  false;
             }
 
@@ -179,6 +186,11 @@ namespace BlazorLocalizer
             {
                 _logger.LogError("Email is not set or is not valid");
                 result =  false;
+            }
+
+            if (config.Save)
+            {
+                _logger.LogInformation("Save command is not implemented yet");
             }
 
             return result;
@@ -213,8 +225,8 @@ namespace BlazorLocalizer
         {
             var appSettings = new Dictionary<string, object>
             {
-                { "ProjectPath", "./MyProject.csproj" }, // Relative to current directory or absolute
-                { "ResourcePath", "Resources/SharedResources.resx" }, // Relative to ProjectPath or absolute
+                { "Project", "./MyProject.csproj" }, // Relative to current directory or absolute
+                { "ResourcePath", "Resources/SharedResources.resx" }, // Relative to Project or absolute
                 { "ExcludeFiles", "App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor" }, //Comma separated list of files to exclude
                 { "IncludeFiles", "*.razor" }, // Default: *.razor
                 { "TargetLanguages", "cs-CZ" }, // Comma separated list of languages to translate to
@@ -239,10 +251,9 @@ namespace BlazorLocalizer
             Console.WriteLine($"BlazorLocalizer v{Assembly.GetExecutingAssembly().GetName().Version}");
             Console.WriteLine();
             Console.WriteLine(@"Commands:");
-            Console.WriteLine(
-                @"  localize (l)   --projectPath (-p) <projectPath> --resourcePath (-r) <resourcePath> [--includeFiles (-i) <includeFiles>] [--excludeFiles (-x) <excludeFiles>] --targetLanguages (-t) <targetLanguages> [--email (-e) <email>]");
-            Console.WriteLine(@"  translate (t)  --resourcePath (-r) <resourcePath> --targetLanguages (-t) <targetLanguages> [--email (-e) <email>]");
-            Console.WriteLine(@"  settings (s)");
+            Console.WriteLine(@"  localize (l)   [--projectPath (-p) <projectPath>] [--resourcePath (-r) <resourcePath>] [--includeFiles (-i) <includeFiles>] [--excludeFiles (-x) <excludeFiles>] [--targetLanguages (-t) <targetLanguages>] [--email (-e) <email>]");
+            Console.WriteLine(@"  translate (t)  [--resourcePath (-r) <resourcePath>] [--targetLanguages (-t) <targetLanguages>] [--email (-e) <email>]");
+            Console.WriteLine(@"  settings (s) [--projectPath (-p) <projectPath>] [--resourcePath (-r) <resourcePath>] [--includeFiles (-i) <includeFiles>] [--excludeFiles (-x) <excludeFiles>] [--targetLanguages (-t) <targetLanguages>] [--email (-e) <email>]");
             Console.WriteLine(@"  help (h)");
         }
     }

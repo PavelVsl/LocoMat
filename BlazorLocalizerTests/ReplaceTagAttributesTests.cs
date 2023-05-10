@@ -23,9 +23,6 @@ namespace BlazorLocalizerTests
             //Translator.targetLanguage = "cs-CZ";
             //Act
             //await ResourceGenerator.TranslateResourceFile(SourceFile, "cs-CZ");
-            
-
         }
-        
     }
 }

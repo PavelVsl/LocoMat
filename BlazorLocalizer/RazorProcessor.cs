@@ -43,8 +43,8 @@ public class RazorProcessor
             }
         }
 
-        //get folderPath folder name  from config.ProjectPath project file name
-        string folderPath = Path.GetDirectoryName(_config.ProjectPath);
+        //get folderPath folder name  from config.Project project file name
+        string folderPath = Path.GetDirectoryName(_config.Project);
 
         // recurse through the directory folderPath   
         if (Directory.Exists(folderPath))
@@ -181,15 +181,15 @@ public class RazorProcessor
 
     private static string GetProjectNamespace(ConfigurationData config)
     {
-        XDocument csprojFile = XDocument.Load(config.ProjectPath);
+        XDocument csprojFile = XDocument.Load(config.Project);
         XNamespace msbuild = "http://schemas.microsoft.com/developer/msbuild/2003";
         XElement rootNamespaceElement = csprojFile.Descendants(msbuild + "RootNamespace").FirstOrDefault();
 
         //Construct relative project namespace from project file folder and resource file folder
-        var projectFolder = Path.GetDirectoryName(config.ProjectPath);
+        var projectFolder = Path.GetDirectoryName(config.Project);
         var resourceFolder = Path.GetDirectoryName(config.ResourcePath);
         var relativeFolder = Path.GetRelativePath(projectFolder, resourceFolder);
-        string nameSpace = Path.GetFileNameWithoutExtension(config.ProjectPath);
+        string nameSpace = Path.GetFileNameWithoutExtension(config.Project);
         if (rootNamespaceElement != null)
         {
             nameSpace = rootNamespaceElement.Value;
@@ -238,7 +238,7 @@ public class RazorProcessor
     private void AddUsingDirective(string nameSpace)
     {
         //check if using directive already exists in _Imports.razor
-        string importsFilePath = Path.Combine(Path.GetDirectoryName(_config.ProjectPath), "_Imports.razor");
+        string importsFilePath = Path.Combine(Path.GetDirectoryName(_config.Project), "_Imports.razor");
 
         //check if _Imports.razor exists,if not, create it
         //check presence of using directive

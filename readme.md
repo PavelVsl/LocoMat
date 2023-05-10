@@ -64,23 +64,28 @@ BlazorLocalizer <command> [parameters]
 
 ### Parameters
 
-| Parameter         | Shortcut | Description |
-| ----------------- |:--------:| ----------- |
-| --projectPath     |    -p    | Path to the Blazor project directory. |
-| --resourcePath    |    -r    | Path to the main resource file. |
+| Parameter         | Shortcut | Description                                                      |
+|-------------------|:--------:|------------------------------------------------------------------|
+| --projectPath     |    -p    | Path to the Blazor project.                                      |
+| --resourcePath    |    -r    | Path to the main resource file.                                  |
 | --excludeFiles    |    -x    | List of files to exclude from localization, separated by commas. |
-| --targetLanguage  |    -t    | Language code for translation. |
-| --email           |    -e    | Email address for the Translator API. |
+| --targetLanguages |    -t    | comma delimited list of language codes for translation.          |
+| --email           |    -e    | Email address for the Translator API.                            |
+                                                                                                         
+### Switches
+
+| Switch    | Shortcut | Description                                                      |
+|-----------|:--------:|------------------------------------------------------------------|
+| --verbose |    -v    | Enables verbose output.                                     |
+|--test     |    -t    | Test mode. No files will be modified.                           |
+|--save     |    -s    | Save settings to the settings file.                             |
 
 ### Examples
-
-### Examples
-
 
 Localize a Blazor project and generate resource files:
 
 ```
-BlazorLocalizer l -p ./MyBlazorProject -r ./MyBlazorProject/Resources/SharedResources.resx -e App.razor,_Imports.razor -t de-DE -m my@email.com
+BlazorLocalizer l -p ./MyBlazorProject.csproj -r ./MyBlazorProject/Resources/SharedResources.resx -e App.razor,_Imports.razor -t de-DE -m my@email.com
 ```
 
 Translate an existing resource file to French:
