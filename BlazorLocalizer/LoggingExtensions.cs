@@ -17,4 +17,3 @@ public static class LoggingExtensions
         return services;
     }
 }
-

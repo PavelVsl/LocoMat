@@ -20,7 +20,7 @@ public class Result<T>
 
     public static Result<T> Failure(string errorMessage)
     {
-        return new Result<T>(default(T), false, errorMessage);
+        return new Result<T>(default, false, errorMessage);
     }
 
     public static implicit operator Result<T>(T value)

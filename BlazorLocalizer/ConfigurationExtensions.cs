@@ -9,13 +9,10 @@ public static class ConfigurationExtensions
         if (configuration != null)
         {
             var value = configuration[key];
-            if (value == null)
-            {
-                return default(T);
-            }
+            if (value == null) return default;
             return (T)Convert.ChangeType(value, typeof(T));
         }
 
-        return default(T);
+        return default;
     }
 }

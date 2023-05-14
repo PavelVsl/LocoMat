@@ -15,75 +15,113 @@ public class RazorProcessor
     private readonly CustomActions _customActions;
     private readonly ResourceKeys _resourceKeys;
     private readonly ResourceGenerator _resourceGenerator;
+    private readonly CsProcessor _csProcessor;
     private readonly bool testMode;
+    private BackupService _backupService;
 
-    public RazorProcessor(ILogger<RazorProcessor> logger, ConfigurationData config, CustomActions customActions, ResourceKeys modelKeys, ResourceGenerator resourceGenerator)
+    public RazorProcessor(ILogger<RazorProcessor> logger, ConfigurationData config, CustomActions customActions, ResourceKeys modelKeys, ResourceGenerator resourceGenerator, CsProcessor csProcessor, BackupService backupService)
     {
         _logger = logger;
         _config = config;
         _customActions = customActions;
         _resourceKeys = modelKeys;
         _resourceGenerator = resourceGenerator;
+        _csProcessor = csProcessor;
+        _backupService = backupService;
         testMode = config.TestMode;
     }
 
     public async Task Localize()
     {
-        string formClassTItem = null;
-
         //if resource at modelPath exists, load it  
         if (File.Exists(_config.ResourcePath))
         {
             var doc = new XmlDocument();
             doc.Load(_config.ResourcePath);
             var elemList = doc.GetElementsByTagName("data");
-            foreach (XmlNode node in elemList)
-            {
-                _resourceKeys.TryAdd(node.Attributes["name"].Value, node.InnerText);
-            }
+            foreach (XmlNode node in elemList) _resourceKeys.TryAdd(node.Attributes["name"].Value, node.InnerText);
         }
 
         //get folderPath folder name  from config.Project project file name
-        string folderPath = Path.GetDirectoryName(_config.Project);
+        var folderPath = Path.GetDirectoryName(_config.Project);
 
         // recurse through the directory folderPath   
         if (Directory.Exists(folderPath))
         {
-            string[] files = Directory.GetFiles(folderPath, _config.IncludeFiles, SearchOption.AllDirectories);
+            var files = Directory.GetFiles(folderPath, _config.IncludeFiles, SearchOption.AllDirectories);
             foreach (var file in files)
             {
-                if (_config.ExcludeFiles.Contains(Path.GetFileName(file)))
-                {
-                    continue;
-                }
-
-                formClassTItem = null;
+                if (_config.ExcludeFiles.Contains(Path.GetFileName(file))) continue;
                 _logger.LogInformation("Processing file: " + file);
                 await ProcessRazorFile(file);
+                //if partial class cs file exists, process it, file name is same as razor file name with .razor.cs extension
+                var csFile = file + ".cs";
+                if (File.Exists(csFile))
+                {
+                    _logger.LogInformation("Processing file: " + csFile);
+
+                    await _csProcessor.ProcessFile(csFile);
+                }
             }
         }
 
-        if (_resourceKeys.Count > 0)
+        GenerateCsFile();
+        await _csProcessor.SaveMatches();
+        if (_resourceKeys.Count > 0) _resourceGenerator.CreateResxFile(_resourceKeys);
+        await _resourceGenerator.TranslateResourceFile();
+    }
+
+    private async Task ProcessCsFile(string csFile)
+    {
+        // Step 1: Open cs file
+        var csContent = await File.ReadAllTextAsync(csFile);
+        var className = Path.GetFileNameWithoutExtension(csFile);
+
+        var newCsContent = csContent;
+        // // Step 2: Add localizer injection                                                                                                                      
+        // string newCsContent = AddLocalizerInjection(csContent, csFile);
+
+        // Step 3: Search localizable strings and replace them with localizer calls
+        newCsContent = ProcessCustomActions(_customActions, newCsContent, className, ".cs");
+
+        //compare newCsContent with csContent, if different, write to disk
+        if (newCsContent == csContent)
         {
-            _resourceGenerator.CreateResxFile(_resourceKeys);
-            GenerateCsFile();
-            await _resourceGenerator.TranslateResourceFile();
+            _logger.LogDebug($"No changes in {csFile}");
+            return;
+        }
+
+        // Step 4: Write the modified razor content back to the file
+        if (testMode)
+        {
+            _logger.LogInformation($"Changes to {csFile} not written to disk.");
+            _logger.LogInformation(newCsContent);
+        }
+        else
+        {
+            await _backupService.WriteAllTextWithBackup(csFile, newCsContent);
         }
     }
 
     private async Task ProcessRazorFile(string razorFileName)
     {
         // Step 1: Open razor file
-        string razorContent = await File.ReadAllTextAsync(razorFileName);
-        string className = Path.GetFileNameWithoutExtension(razorFileName);
+        var razorContent = await File.ReadAllTextAsync(razorFileName);
+        var className = Path.GetFileNameWithoutExtension(razorFileName);
 
         // Step 2: Add localizer injection                                                                                                                      
-        string newRazorContent = AddLocalizerInjection(razorContent, razorFileName);
+        var newRazorContent = AddLocalizerInjection(razorContent, razorFileName);
 
         // Step 3: Search localizable strings and replace them with localizer calls
         newRazorContent = ProcessCustomActions(_customActions, newRazorContent, className);
 
         // Step 4: Write the modified razor content back to the file
+        if (newRazorContent == razorContent)
+        {
+            _logger.LogDebug($"No changes to {razorFileName}.");
+            return;
+        }
+
         if (testMode)
         {
             _logger.LogInformation($"Changes to {razorFileName} not written to disk.");
@@ -91,7 +129,7 @@ public class RazorProcessor
         }
         else
         {
-            await File.WriteAllTextAsync(razorFileName, newRazorContent);
+            await _backupService.WriteAllTextWithBackup(razorFileName, newRazorContent);
         }
     }
 
@@ -99,102 +137,54 @@ public class RazorProcessor
     private static string AddLocalizerInjection(string razorContent, string razorFileName)
     {
         // Get the class name from the filename
-        string className = Path.GetFileNameWithoutExtension(razorFileName);
+        var className = Path.GetFileNameWithoutExtension(razorFileName);
 
         // Check if the localizer is already injected
-        string pattern = $@"@inject\s+Microsoft.Extensions.Localization.IStringLocalizer<SharedResources>\s+D\b";
-        Regex regex = new Regex(pattern);
+        var pattern = $@"@inject\s+Microsoft.Extensions.Localization.IStringLocalizer<SharedResources>\s+D\b";
+        var regex = new Regex(pattern);
 
-        if (regex.IsMatch(razorContent))
-        {
-            return razorContent;
-        }
+        if (regex.IsMatch(razorContent)) return razorContent;
 
         // Prepend the localizer injection directive
-        string localizerInjection = $"@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> D{Environment.NewLine}";
+        var localizerInjection = $"@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> D{Environment.NewLine}";
         return localizerInjection + razorContent;
     }
 
-
-    private static string ReplaceLocalizableStrings(Dictionary<string, string> resourceKeys, string razorContent, string className)
-    {
-        // Find attributes ending with Text or Title
-        string attributePattern = @"(?<=(Text|Title)\s*=\s*""(?![^""]*@))([^""]*)";
-        Regex attributeRegex = new Regex(attributePattern);
-
-        // Handle attribute values
-        razorContent = attributeRegex.Replace(razorContent, match =>
-        {
-            string key = $"{className}.{match.Value.GenerateResourceKey()}";
-            resourceKeys.TryAdd(key, match.Value);
-            return $"@D[\"{key}\"]";
-        });
-
-        // Find text content between tags, e.g., <PageTitle>Measurement Files</PageTitle>
-        string tagContentPattern = @"(?<=<\w+>(?![^<]*?@)[^<]*?)\b(?:\w+\s*)+\b(?=[^>]*</\w+>)";
-
-        Regex tagContentRegex = new Regex(tagContentPattern);
-
-        // Handle text content between tags
-        razorContent = tagContentRegex.Replace(razorContent, match =>
-        {
-            string trimmedValue = match.Value.Trim();
-            if (string.IsNullOrEmpty(trimmedValue))
-            {
-                return match.Value;
-            }
-
-            string key = $"{className}.{trimmedValue.GenerateResourceKey()}";
-
-            if (!resourceKeys.ContainsKey(key))
-            {
-                resourceKeys.Add(key, trimmedValue);
-            }
-
-            return $"@D[\"{key}\"]";
-        });
-
-        return razorContent;
-    }
-
-    public string ProcessCustomActions(CustomActions customActions, string razorContent, string className)
+    public string ProcessCustomActions(CustomActions customActions, string razorContent, string className, string fileType = null)
     {
         customActions.SetVariable("className", className);
 
-        foreach (var customAction in customActions.Actions)
+        foreach (var customAction in customActions.Actions.Where(a => fileType == null || a.FileType == fileType))
         {
-            string componentTypePattern = customAction.Regex();
-            Regex componentTypeRegex = new Regex(componentTypePattern, RegexOptions.Singleline);
+            var componentTypePattern = customAction.Regex();
+            var componentTypeRegex = new Regex(componentTypePattern, RegexOptions.Singleline);
             razorContent = componentTypeRegex.Replace(razorContent, match =>
             {
+                var originalValue = match.Value;
                 // Call custom action to modify attribute dictionary
-                string modifiedTag = customAction.Action(match.Value);
+                var modifiedTag = customAction.Action(match);
                 // check if the tag has been modified
-                if (modifiedTag != match.Value)
-                    _logger.LogDebug($"Replace: {match.Groups[0].Value} -> {modifiedTag}");
+                if (modifiedTag != originalValue)
+                    _logger.LogDebug($"Replace: {originalValue} -> {modifiedTag}");
                 return modifiedTag;
             });
         }
+
         return razorContent;
     }
 
-
     private static string GetProjectNamespace(ConfigurationData config)
     {
-        XDocument csprojFile = XDocument.Load(config.Project);
+        var csprojFile = XDocument.Load(config.Project);
         XNamespace msbuild = "http://schemas.microsoft.com/developer/msbuild/2003";
-        XElement rootNamespaceElement = csprojFile.Descendants(msbuild + "RootNamespace").FirstOrDefault();
+        var rootNamespaceElement = csprojFile.Descendants(msbuild + "RootNamespace").FirstOrDefault();
 
         //Construct relative project namespace from project file folder and resource file folder
         var projectFolder = Path.GetDirectoryName(config.Project);
         var resourceFolder = Path.GetDirectoryName(config.ResourcePath);
         var relativeFolder = Path.GetRelativePath(projectFolder, resourceFolder);
-        string nameSpace = Path.GetFileNameWithoutExtension(config.Project);
-        if (rootNamespaceElement != null)
-        {
-            nameSpace = rootNamespaceElement.Value;
-        }
-
+        var nameSpace = Path.GetFileNameWithoutExtension(config.Project);
+        if (rootNamespaceElement != null) nameSpace = rootNamespaceElement.Value;
         if (!string.IsNullOrEmpty(relativeFolder)) nameSpace += "." + relativeFolder.Replace(Path.DirectorySeparatorChar, '.');
         return nameSpace;
     }
@@ -203,14 +193,14 @@ public class RazorProcessor
     {
         //change extension to .cs
 
-        string csFilePath = Path.ChangeExtension(_config.ResourcePath, ".cs");
+        var csFilePath = Path.ChangeExtension(_config.ResourcePath, ".cs");
+        var className = Path.GetFileNameWithoutExtension(csFilePath);
+        var nameSpace = GetProjectNamespace(_config);
+        AddUsingDirective(nameSpace);
 
         if (!File.Exists(csFilePath))
         {
-            string className = Path.GetFileNameWithoutExtension(csFilePath);
-            string nameSpace = GetProjectNamespace(_config);
-
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             // add namespace    
             sb.AppendLine("namespace " + nameSpace);
             sb.AppendLine("{");
@@ -230,15 +220,13 @@ public class RazorProcessor
                 _logger.LogInformation($"Generated: {csFilePath}:");
                 _logger.LogDebug(sb.ToString());
             }
-
-            AddUsingDirective(nameSpace);
         }
     }
 
     private void AddUsingDirective(string nameSpace)
     {
         //check if using directive already exists in _Imports.razor
-        string importsFilePath = Path.Combine(Path.GetDirectoryName(_config.Project), "_Imports.razor");
+        var importsFilePath = Path.Combine(Path.GetDirectoryName(_config.Project), "_Imports.razor");
 
         //check if _Imports.razor exists,if not, create it
         //check presence of using directive
@@ -253,7 +241,7 @@ public class RazorProcessor
         }
         else
         {
-            string importsFileContent = File.ReadAllText(importsFilePath);
+            var importsFileContent = File.ReadAllText(importsFilePath);
             if (!importsFileContent.Contains("@using " + nameSpace))
             {
                 importsFileContent += Environment.NewLine + "@using " + nameSpace;
