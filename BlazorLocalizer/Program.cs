@@ -257,16 +257,27 @@ internal class Program
     }
 
 
-    private void ConsoleHelp()
+    private static void ConsoleHelp()
     {
-        Console.WriteLine($"BlazorLocalizer v{Assembly.GetExecutingAssembly().GetName().Version}");
+        Console.WriteLine("Usage: BlazorLocalizer <command> [options]");
         Console.WriteLine();
-        Console.WriteLine(@"Commands:");
-        Console.WriteLine(
-            @"  localize (l)   [--projectPath (-p) <projectPath>] [--resourcePath (-r) <resourcePath>] [--includeFiles (-i) <includeFiles>] [--excludeFiles (-x) <excludeFiles>] [--targetLanguages (-t) <targetLanguages>] [--email (-e) <email>]");
-        Console.WriteLine(@"  translate (t)  [--resourcePath (-r) <resourcePath>] [--targetLanguages (-t) <targetLanguages>] [--email (-e) <email>]");
-        Console.WriteLine(
-            @"  settings (s) [--projectPath (-p) <projectPath>] [--resourcePath (-r) <resourcePath>] [--includeFiles (-i) <includeFiles>] [--excludeFiles (-x) <excludeFiles>] [--targetLanguages (-t) <targetLanguages>] [--email (-e) <email>]");
-        Console.WriteLine(@"  help (h)");
+        Console.WriteLine("Commands:");
+        Console.WriteLine("  localize, l\tLocalizes the source files.");
+        Console.WriteLine("  translate, t\tTranslates the resource files.");
+        Console.WriteLine("  restore\tRestores the original source files from the backup.");
+        Console.WriteLine("  settings, s\tDisplays or changes the application settings.");
+        Console.WriteLine("  help, h\tDisplays this help message.");
+        Console.WriteLine();
+        Console.WriteLine("Options:");
+        Console.WriteLine("  -p\t\tPath to the project file. Defaults to the first .csproj file in the current directory.");
+        Console.WriteLine("  -r\t\tPath to the resource file. Defaults to 'Resources/SharedResources.resx'.");
+        Console.WriteLine("  -x\t\tComma-separated list of file names to exclude from localization. Defaults to 'App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor'.");
+        Console.WriteLine("  -t\t\tComma-separated list of target languages for translation. Defaults to empty (i.e. no translation).");
+        Console.WriteLine("  -e\t\tEmail address for the translation service. Required for translation.");
+        Console.WriteLine("  -i\t\tFile name pattern to include in localization. Defaults to '*.razor'.");
+        Console.WriteLine("  -test\t\tRuns in test mode without actually changing any files.");
+        Console.WriteLine("  -v\t\tEnables verbose output.");
+        Console.WriteLine("  -s\t\tSaves the settings to the configuration file.");
+        Console.WriteLine("  -f\t\tForces overwrite existing files when restoring from backup.");
     }
 }
