@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging.Console;
 
-namespace BlazorLocalizer;
+namespace LocoMat;
 
 public class MyCustomFormatterOptions : ConsoleFormatterOptions
 {

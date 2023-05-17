@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
-using BlazorLocalizer;
+using LocoMat;
 
-namespace BlazorLocalizerTests;
+namespace LocoMatTests;
 
 public class DialogServiceCustomActionTests
 {

@@ -1,11 +1,11 @@
-using BlazorLocalizer;
+using LocoMat;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace BlazorLocalizerTests;
+namespace LocoMatTests;
 
 public class ExpressionFilterServiceTests
 {

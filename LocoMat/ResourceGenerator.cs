@@ -4,10 +4,10 @@ using System.IO;
 using System.Resources.NetStandard;
 using System.Text;
 using System.Xml.Linq;
-using BlazorLocalizer.Translation;
+using LocoMat.Translation;
 using Microsoft.Extensions.Logging;
 
-namespace BlazorLocalizer;
+namespace LocoMat;
 
 public class ResourceGenerator
 {

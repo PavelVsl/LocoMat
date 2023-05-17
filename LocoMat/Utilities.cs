@@ -4,7 +4,7 @@ using System.Resources.NetStandard;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace BlazorLocalizer;
+namespace LocoMat;
 
 public static class Utilities
 {

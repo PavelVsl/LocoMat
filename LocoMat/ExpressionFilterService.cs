@@ -1,11 +1,8 @@
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 
-namespace BlazorLocalizer
+namespace LocoMat
 {
-    using System.Collections.Generic;
-
     public class ExpressionFilterService
     {
         private readonly ConfigurationData _config;

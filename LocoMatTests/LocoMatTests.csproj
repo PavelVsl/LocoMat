@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\BlazorLocalizer\BlazorLocalizer.csproj" />
+        <ProjectReference Include="..\LocoMat\LocoMat.csproj" />
     </ItemGroup>
 
 </Project>

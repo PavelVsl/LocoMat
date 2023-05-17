@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using BlazorLocalizer;
-using static BlazorLocalizer.RazorProcessor;
+using LocoMat;
+using static LocoMat.RazorProcessor;
 
-namespace BlazorLocalizerTests;
+namespace LocoMatTests;
 
 public class ReplaceTagAttributesTests
 {

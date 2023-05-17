@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 
-namespace BlazorLocalizer;
+namespace LocoMat;
 
 public class ConfigurationData
 {
@@ -29,6 +29,6 @@ public class ConfigurationData
     public void SaveToJson()
     {
         var json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText("BlazorLocalizer.json", json);
+        File.WriteAllText("LocoMat.json", json);
     }
 }

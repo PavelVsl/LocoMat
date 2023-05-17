@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace BlazorLocalizer;
+namespace LocoMat;
 
 public static class LoggingExtensions
 {

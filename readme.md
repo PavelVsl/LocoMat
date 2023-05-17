@@ -1,6 +1,6 @@
-# BlazorLocalizer
+# LocoMat
 
-BlazorLocalizer is a tool to help localize Blazor Razor components. This tool can be used to automate the process of localizing Blazor Razor components by processing Razor files and updating the localized resources file.
+LocoMat is a tool to help localize Blazor Razor components. This tool can be used to automate the process of localizing Blazor Razor components by processing Razor files and updating the localized resources file.
 
 This program is focused on providing localization support for applications built with Radzen Blazor Studio.
 
@@ -20,7 +20,7 @@ RadzenTemplateForm, RadzenDropDownDataGridColumn, RadzenDataGridColumn, RadzenLa
 1. Clone the repository:
 
 ```sh
-git clone https://github.com/chlupac/BlazorLocalizer.git
+git clone https://github.com/chlupac/LocoMat.git
 ```
 
 2. Build the project:
@@ -33,19 +33,19 @@ dotnet build
 
 ```sh 
 dotnet pack
-dotnet tool install --global --add-source ./nupkg BlazorLocalizer
+dotnet tool install --global --add-source ./nupkg LocoMat
 ```
 
 4. (Optional) Uninstall the program as dotnet tool:
 
 ```sh
-dotnet tool uninstall --global BlazorLocalizer
+dotnet tool uninstall --global LocoMat
 ```
 
 5. (Optional) Update the program as dotnet tool:
 
 ```sh
-dotnet tool update --global --add-source ./nupkg BlazorLocalizer
+dotnet tool update --global --add-source ./nupkg LocoMat
 ```
 
 ## Usage
@@ -53,7 +53,7 @@ dotnet tool update --global --add-source ./nupkg BlazorLocalizer
 Use the command-line interface to perform localization tasks:
 
 ```
-BlazorLocalizer <command> [parameters]
+LocoMat <command> [parameters]
 ```
 
 ### Commands
@@ -88,27 +88,27 @@ BlazorLocalizer <command> [parameters]
 Localize a Blazor project and generate resource files:
 
 ```
-BlazorLocalizer l -p ./MyBlazorProject.csproj -r ./Resources/SharedResources.resx -x App.razor,_Imports.razor -t de-DE -e my@email.com
+LocoMat l -p ./MyBlazorProject.csproj -r ./Resources/SharedResources.resx -x App.razor,_Imports.razor -t de-DE -e my@email.com
 ```
 
 Translate an existing resource file to French:
 
 ```
-BlazorLocalizer t -r ./MyBlazorProject/Resources/SharedResources.resx -t fr-FR -e my@email.com
+LocoMat t -r ./MyBlazorProject/Resources/SharedResources.resx -t fr-FR -e my@email.com
 ```
 
 Create a default localization settings file:
 
 ```
-BlazorLocalizer s
+LocoMat s
 ```
 
 Display help information:
 
 ```
-BlazorLocalizer h
+LocoMat h
 ```
 
 ## License
 
-BlazorLocalizer is released under the [MIT License](LICENSE).
+LocoMat is released under the [MIT License](LICENSE).

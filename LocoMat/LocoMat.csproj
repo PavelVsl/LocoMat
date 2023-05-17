@@ -6,7 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
         <PackAsTool>true</PackAsTool>
-        <ToolCommandName>BlazorLocalizer</ToolCommandName>
+        <ToolCommandName>LocoMat</ToolCommandName>
         <PackageOutputPath>../nupkg</PackageOutputPath>
 
     </PropertyGroup>

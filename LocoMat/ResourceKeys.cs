@@ -1,4 +1,4 @@
-namespace BlazorLocalizer;
+namespace LocoMat;
 
 public class ResourceKeys : Dictionary<string, string>
 {

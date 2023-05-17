@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace BlazorLocalizer;
+namespace LocoMat;
 
 public class CustomAction
 {

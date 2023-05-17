@@ -3,10 +3,8 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Converters;
-using static BlazorLocalizer.Utilities;
 
-namespace BlazorLocalizer;
+namespace LocoMat;
 
 public class RazorProcessor
 {

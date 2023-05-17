@@ -1,19 +1,13 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using BlazorLocalizer.Translation;
+using LocoMat.Translation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace BlazorLocalizer;
+namespace LocoMat;
 
 internal class Program
 {
@@ -66,7 +60,7 @@ internal class Program
 
     private void Run()
     {
-        _logger.LogDebug($"Starting BlazorLocalizer v{Assembly.GetExecutingAssembly().GetName().Version}");
+        _logger.LogDebug($"Starting LocoMat v{Assembly.GetExecutingAssembly().GetName().Version}");
         switch (_configData.Command)
         {
             case "localize":
@@ -112,7 +106,7 @@ internal class Program
     {
         return new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("BlazorLocalizerSettings.json", true)
+            .AddJsonFile("LocoMatSettings.json", true)
             .AddCommandLine(args, GetSwitchMappings())
             .Build();
     }
@@ -221,14 +215,14 @@ internal class Program
 
     private void HandleSettings()
     {
-        if (!File.Exists("BlazorLocalizerSettings.json"))
+        if (!File.Exists("LocoMatSettings.json"))
         {
             CreateDefaultSettingsFile();
         }
         else
         {
-            _logger.LogInformation("Settings file already exists: BlazorLocalizerSettings.json");
-            _logger.LogInformation(File.ReadAllText("BlazorLocalizerSettings.json"));
+            _logger.LogInformation("Settings file already exists: LocoMatSettings.json");
+            _logger.LogInformation(File.ReadAllText("LocoMatSettings.json"));
         }
     }
 
@@ -251,15 +245,15 @@ internal class Program
 
         var jsonString = JsonSerializer.Serialize(appSettings, options);
 
-        File.WriteAllText("BlazorLocalizerSettings.json", jsonString);
-        _logger.LogInformation("Default settings file created: BlazorLocalizerSettings.json");
+        File.WriteAllText("LocoMatSettings.json", jsonString);
+        _logger.LogInformation("Default settings file created: LocoMatSettings.json");
         _logger.LogInformation(jsonString);
     }
 
 
     private static void ConsoleHelp()
     {
-        Console.WriteLine("Usage: BlazorLocalizer <command> [options]");
+        Console.WriteLine("Usage: LocoMat <command> [options]");
         Console.WriteLine();
         Console.WriteLine("Commands:");
         Console.WriteLine("  localize, l\tLocalizes the source files.");

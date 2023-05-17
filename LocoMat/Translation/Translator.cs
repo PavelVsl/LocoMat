@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 
-namespace BlazorLocalizer.Translation;
+namespace LocoMat.Translation;
 
 public class Translator
 {

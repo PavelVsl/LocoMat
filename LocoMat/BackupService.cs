@@ -1,11 +1,8 @@
-using Microsoft.Extensions.Logging;
-using System;
-using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
-namespace BlazorLocalizer;
+namespace LocoMat;
 
 public class BackupService : IDisposable
 {

@@ -1,4 +1,4 @@
-namespace BlazorLocalizer.Translation;
+namespace LocoMat.Translation;
 
 public class Result<T>
 {

@@ -1,10 +1,10 @@
 using Microsoft.Extensions.Configuration;
 
-namespace BlazorLocalizer;
+namespace LocoMat;
 
 public static class ConfigurationExtensions
 {
-    public static T GetValue<T>(this IConfigurationRoot? configuration, string key)
+    public static T GetValue<T>(this IConfigurationRoot configuration, string key)
     {
         if (configuration != null)
         {
