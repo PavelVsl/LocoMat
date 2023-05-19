@@ -25,8 +25,8 @@ public class BackupService : IDisposable
 
     private ZipArchive CreateBackupFile()
     {
+        if (_config.TestMode || !_config.Backup) return null;
         Directory.CreateDirectory(_backupPath);
-
         // Filename should contain sortable date and time
         var fileName = $"backup{DateTime.Now:yyyy-MM-ddTHH-mm-ss}.zip";
         var zipFilePath = Path.Combine(_backupPath, fileName);
@@ -36,8 +36,8 @@ public class BackupService : IDisposable
 
     public async Task WriteAllTextWithBackup(string path, string newContent)
     {
-        if (_config.TestMode) return;
-
+        if (_config.TestMode || !_config.Backup) return;
+        if (ZipArchive == null) return;
         //Check if file exists and content is different
         if (File.Exists(path) && await CalculateHashFromFileAsync(path) == CalculateHash(newContent))
         {
@@ -55,6 +55,7 @@ public class BackupService : IDisposable
     public async Task BackupFileAsync(string path)
     {
         if (_config.TestMode) return;
+        if (ZipArchive == null) return;
         //Check if file exists and content is different
         if (File.Exists(path))
         {
@@ -68,6 +69,8 @@ public class BackupService : IDisposable
     public async Task UpdateFileHashAsync(string path)
     {
         if (_config.TestMode) return;
+        if (ZipArchive == null) return;
+
         //Check if file exists and content is different
         if (File.Exists(path))
         {

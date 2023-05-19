@@ -69,38 +69,6 @@ public class RazorProcessor
         await _resourceGenerator.TranslateResourceFile();
     }
 
-    private async Task ProcessCsFile(string csFile)
-    {
-        // Step 1: Open cs file
-        var csContent = await File.ReadAllTextAsync(csFile);
-        var className = Path.GetFileNameWithoutExtension(csFile);
-
-        var newCsContent = csContent;
-        // // Step 2: Add localizer injection                                                                                                                      
-        // string newCsContent = AddLocalizerInjection(csContent, csFile);
-
-        // Step 3: Search localizable strings and replace them with localizer calls
-        newCsContent = ProcessCustomActions(_customActions, newCsContent, className, ".cs");
-
-        //compare newCsContent with csContent, if different, write to disk
-        if (newCsContent == csContent)
-        {
-            _logger.LogDebug($"No changes in {csFile}");
-            return;
-        }
-
-        // Step 4: Write the modified razor content back to the file
-        if (testMode)
-        {
-            _logger.LogInformation($"Changes to {csFile} not written to disk.");
-            _logger.LogInformation(newCsContent);
-        }
-        else
-        {
-            await _backupService.WriteAllTextWithBackup(csFile, newCsContent);
-        }
-    }
-
     private async Task ProcessRazorFile(string razorFileName)
     {
         // Step 1: Open razor file

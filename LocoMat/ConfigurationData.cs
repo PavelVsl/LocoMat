@@ -15,9 +15,11 @@ public class ConfigurationData
     public string IncludeFiles { get; set; }
     [JsonIgnore] public bool TestMode { get; set; }
     [JsonIgnore] public bool VerboseOutput { get; set; }
+    [JsonIgnore] public bool QuietOutput { get; set; }  
+    [JsonIgnore] public LogLevel LogLevel => QuietOutput ? LogLevel.Error : VerboseOutput ? LogLevel.Debug : LogLevel.Information;
     [JsonIgnore] public bool Save { get; set; }
-    [JsonIgnore] public LogLevel LogLevel => VerboseOutput ? LogLevel.Debug : LogLevel.Information;
     [JsonIgnore] public bool Force { get; set; }
+    [JsonIgnore] public bool Backup { get; set; }
 
     public string ExpressionFilter { get; set; }
 

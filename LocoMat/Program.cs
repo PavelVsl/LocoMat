@@ -8,7 +8,25 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace LocoMat;
-
+/// <summary>
+/// # LocoMat
+/// LocoMat is a tool to help localize Blazor Razor components. This tool can be used to automate the process of localizing
+/// Blazor Razor components by processing Razor files and updating the localized resources file.
+///
+///    This program is focused on providing localization support for applications built with Radzen Blazor Studio.
+///
+///Supported Radzen Blazor components:
+///  RadzenTemplateForm, RadzenDropDownDataGridColumn, RadzenDataGridColumn, RadzenLabel, RadzenRequiredValidator, RadzenButton, and RadzenPanelMenuItem
+///
+///## Features
+///
+///    * Generate resource files from .razor files in your Blazor application
+///    * Translate resource files to different languages using Translator API
+///    * Exclude specific files from localization
+///    * Create default localization settings
+///    * Easy-to-use command-line interface with shortcuts for faster input
+///
+/// </summary>
 internal class Program
 {
     private readonly ILogger<Program> _logger;
@@ -32,7 +50,8 @@ internal class Program
         _resourceGenerator = resourceGenerator;
         _backupService = backupService;
     }
-
+    private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+    
     private static void Main(string[] args)
     {
         var config = BuildConfiguration(args);
@@ -55,9 +74,21 @@ internal class Program
             .BuildServiceProvider();
 
         var program = services.GetRequiredService<Program>();
+        
+        Console.CancelKeyPress += (sender, eventArgs) =>
+        {
+            program.Stop();
+            eventArgs.Cancel = true;
+        };
         program.Run();
     }
 
+    
+    public void Stop()
+    {
+        _backupService.Close();
+        _cancellationTokenSource.Cancel();
+    }
     private void Run()
     {
         _logger.LogDebug($"Starting LocoMat v{Assembly.GetExecutingAssembly().GetName().Version}");
@@ -115,17 +146,43 @@ internal class Program
     {
         return new Dictionary<string, string>
         {
-            { "-p", "projectPath" },
+            { "-p", "project" },
             { "-r", "resourcePath" },
             { "-x", "excludeFiles" },
             { "-t", "targetLanguages" },
             { "-e", "email" },
             { "-i", "includeFiles" },
             { "-test", "testMode" },
-            { "-v", "verboseOutput" },
+            { "-v", "verbose" },
+            { "-q", "quiet" },
+            { "-b", "backup"},
             { "-s", "save" },
             { "-f", "force" },
         };
+    }
+
+     private void CreateDefaultSettingsFile()
+    {
+        var appSettings = new Dictionary<string, object>
+        {
+            { "Project", "./MyProject.csproj" }, // Relative to current directory or absolute
+            { "ResourcePath", "Resources/SharedResources.resx" }, // Relative to Project or absolute
+            { "ExcludeFiles", "App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor" }, //Comma separated list of files to exclude
+            { "IncludeFiles", "*.razor" }, // Default: *.razor
+            { "TargetLanguages", "" }, // Comma separated list of languages to translate to
+            { "Email", "sample@email.com" }, // Email for translated.net translation service 
+        };
+
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+        };
+
+        var jsonString = JsonSerializer.Serialize(appSettings, options);
+
+        File.WriteAllText("LocoMatSettings.json", jsonString);
+        _logger.LogInformation("Default settings file created: LocoMatSettings.json");
+        _logger.LogInformation(jsonString);
     }
 
     private static ConfigurationData GetParametersFromArgs(string[] args, IConfigurationRoot configuration)
@@ -140,8 +197,12 @@ internal class Program
             Email = configuration["email"],
             IncludeFiles = configuration["includeFiles"] ?? "*.razor",
             TestMode = configuration["testMode"] != null,
-            VerboseOutput = configuration["verboseOutput"] != null,
+            VerboseOutput = configuration["verbose"] != null,
             Force = configuration["force"] != null,
+            QuietOutput = configuration["quiet"] != null,
+            Backup = configuration["backup"] != null,
+            Save = configuration["save"] != null
+            
         };
 
         //fix for relative paths
@@ -226,52 +287,34 @@ internal class Program
         }
     }
 
-    private void CreateDefaultSettingsFile()
-    {
-        var appSettings = new Dictionary<string, object>
-        {
-            { "Project", "./MyProject.csproj" }, // Relative to current directory or absolute
-            { "ResourcePath", "Resources/SharedResources.resx" }, // Relative to Project or absolute
-            { "ExcludeFiles", "App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor" }, //Comma separated list of files to exclude
-            { "IncludeFiles", "*.razor" }, // Default: *.razor
-            { "TargetLanguages", "cs-CZ" }, // Comma separated list of languages to translate to
-            { "Email", "sample@email.com" }, // Email for translated.net translation service 
-        };
-
-        var options = new JsonSerializerOptions
-        {
-            WriteIndented = true,
-        };
-
-        var jsonString = JsonSerializer.Serialize(appSettings, options);
-
-        File.WriteAllText("LocoMatSettings.json", jsonString);
-        _logger.LogInformation("Default settings file created: LocoMatSettings.json");
-        _logger.LogInformation(jsonString);
-    }
-
 
     private static void ConsoleHelp()
     {
         Console.WriteLine("Usage: LocoMat <command> [options]");
         Console.WriteLine();
         Console.WriteLine("Commands:");
-        Console.WriteLine("  localize, l\tLocalizes the source files.");
-        Console.WriteLine("  translate, t\tTranslates the resource files.");
-        Console.WriteLine("  restore\tRestores the original source files from the backup.");
-        Console.WriteLine("  settings, s\tDisplays or changes the application settings.");
-        Console.WriteLine("  help, h\tDisplays this help message.");
-        Console.WriteLine();
-        Console.WriteLine("Options:");
+        Console.WriteLine("localize, l\tLocalizes the source files.");
         Console.WriteLine("  -p\t\tPath to the project file. Defaults to the first .csproj file in the current directory.");
         Console.WriteLine("  -r\t\tPath to the resource file. Defaults to 'Resources/SharedResources.resx'.");
         Console.WriteLine("  -x\t\tComma-separated list of file names to exclude from localization. Defaults to 'App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor'.");
-        Console.WriteLine("  -t\t\tComma-separated list of target languages for translation. Defaults to empty (i.e. no translation).");
-        Console.WriteLine("  -e\t\tEmail address for the translation service. Required for translation.");
         Console.WriteLine("  -i\t\tFile name pattern to include in localization. Defaults to '*.razor'.");
         Console.WriteLine("  -test\t\tRuns in test mode without actually changing any files.");
+        Console.WriteLine("  -b\t\tBackup changed files.");
+        Console.WriteLine();
+        Console.WriteLine("  translate, t\tTranslates the resource files.");
+        Console.WriteLine("  -r\t\tPath to the resource file to be translated. Defaults to 'Resources/SharedResources.resx'.");
+        Console.WriteLine("  -t\t\tComma-separated list of target languages for translation. Defaults to empty (i.e. no translation).");
+        Console.WriteLine("  -e\t\tEmail address. Required for translation service.");
+        Console.WriteLine();
+        Console.WriteLine("  restore\tRestores the original source files from the backup.");
+        Console.WriteLine("  -f\t\tForces overwrite existing files when restoring from backup.");
+        Console.WriteLine();
+        Console.WriteLine("  settings, s\tDisplays or changes the application settings.");
+        Console.WriteLine();
+        Console.WriteLine("  help, h\tDisplays this help message.");
+        Console.WriteLine();
+        Console.WriteLine("Switches:");
         Console.WriteLine("  -v\t\tEnables verbose output.");
         Console.WriteLine("  -s\t\tSaves the settings to the configuration file.");
-        Console.WriteLine("  -f\t\tForces overwrite existing files when restoring from backup.");
     }
 }
