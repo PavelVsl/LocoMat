@@ -36,52 +36,22 @@ public class BackupService : IDisposable
 
     public async Task WriteAllTextWithBackup(string path, string newContent)
     {
-        if (_config.TestMode || !_config.Backup) return;
-        if (ZipArchive == null) return;
+        if (_config.TestMode) return;
+        await File.WriteAllTextAsync(path, newContent);
+        if (ZipArchive != null) return;
         //Check if file exists and content is different
         if (File.Exists(path) && await CalculateHashFromFileAsync(path) == CalculateHash(newContent))
         {
             _logger.LogDebug("Skipping unchanged file " + path);
             return;
         }
-
+        // Create a relative path for the file in the zip archive
         var relativePath = Path.GetRelativePath(_basePath, path);
+        // Create a new entry in the zip archive
         var entry = ZipArchive.CreateEntryFromFile(path, relativePath);
+        // Calculate hash and store it in the entry comment
         var hash = CalculateHash(newContent);
         entry.Comment = hash;
-        await File.WriteAllTextAsync(path, newContent);
-    }
-
-    public async Task BackupFileAsync(string path)
-    {
-        if (_config.TestMode) return;
-        if (ZipArchive == null) return;
-        //Check if file exists and content is different
-        if (File.Exists(path))
-        {
-            var relativePath = Path.GetRelativePath(_basePath, path);
-            var entry = ZipArchive.CreateEntryFromFile(path, relativePath);
-            var hash = await CalculateHashFromFileAsync(path);
-            entry.Comment = hash;
-        }
-    }
-
-    public async Task UpdateFileHashAsync(string path)
-    {
-        if (_config.TestMode) return;
-        if (ZipArchive == null) return;
-
-        //Check if file exists and content is different
-        if (File.Exists(path))
-        {
-            var relativePath = Path.GetRelativePath(_basePath, path);
-            var entry = ZipArchive.GetEntry(relativePath);
-            if (entry != null)
-            {
-                var hash = await CalculateHashFromFileAsync(path);
-                entry.Comment = hash;
-            }
-        }
     }
 
     private string CalculateHash(string content)

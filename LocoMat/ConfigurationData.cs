@@ -33,4 +33,6 @@ public class ConfigurationData
         var json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText("LocoMat.json", json);
     }
+    
+    
 }

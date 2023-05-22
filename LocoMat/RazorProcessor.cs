@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
 
@@ -11,9 +10,6 @@ public class RazorProcessor
     private readonly ILogger<RazorProcessor> _logger;
     private readonly ConfigurationData _config;
     private readonly CustomActions _customActions;
-    private readonly ResourceKeys _resourceKeys;
-    private readonly ResourceGenerator _resourceGenerator;
-    private readonly CsProcessor _csProcessor;
     private readonly bool testMode;
     private BackupService _backupService;
 
@@ -22,54 +18,11 @@ public class RazorProcessor
         _logger = logger;
         _config = config;
         _customActions = customActions;
-        _resourceKeys = modelKeys;
-        _resourceGenerator = resourceGenerator;
-        _csProcessor = csProcessor;
         _backupService = backupService;
         testMode = config.TestMode;
     }
 
-    public async Task Localize()
-    {
-        //if resource at modelPath exists, load it  
-        if (File.Exists(_config.ResourcePath))
-        {
-            var doc = new XmlDocument();
-            doc.Load(_config.ResourcePath);
-            var elemList = doc.GetElementsByTagName("data");
-            foreach (XmlNode node in elemList) _resourceKeys.TryAdd(node.Attributes["name"].Value, node.InnerText);
-        }
-
-        //get folderPath folder name  from config.Project project file name
-        var folderPath = Path.GetDirectoryName(_config.Project);
-
-        // recurse through the directory folderPath   
-        if (Directory.Exists(folderPath))
-        {
-            var files = Directory.GetFiles(folderPath, _config.IncludeFiles, SearchOption.AllDirectories);
-            foreach (var file in files)
-            {
-                if (_config.ExcludeFiles.Contains(Path.GetFileName(file))) continue;
-                _logger.LogInformation("Processing file: " + file);
-                await ProcessRazorFile(file);
-                //if partial class cs file exists, process it, file name is same as razor file name with .razor.cs extension
-                var csFile = file + ".cs";
-                if (File.Exists(csFile))
-                {
-                    _logger.LogInformation("Processing file: " + csFile);
-
-                    await _csProcessor.ProcessFile(csFile);
-                }
-            }
-        }
-
-        GenerateCsFile();
-        await _csProcessor.SaveMatches();
-        if (_resourceKeys.Count > 0) _resourceGenerator.CreateResxFile(_resourceKeys);
-        await _resourceGenerator.TranslateResourceFile();
-    }
-
-    private async Task ProcessRazorFile(string razorFileName)
+    public async Task ProcessRazorFile(string razorFileName)
     {
         // Step 1: Open razor file
         var razorContent = await File.ReadAllTextAsync(razorFileName);
@@ -155,7 +108,7 @@ public class RazorProcessor
         return nameSpace;
     }
 
-    private void GenerateCsFile()
+    internal void GenerateResourceStubFile()
     {
         //change extension to .cs
 

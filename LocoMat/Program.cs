@@ -34,6 +34,7 @@ internal class Program
     private readonly RazorProcessor _razorProcessor;
     private readonly ResourceGenerator _resourceGenerator;
     private readonly BackupService _backupService;
+    private readonly Localizator _localizator;
 
     public Program(
         ILogger<Program> logger,
@@ -41,7 +42,8 @@ internal class Program
         RazorProcessor razorProcessor,
         ResourceGenerator resourceGenerator,
         BackupService backupService,
-        ExpressionFilterService expressionFilterService
+        ExpressionFilterService expressionFilterService,
+        Localizator localizator
     )
     {
         _logger = logger;
@@ -49,6 +51,7 @@ internal class Program
         _razorProcessor = razorProcessor;
         _resourceGenerator = resourceGenerator;
         _backupService = backupService;
+        _localizator = localizator;
     }
     private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
     
@@ -70,6 +73,7 @@ internal class Program
             .AddSingleton<BackupService>()
             .AddSingleton<ExpressionFilterService>()
             .AddSingleton<ILiteralFilter,LiteralFilters>()
+            .AddSingleton<Localizator>()
             .AddTransient<Program>()
             .BuildServiceProvider();
 
@@ -99,7 +103,7 @@ internal class Program
                 if (CheckConfiguration(_configData))
                 {
                     _logger.LogDebug("Localizing...");
-                    _razorProcessor.Localize().Wait();
+                    _localizator.Localize().Wait();
                     _backupService.Close();
                     _logger.LogDebug("Localization complete.");
                 }
@@ -318,3 +322,4 @@ internal class Program
         Console.WriteLine("  -s\t\tSaves the settings to the configuration file.");
     }
 }
+

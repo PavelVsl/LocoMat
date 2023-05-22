@@ -48,15 +48,19 @@ Commands:
     - `-x`: Comma-separated list of file names to exclude from localization. Defaults to 'App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor'.
     - `-i`: File name pattern to include in localization. Defaults to '*.razor'.
     - `-test`: Runs in test mode without actually changing any files.
+      
 
 - `translate`, `t`: Translates the resource files.
     - `-t`: Comma-separated list of target languages for translation. Defaults to empty (i.e. no translation).
     - `-e`: Email address. Required for translation service.
 
+
 - `restore`: Restores the original source files from the backup.
     - `-f`: Forces overwrite existing files when restoring from backup.
 
+
 - `settings`, `s`: Displays or changes the application settings.
+
 
 - `help`, `h`: Displays the help message.
 
