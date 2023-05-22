@@ -6,7 +6,7 @@ namespace LocoMatTests;
 public class DialogServiceCustomActionTests
 {
     private readonly CustomAction _customAction;
-    private Dictionary<string, string> _vars;
+
     private string originalValue;
 
     public DialogServiceCustomActionTests()
@@ -46,7 +46,7 @@ public class DialogServiceCustomActionTests
 
         var regex = new Regex(regexPattern);
 
-        var key = "Resource.Key";
+
         // Act
         var result = regex.Replace(input, match =>
         {

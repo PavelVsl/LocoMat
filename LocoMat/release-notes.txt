@@ -1,5 +1,6 @@
 Release notes
 
+Version 0.1.18 - remove dependency on Newtonsoft.Json
 Version 0.1.17 - add release notes to nugget
 Version 0.1.16 - bugfix release
 Version 0.1.15 - Added backup and restore functionality
