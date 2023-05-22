@@ -9,16 +9,14 @@
         <ToolCommandName>LocoMat</ToolCommandName>
         <PackageOutputPath>../.nupkg</PackageOutputPath>
         <Version>0.0.0</Version>
-<Authors>Pavel Veselý</Authors>
-<Description>LocoMat is a tool for localization of .NET projects and translation of resource files.</Description>
-<PackageTags>LocoMat</PackageTags>
-<PackageProjectUrl>https://github.com/chlupac/LocoMat</PackageProjectUrl>
-<PackageLicenseExpression>MIT</PackageLicenseExpression>
-<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-<PackageReleaseNotes>LocoMat is a tool for localization of .NET projects and translation of resource files.</PackageReleaseNotes>
-        <PackageReadmeFile>readme.md</PackageReadmeFile>       
-       
-
+        <Authors>Pavel Veselý</Authors>
+        <Description>LocoMat is a tool for localization of .NET projects and translation of resource files.</Description>
+        <PackageTags>LocoMat</PackageTags>
+        <PackageProjectUrl>https://github.com/chlupac/LocoMat</PackageProjectUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageReleaseNotes>LocoMat is a tool for localization of .NET projects and translation of resource files.</PackageReleaseNotes>
+        <PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="GitVersion.MsBuild" Version="5.12.0">
