@@ -7,6 +7,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{7088AC5B-8BB5-4E1C-A955-8C7D18A5C7B9}"
 	ProjectSection(SolutionItems) = preProject
 		readme.md = readme.md
+		LocoMat\release-notes.txt = LocoMat\release-notes.txt
 	EndProjectSection
 EndProject
 Global

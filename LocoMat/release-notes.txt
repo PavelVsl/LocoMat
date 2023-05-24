@@ -1,8 +1,9 @@
 Release notes
 
-Version 0.1.18 - remove dependency on Newtonsoft.Json
-Version 0.1.17 - add release notes to nugget
-Version 0.1.16 - bugfix release
-Version 0.1.15 - Added backup and restore functionality
-Version 0.1.0 - Initial release
+0.1.20 - bugfix release + Add FormField Radzen control localization
+0.1.18 - remove dependency on Newtonsoft.Json
+0.1.17 - add release notes to nugget
+0.1.16 - bugfix release
+0.1.15 - Added backup and restore functionality
+0.1.0 - Initial release
 
