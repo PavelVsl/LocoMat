@@ -79,6 +79,19 @@ public class CustomActions
                     var key = $"{_vars["TItem"]}.{attributeValue}";
                     return tag.ReplaceAttributeWithKey(_resourceKeys, "Text", key);
                 },
+            },            
+            new CustomAction
+            {
+                //Localize RadzenLabel
+                ComponentType = "RadzenFormField",
+                Action = match =>
+                {
+                    var tag = match.Value;
+                    var attributeValue = tag.GetAttributeValue("Text").GenerateResourceKey();
+                    if (string.IsNullOrEmpty(attributeValue)) return tag;
+                    var key = $"{_vars["TItem"]}.{attributeValue}";
+                    return tag.ReplaceAttributeWithKey(_resourceKeys, "Text", key);
+                },
             },
             new CustomAction
             {

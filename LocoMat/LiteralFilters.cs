@@ -13,7 +13,9 @@ public class LiteralFilters : List<ILiteralFilter>, ILiteralFilter
         _logger = logger;
         Load();
         Add(new MethodCallFilter("Query")); 
-        Add(new MethodCallFilter("NavigateTo")); 
+        
+        Add(new MethodCallFilter("NavigateTo"));
+        Add(new MethodCallRegexFilter("Export*")); 
     }
 
     //Load filters using reflection
@@ -25,6 +27,9 @@ public class LiteralFilters : List<ILiteralFilter>, ILiteralFilter
         {
             //exclude this
             if (type == typeof(LiteralFilters))
+                continue;
+            //exclude filter without parameterless constructor
+            if (type.GetConstructor(Type.EmptyTypes) == null)
                 continue;
             
             var filter = (ILiteralFilter)Activator.CreateInstance(type);

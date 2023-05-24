@@ -9,6 +9,6 @@ public class InitializerExpressionFilter : BaseLiteralFilter
 
     public override bool IsProhibited(LiteralExpressionSyntax literal)
     {
-        return literal.Parent is InitializerExpressionSyntax;
+        return literal.Ancestors().Any( x => x is InitializerExpressionSyntax);
     }
 }
