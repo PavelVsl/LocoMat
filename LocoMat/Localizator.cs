@@ -61,7 +61,7 @@ public class Localizator
                 }
             }
         }
-
+        Utilities.EnsureFolderExists(_config.ResourcePath);
         _razorProcessor.GenerateResourceStubFile();
         if (_resourceKeys.Count > 0) _resourceGenerator.CreateResxFile(_resourceKeys);
         await _resourceGenerator.TranslateResourceFile();
