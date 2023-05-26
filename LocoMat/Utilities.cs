@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Globalization;
+using System.Reflection;
 using System.Resources.NetStandard;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -155,5 +156,10 @@ public static class Utilities
     {
         if (text.Contains(" ")) return text;
         return Regex.Replace(text, "(?<=[a-z])([A-Z])", " $1", RegexOptions.Compiled).Trim();
+    }
+    
+    public static bool IsLocalizable(this PropertyInfo p)
+    {
+        return p.Name.EndsWith("Text") && p.Name != "Text" && p.Name != "SearchText";
     }
 }

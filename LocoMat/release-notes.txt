@@ -1,5 +1,5 @@
 Release notes
-
+0.1.22 - experimental support for Radzen Blazor components localization
 0.1.20 - bugfix release + Add FormField Radzen control localization
 0.1.18 - remove dependency on Newtonsoft.Json
 0.1.17 - add release notes to nugget

@@ -40,6 +40,7 @@ public class CustomActions
                     var key = tag.GenerateResourceKey();
                     if (string.IsNullOrEmpty(key)) return tag;
                     key = $"{className}.{key}";
+                    _resourceKeys.TryAdd(key, tag.SplitCamelCase());
                     return $"@D[\"{key}\"]";
                 },
             },
@@ -95,6 +96,20 @@ public class CustomActions
             },
             new CustomAction
             {
+                //Localize RadzenLabel
+                ComponentType = "RadzenText",
+                Action = match =>
+                {
+                    var tag = match.Value;
+                    var attributeValue = tag.GetAttributeValue("Text").GenerateResourceKey();
+                    if (string.IsNullOrEmpty(attributeValue)) return tag;
+                    
+                    var key = $"{_vars["className"]}.{attributeValue}";
+                    return tag.ReplaceAttributeWithKey(_resourceKeys, "Text", key);
+                },
+            },
+            new CustomAction
+            {
                 //Localize RadzenRequiredValidator
                 ComponentType = "RadzenRequiredValidator",
                 Action = match =>
@@ -130,27 +145,11 @@ public class CustomActions
                     return tag.ReplaceAttributeWithKey(_resourceKeys, "Text", key);
                 },
             },
-            new CustomAction
-            {
-                ComponentType = "DialogService",
-                Regex = () => @"DialogService\.(?<method>[A-Za-z]+)<*(?<generic>[A-Za-z, ]*)>*\((?<literal>""[^""]*"")",
-                FileType = ".cs",
-                Action = match =>
-                {
-                    var className = !string.IsNullOrEmpty(match.Groups["generic"].Value) ? match.Groups["generic"].Value : match.Groups["method"].Value;
-                    var value = match.Groups["literal"].Value;
-                    var key = value.GenerateResourceKey();
-                    key = $"{className}.{key}";
-                    var localizer = $"D[\"{key}\"]";
-                    return match.Value.Replace(value, localizer);
-                },
-            },
 
             new CustomAction
             {
                 ComponentType = "RadzenGridColumn",
                 Regex = () => @"NotificationService\.Notify\(new NotificationMessage\s*\{\s*Severity\s*=\s*NotificationSeverity\.Error,\s*Summary\s*=\s*`(?<error>[^`]+)`,\s*Detail\s*=\s*`(?<detail>[^`]+)`\s*\}\);",
-
                 Action = match =>
                 {
                     var tag = match.Value;

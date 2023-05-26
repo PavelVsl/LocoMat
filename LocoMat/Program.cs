@@ -2,12 +2,14 @@ using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using LocoMat.RadzenComponents;
 using LocoMat.Translation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace LocoMat;
+
 /// <summary>
 /// # LocoMat
 /// LocoMat is a tool to help localize Blazor Razor components. This tool can be used to automate the process of localizing
@@ -35,6 +37,7 @@ internal class Program
     private readonly ResourceGenerator _resourceGenerator;
     private readonly BackupService _backupService;
     private readonly Localizator _localizator;
+    private readonly ComponentScaffolder _componentScaffolder;
 
     public Program(
         ILogger<Program> logger,
@@ -43,7 +46,8 @@ internal class Program
         ResourceGenerator resourceGenerator,
         BackupService backupService,
         ExpressionFilterService expressionFilterService,
-        Localizator localizator
+        Localizator localizator,
+        ComponentScaffolder componentScaffolder
     )
     {
         _logger = logger;
@@ -52,9 +56,11 @@ internal class Program
         _resourceGenerator = resourceGenerator;
         _backupService = backupService;
         _localizator = localizator;
+        _componentScaffolder = componentScaffolder;
     }
+
     private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-    
+
     private static void Main(string[] args)
     {
         var config = BuildConfiguration(args);
@@ -72,13 +78,15 @@ internal class Program
             .AddSingleton<CsProcessor>()
             .AddSingleton<BackupService>()
             .AddSingleton<ExpressionFilterService>()
-            .AddSingleton<ILiteralFilter,LiteralFilters>()
+            .AddSingleton<ILiteralFilter, LiteralFilters>()
             .AddSingleton<Localizator>()
+            .AddSingleton<ComponentScaffolder>()
+            .AddSingleton<NamespaceService>()
             .AddTransient<Program>()
             .BuildServiceProvider();
 
         var program = services.GetRequiredService<Program>();
-        
+
         Console.CancelKeyPress += (sender, eventArgs) =>
         {
             program.Stop();
@@ -87,12 +95,13 @@ internal class Program
         program.Run();
     }
 
-    
+
     public void Stop()
     {
         _backupService.Close();
         _cancellationTokenSource.Cancel();
     }
+
     private void Run()
     {
         _logger.LogDebug($"Starting LocoMat v{Assembly.GetExecutingAssembly().GetName().Version}");
@@ -118,6 +127,10 @@ internal class Program
                     _logger.LogDebug("Translation complete.");
                 }
 
+                break;
+            case "components":
+            case "c":
+                _componentScaffolder.ScaffoldLocalization();
                 break;
             case "settings":
             case "s":
@@ -159,13 +172,13 @@ internal class Program
             { "-test", "testMode" },
             { "-v", "verbose" },
             { "-q", "quiet" },
-            { "-b", "backup"},
+            { "-b", "backup" },
             { "-s", "save" },
             { "-f", "force" },
         };
     }
 
-     private void CreateDefaultSettingsFile()
+    private void CreateDefaultSettingsFile()
     {
         var appSettings = new Dictionary<string, object>
         {
@@ -206,7 +219,6 @@ internal class Program
             QuietOutput = configuration["quiet"] != null,
             Backup = configuration["backup"] != null,
             Save = configuration["save"] != null
-            
         };
 
         //fix for relative paths
@@ -322,4 +334,3 @@ internal class Program
         Console.WriteLine("  -s\t\tSaves the settings to the configuration file.");
     }
 }
-

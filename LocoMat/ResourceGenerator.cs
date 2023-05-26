@@ -26,30 +26,33 @@ public class ResourceGenerator
 
     public void CreateResxFile(Dictionary<string, string> resourceKeys)
     {
-        Utilities.EnsureFolderExists(_config.ResourcePath);
-
         var filePath = _config.ResourcePath;
-        var existingResources = GetOrCreateResxFile(filePath);
+        CreateResxFile(filePath,resourceKeys);
+    }
 
+    public void CreateResxFile(string filePath, Dictionary<string, string> resourceKeys)
+    {
+        Utilities.EnsureFolderExists(_config.ResourcePath);
+        var existingResources = GetOrCreateResxFile(filePath);
         foreach (var resource in resourceKeys)
             existingResources.TryAdd(resource.Key, resource.Value);
-
         if (!_config.TestMode)
         {
             Utilities.WriteResourcesToFile(existingResources, filePath);
             _logger.LogInformation($"Created resource: {filePath}");
         }
-
-        return;
     }
 
     public async Task TranslateResourceFile()
     {
+        var baseFileName = _config.ResourcePath;
+        await TranslateResourceFile(baseFileName);
+    }
+
+    public async Task TranslateResourceFile(string baseFileName)
+    {
         //Check if languages are not empty
         if (string.IsNullOrEmpty(_config.TargetLanguages)) return;
-
-        var baseFileName = _config.ResourcePath;
-
         var existingResources = Utilities.GetExistingResources(baseFileName);
 
         foreach (var languageCode in _config.TargetLanguages.Split(','))

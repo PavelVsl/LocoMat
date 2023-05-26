@@ -22,6 +22,7 @@ public class ConfigurationData
     [JsonIgnore] public bool Backup { get; set; }
 
     public string ExpressionFilter { get; set; }
+    public string RadzenSupport { get; set; } = "RadzenSupport";
 
     public ConfigurationData()
     {
@@ -33,6 +34,4 @@ public class ConfigurationData
         var json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText("LocoMat.json", json);
     }
-    
-    
 }

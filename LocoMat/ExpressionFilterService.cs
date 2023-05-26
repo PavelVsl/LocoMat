@@ -23,20 +23,5 @@ namespace LocoMat
         }
     }
 
-    // filter literal in cases like if (args.Value == "Logout") {}
-    // filter literal in initializers like new Dictionary<string, object> { {"Id", args.Id} }
 
-
-    // Interpolation and Indexer Related Filters
-
-    // Syntax Related Filters
-
-    // Length Related Filters
-
-    // Verbatim String and Escape Sequence Filters
-
-    //string with / characters
-
-
-    // Whitespace Filter
 }

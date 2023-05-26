@@ -48,9 +48,15 @@ Commands:
     - `-x`: Comma-separated list of file names to exclude from localization. Defaults to 'App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor'.
     - `-i`: File name pattern to include in localization. Defaults to '*.razor'.
     - `-test`: Runs in test mode without actually changing any files.
-      
+
 
 - `translate`, `t`: Translates the resource files.
+    - `-t`: Comma-separated list of target languages for translation. Defaults to empty (i.e. no translation).
+    - `-e`: Email address. Required for translation service.
+
+
+- `scaffold`, `s`: (experimental) Generate support classes for  localizing localizable texts from Radzen.Blazor components.
+    - `-p`: Path to the project file. Defaults to the first .csproj file in the current directory.
     - `-t`: Comma-separated list of target languages for translation. Defaults to empty (i.e. no translation).
     - `-e`: Email address. Required for translation service.
 
