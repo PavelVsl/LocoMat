@@ -42,6 +42,10 @@ public class ResourceGenerator
             _logger.LogInformation($"Created resource: {filePath}");
         }
     }
+    public async Task TranslateResources()
+    {
+        await FileProcessor.ProcessFilesAsync(_config.ResourcePath,_config.OutputPath,true, TranslateResourceFile,true);
+    }
 
     public async Task TranslateResourceFile()
     {
@@ -49,7 +53,12 @@ public class ResourceGenerator
         await TranslateResourceFile(baseFileName);
     }
 
-    public async Task TranslateResourceFile(string baseFileName)
+    public Task TranslateResourceFile(string baseFileName)
+    {
+        return TranslateResourceFile(baseFileName, Path.GetDirectoryName(baseFileName));
+    }
+
+    public async Task TranslateResourceFile(string baseFileName, string outputPath)
     {
         //Check if languages are not empty
         if (string.IsNullOrEmpty(_config.TargetLanguages)) return;
@@ -57,7 +66,8 @@ public class ResourceGenerator
 
         foreach (var languageCode in _config.TargetLanguages.Split(','))
         {
-            var translatedResources = GetOrCreateResxFile(baseFileName, languageCode);
+            var outputFilePath = Path.Combine(outputPath, $"{Path.GetFileNameWithoutExtension(baseFileName)}.{languageCode}.resx");
+            var translatedResources = GetOrCreateResxFile(outputFilePath);
 
             var errorCounter = 0;
             foreach (var resource in existingResources)
@@ -97,7 +107,7 @@ public class ResourceGenerator
                     }
                 }
 
-            if (!_config.TestMode) Utilities.WriteResourcesToFile(translatedResources, baseFileName, languageCode);
+            if (!_config.TestMode) Utilities.WriteResourcesToFile(translatedResources, outputFilePath);
         }
     }
 

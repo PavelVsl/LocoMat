@@ -10,8 +10,6 @@ namespace LocoMat.RadzenComponents;
 
 public class ComponentScaffolder
 {
-    private readonly BackupService _backupService;
-    private readonly NamespaceService _namespaceService;
     private readonly ConfigurationData _config;
     private readonly ILogger<ComponentScaffolder> _logger;
     private readonly ResourceGenerator _resourceGenerator;
@@ -20,18 +18,15 @@ public class ComponentScaffolder
         ILogger<ComponentScaffolder> logger,
         ConfigurationData config,
         ResourceGenerator resourceGenerator,
-        BackupService backupService,
         NamespaceService namespaceService
     )
     {
         _logger = logger;
         _config = config;
         _resourceGenerator = resourceGenerator;
-        _backupService = backupService;
-        _namespaceService = namespaceService;
-        _nameSpace = _namespaceService.GetNamespace(_config.RadzenSupport);
+        _nameSpace = namespaceService.GetNamespace(_config.RadzenSupport);
         _projectFolder = Path.GetDirectoryName(_config.Project);
-        _scaffoldFolder = Path.Combine(_projectFolder, _config.RadzenSupport);
+        _scaffoldFolder = Path.Combine(_projectFolder ?? string.Empty, _config.RadzenSupport);
         LoadClasses();
     }
 
@@ -81,8 +76,9 @@ public class ComponentScaffolder
                 var value = property.GetValue(instance);
                 // check if value is null or empty
                 if (value == null || string.IsNullOrEmpty(value.ToString())) continue;
-                ci.Properties.Add(property.Name, value?.ToString());
+                ci.Properties.Add(property.Name, value.ToString());
             }
+
             // If there are no properties, skip this class
             if (ci.Properties.Count == 0) continue;
             _classes.Add(ci);
@@ -91,7 +87,7 @@ public class ComponentScaffolder
 
     private string ScaffoldResources()
     {
-        var projectFolder = Path.GetDirectoryName(_config.Project);
+        var projectFolder = Path.GetDirectoryName(_config.Project) ?? string.Empty;
         var filename = Path.Combine(projectFolder, _config.RadzenSupport, "RadzenLocalizer.resx");
         // concat all _classes.Properties to dictionary
         var dict = new Dictionary<string, string>();
@@ -102,82 +98,87 @@ public class ComponentScaffolder
                 dict.TryAdd($"{type.Name}.{property.Key}", property.Value);
             }
         }
-        Utilities.WriteResourcesToFile(dict,filename);
+
+        Utilities.WriteResourcesToFile(dict, filename);
         return filename;
     }
 
-private void ScaffoldComponents()
-{
-    var filename = Path.Combine(_projectFolder, _config.RadzenSupport, "RadzenComponents.cs");
-    var sb = new StringBuilder();
-    sb.AppendLine("using Microsoft.AspNetCore.Components;");
-    sb.AppendLine("using Radzen;");
-    sb.AppendLine("using Radzen.Blazor;");
-    sb.AppendLine();
-    sb.AppendLine($"namespace {_nameSpace};");
-    
-    foreach (var type in _classes)
+    private void ScaffoldComponents()
     {
-        var name = type.Name;
-        var classHeader = type.GenericType != null
-            ? $"public class {name}Localized<{type.GenericType}> : {name}<{type.GenericType}>"
-            : $"public class {name}Localized : {name}";
-
-        sb.AppendLine(classHeader);
-        sb.AppendLine("{");
-        sb.AppendLine("    [Inject] RadzenLocalizer L { get; set; }");
-        sb.AppendLine("    protected override void OnInitialized()");
-        sb.AppendLine("    {");
-        foreach (var property in type.Properties)
-        {
-            sb.AppendLine($"      {property.Key} = L[\"{name}.{property.Key}\"] ?? {property.Key};");
-        }
-        sb.AppendLine("        base.OnInitialized();");
-        sb.AppendLine("    }");
-        sb.AppendLine("}");
+        var filename = Path.Combine(_projectFolder, _config.RadzenSupport, "RadzenComponents.cs");
+        var sb = new StringBuilder();
+        sb.AppendLine("using Microsoft.AspNetCore.Components;");
+        sb.AppendLine("using Radzen;");
+        sb.AppendLine("using Radzen.Blazor;");
         sb.AppendLine();
+        sb.AppendLine($"namespace {_nameSpace};");
+
+        foreach (var type in _classes)
+        {
+            var name = type.Name;
+            var classHeader = type.GenericType != null
+                ? $"public class {name}Localized<{type.GenericType}> : {name}<{type.GenericType}>"
+                : $"public class {name}Localized : {name}";
+
+            sb.AppendLine(classHeader);
+            sb.AppendLine("{");
+            sb.AppendLine("    [Inject] RadzenLocalizer L { get; set; }");
+            sb.AppendLine("    protected override void OnInitialized()");
+            sb.AppendLine("    {");
+            foreach (var property in type.Properties)
+            {
+                sb.AppendLine($"      {property.Key} = L[\"{name}.{property.Key}\"] ?? {property.Key};");
+            }
+
+            sb.AppendLine("        base.OnInitialized();");
+            sb.AppendLine("    }");
+            sb.AppendLine("}");
+            sb.AppendLine();
+            _logger.LogDebug("Scaffolded {Name}", name);
+        }
+
+        _logger.LogInformation("Writing {Filename}", filename);
+        File.WriteAllText(filename, sb.ToString());
     }
-    
-    File.WriteAllText(filename, sb.ToString());
-}
 
 
     private void ScaffoldExtensions()
-{
-    var filePath = Path.Combine(_scaffoldFolder, "RadzenLocalizationExtensions.cs");
-
-    var sb = new StringBuilder();
-    sb.AppendLine($"namespace {_nameSpace};");
-    sb.AppendLine();
-    sb.AppendLine("using Microsoft.Extensions.DependencyInjection;");
-    sb.AppendLine("using Microsoft.AspNetCore.Components;");
-    sb.AppendLine("using Radzen;");
-    sb.AppendLine("using Radzen.Blazor;");
-    sb.AppendLine();
-    sb.AppendLine("public static class RadzenLocalizationExtensions");
-    sb.AppendLine("{");
-    sb.AppendLine("    public static IServiceCollection AddRadzenLocalization(this IServiceCollection services)");
-    sb.AppendLine("    {");
-    sb.AppendLine("        var componentActivator = new OverridableComponentActivator();");
-    sb.AppendLine();
-
-    foreach (var type in _classes)
     {
-        var name = type.Name;
-        var p = type.GenericType != null ? "<>" : "";
-        sb.AppendLine($"        componentActivator.RegisterOverride(typeof({name}{p}), typeof({name}Localized{p}));");
+        var filePath = Path.Combine(_scaffoldFolder, "RadzenLocalizationExtensions.cs");
+
+        var sb = new StringBuilder();
+        sb.AppendLine($"namespace {_nameSpace};");
+        sb.AppendLine();
+        sb.AppendLine("using Microsoft.Extensions.DependencyInjection;");
+        sb.AppendLine("using Microsoft.AspNetCore.Components;");
+        sb.AppendLine("using Radzen;");
+        sb.AppendLine("using Radzen.Blazor;");
+        sb.AppendLine();
+        sb.AppendLine("public static class RadzenLocalizationExtensions");
+        sb.AppendLine("{");
+        sb.AppendLine("    public static IServiceCollection AddRadzenLocalization(this IServiceCollection services)");
+        sb.AppendLine("    {");
+        sb.AppendLine("        var componentActivator = new OverridableComponentActivator();");
+        sb.AppendLine();
+
+        foreach (var type in _classes)
+        {
+            var name = type.Name;
+            var p = type.GenericType != null ? "<>" : "";
+            sb.AppendLine($"        componentActivator.RegisterOverride(typeof({name}{p}), typeof({name}Localized{p}));");
+        }
+
+        sb.AppendLine();
+        sb.AppendLine("        services.AddSingleton<RadzenLocalizer>();");
+        sb.AppendLine("        services.AddSingleton<IComponentActivator>(componentActivator);");
+        sb.AppendLine();
+        sb.AppendLine("        return services;");
+        sb.AppendLine("    }");
+        sb.AppendLine("}");
+
+        _logger.LogInformation("Writing {FilePath}", filePath);
+        File.WriteAllText(filePath, sb.ToString());
     }
-
-    sb.AppendLine();
-    sb.AppendLine("        services.AddSingleton<RadzenLocalizer>();");
-    sb.AppendLine("        services.AddSingleton<IComponentActivator>(componentActivator);");
-    sb.AppendLine();
-    sb.AppendLine("        return services;");
-    sb.AppendLine("    }");
-    sb.AppendLine("}");
-
-    File.WriteAllText(filePath, sb.ToString());
-}
 
 
     private void ScaffoldComponentActivator()
@@ -225,6 +226,7 @@ public class OverridableComponentActivator : IComponentActivator
 }}
 ";
         var filename = Path.Combine(_scaffoldFolder, "OverridableComponentActivator.cs");
+        _logger.LogInformation("Writing {Filename}", filename);
         File.WriteAllText(filename, code);
     }
 
@@ -244,9 +246,10 @@ public class RadzenLocalizer  :  StringLocalizer<RadzenLocalizer>
 }}";
 
         var filename = Path.Combine(_scaffoldFolder, "RadzenLocalizer.cs");
-        File.WriteAllText(filename, code);   
+        _logger.LogInformation("Writing {Filename}", filename);
+        File.WriteAllText(filename, code);
     }
-    
+
     public void ScaffoldLocalization()
     {
         var separator = Path.DirectorySeparatorChar;
@@ -257,31 +260,56 @@ public class RadzenLocalizer  :  StringLocalizer<RadzenLocalizer>
         ScaffoldComponentActivator();
         ScaffoldLocalizer();
         _resourceGenerator.TranslateResourceFile(resource).Wait();
-        //FinishProgramConfiguration();
+        FinishProgramConfiguration(_projectFolder, _nameSpace);
     }
 
-    private void FinishProgramConfiguration()
+    private void FinishProgramConfiguration(string projectFolder, string nameSpace)
+{
+    var filename = Path.Combine(projectFolder, "Program.cs");
+    var code = File.ReadAllText(filename);
+    //load syntax tree
+    var tree = CSharpSyntaxTree.ParseText(code);
+    //get root node
+    var root = tree.GetRoot();
+
+    //check if already present
+    if (root.DescendantNodes().OfType<GlobalStatementSyntax>().All(i => i.Statement.ToString() != "builder.Services.AddRadzenLocalization()"))
     {
-        var filename = Path.Combine(_projectFolder, "Program.cs");
-        var code = File.ReadAllText(filename);
-        //load syntax tree
-        var tree = CSharpSyntaxTree.ParseText(code);
-        //get root node
-        var root = tree.GetRoot();
-        // add using if not already present
-        var usingDirective = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName($"{_nameSpace}"));
-        if (!root.DescendantNodes().OfType<UsingDirectiveSyntax>().Any(u => u.Name.ToString() == _nameSpace))
+        //find line with "var app = builder.Build();" and insert service before
+        var app = root.DescendantNodes().OfType<GlobalStatementSyntax>().FirstOrDefault(m => m.Statement.ToString() == "var app = builder.Build();");
+        if (app != null)
         {
-            root = root.InsertNodesAfter(root.DescendantNodes().OfType<UsingDirectiveSyntax>().Last(), new[] { usingDirective });
+            // add service
+            var service = SyntaxFactory.ParseStatement("builder.Services.AddRadzenLocalization();\n");
+            var global = SyntaxFactory.GlobalStatement(service);
+            root = root.InsertNodesBefore(app, new[] { global });
         }
-        // add service
-        var service = SyntaxFactory.ParseStatement("services.AddRadzenLocalization();");
-        // find line with "var app = builder.Build();" and insert service before
-        var app = root.DescendantNodes().OfType<GlobalStatementSyntax>().First(m => m.DescendantNodes().OfType<VariableDeclaratorSyntax>().Any(v => v.Identifier.ValueText == "app"));
-        root = root.InsertNodesBefore(app, new[] { service });
-        // get main method
-        // root = root.ReplaceNode(body, newBody);
-        // save file
-        File.WriteAllText(filename, root.ToFullString());
     }
+
+    if (root.DescendantNodes().OfType<UsingDirectiveSyntax>().All(u => u.Name!.ToString() != nameSpace))
+    {
+        // add using if not already present
+        var usingDirective = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName($" {nameSpace}"));
+        //add empty line after last using
+        SyntaxNode lastUsing = root.DescendantNodes().OfType<UsingDirectiveSyntax>().LastOrDefault();
+        if (lastUsing != null)
+        {
+            root = root.InsertNodesAfter(lastUsing, new[] { usingDirective });
+        }
+        else
+        {
+            //if there is no using directive, add new line and using directive at the top of the file
+            var newLine = SyntaxFactory.ParseStatement("");
+            var firstToken = root.DescendantTokens().FirstOrDefault(t => t.IsKind(SyntaxKind.UsingKeyword));
+            //add using directive at the top of the file
+            root = root.InsertNodesBefore(firstToken != default ?
+                //add using directive after the last using directive
+                firstToken.Parent : root.ChildNodes().First(), new SyntaxNode[]{ usingDirective, newLine });
+        }
+    }
+
+    File.WriteAllText(filename, root.ToFullString());
+}
+
+   
 }

@@ -123,13 +123,13 @@ internal class Program
                 if (CheckConfiguration(_configData))
                 {
                     _logger.LogDebug("Translating resources...");
-                    _resourceGenerator.TranslateResourceFile().Wait();
+                    _resourceGenerator.TranslateResources().Wait();
                     _logger.LogDebug("Translation complete.");
                 }
 
                 break;
-            case "components":
-            case "c":
+            case "scaffold":
+            case "f":
                 _componentScaffolder.ScaffoldLocalization();
                 break;
             case "settings":
@@ -165,6 +165,7 @@ internal class Program
         {
             { "-p", "project" },
             { "-r", "resourcePath" },
+            { "-o", "outputPath" },
             { "-x", "excludeFiles" },
             { "-t", "targetLanguages" },
             { "-e", "email" },
@@ -207,8 +208,9 @@ internal class Program
         var config = new ConfigurationData
         {
             Command = args.Length > 0 ? args[0] : "help",
-            Project = configuration["projectPath"] ?? GetProjectFileName() ?? "./",
+            Project = configuration["projectPath"] ?? Utilities.GetProjectFileName() ?? "./",
             ResourcePath = configuration["resourcePath"] ?? "Resources/SharedResources.resx",
+            OutputPath = configuration["outputPath"] ?? "",
             ExcludeFiles = configuration["excludeFiles"]?.Split(",").ToList() ?? "App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor".Split(",").ToList(),
             TargetLanguages = configuration["targetLanguages"] ?? "",
             Email = configuration["email"],
@@ -228,14 +230,6 @@ internal class Program
         if (!string.IsNullOrEmpty(config.ResourcePath) && !Path.IsPathRooted(config.ResourcePath)) config.ResourcePath = Path.Combine(Path.GetDirectoryName(config.Project), config.ResourcePath);
 
         return config;
-    }
-
-    private static string GetProjectFileName()
-    {
-        //check current dir for csproj file, must be only one, if here more csproj files or does not exists return null
-
-        var files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.csproj");
-        return files.Length == 1 ? files[0] : null;
     }
 
     private bool CheckConfiguration(ConfigurationData config)
@@ -267,7 +261,7 @@ internal class Program
         }
 
         //if languages is set, check if email is valid
-        if (!string.IsNullOrEmpty(config.TargetLanguages) && !IsValidEmail(config.Email))
+        if (!string.IsNullOrEmpty(config.TargetLanguages) && !Utilities.IsValidEmail(config.Email))
         {
             _logger.LogError("Email is not set or is not valid");
             result = false;
@@ -276,17 +270,6 @@ internal class Program
         if (config.Save) _logger.LogInformation("Save command is not implemented yet");
 
         return result;
-    }
-
-    public static bool IsValidEmail(string email)
-    {
-        if (string.IsNullOrEmpty(email))
-            return false;
-
-        // RFC 2822 compliant regex pattern for email validation
-        var pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-
-        return Regex.IsMatch(email, pattern);
     }
 
 
@@ -319,6 +302,12 @@ internal class Program
         Console.WriteLine();
         Console.WriteLine("  translate, t\tTranslates the resource files.");
         Console.WriteLine("  -r\t\tPath to the resource file to be translated. Defaults to 'Resources/SharedResources.resx'.");
+        Console.WriteLine("  -o\t\tOutput path where translated resources will be generated. If not specified, the translated resources will be generated in the same folder as the original resource file.");
+        Console.WriteLine("  -t\t\tComma-separated list of target languages for translation. Defaults to empty (i.e. no translation).");
+        Console.WriteLine("  -e\t\tEmail address. Required for translation service.");
+        Console.WriteLine();
+        Console.WriteLine("  Scaffold, s\tScaffolds localization of Radzen.Blazor components.");
+        Console.WriteLine("  -p\t\tPath to the project file. Defaults to the first .csproj file in the current directory.");
         Console.WriteLine("  -t\t\tComma-separated list of target languages for translation. Defaults to empty (i.e. no translation).");
         Console.WriteLine("  -e\t\tEmail address. Required for translation service.");
         Console.WriteLine();

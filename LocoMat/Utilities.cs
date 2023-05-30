@@ -160,6 +160,26 @@ public static class Utilities
     
     public static bool IsLocalizable(this PropertyInfo p)
     {
-        return p.Name.EndsWith("Text") && p.Name != "Text" && p.Name != "SearchText";
+        return (p.Name.EndsWith("Text") && p.Name != "Text" && p.Name != "SearchText") ||
+               p.Name == "PagingSummaryFormat";
+    }
+
+    public static bool IsValidEmail(string email)
+    {
+        if (string.IsNullOrEmpty(email))
+            return false;
+
+        // RFC 2822 compliant regex pattern for email validation
+        var pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+
+        return Regex.IsMatch(email, pattern);
+    }
+
+    public static string GetProjectFileName()
+    {
+        //check current dir for csproj file, must be only one, if here more csproj files or does not exists return null
+
+        var files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.csproj");
+        return files.Length == 1 ? files[0] : null;
     }
 }

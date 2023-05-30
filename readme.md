@@ -55,7 +55,7 @@ Commands:
     - `-e`: Email address. Required for translation service.
 
 
-- `scaffold`, `s`: (experimental) Generate support classes for  localizing localizable texts from Radzen.Blazor components.
+- `scaffold`, `f`: (experimental) Generate support classes for  localizing localizable texts from Radzen.Blazor components.
     - `-p`: Path to the project file. Defaults to the first .csproj file in the current directory.
     - `-t`: Comma-separated list of target languages for translation. Defaults to empty (i.e. no translation).
     - `-e`: Email address. Required for translation service.
@@ -83,25 +83,29 @@ Switches:
 Localize a Blazor project and generate resource files:
 
 ```
-LocoMat l -p ./MyBlazorProject.csproj -r ./Resources/SharedResources.resx -x App.razor,_Imports.razor 
+LocoMat localize -p ./MyBlazorProject.csproj -r ./Resources/SharedResources.resx -x App.razor,_Imports.razor 
 ```
 
 Translate an existing resource file to Czech:
 
 ```
-LocoMat t -r ./MyBlazorProject/Resources/SharedResources.resx -t cs-CZ -e my@email.com
+LocoMat translate -r ./MyBlazorProject/Resources/SharedResources.resx -t cs-CZ -e my@email.com
 ```
 
+Scaffold support classes for localizing localizable texts from Radzen.Blazor components:
+```
+LocoMat scaffold -r ./MyBlazorProject/Resources/SharedResources.resx -t cs-CZ -e my@email.com
+```
 Create a default localization settings file:
 
 ```
-LocoMat s
+LocoMat settings -s
 ```
 
 Display help information:
 
 ```
-LocoMat h
+LocoMat help
 ```
 
 ## Backups

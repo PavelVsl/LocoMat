@@ -23,6 +23,7 @@ public class ConfigurationData
 
     public string ExpressionFilter { get; set; }
     public string RadzenSupport { get; set; } = "RadzenSupport";
+    public string OutputPath { get; set; }
 
     public ConfigurationData()
     {
