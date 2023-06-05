@@ -4,6 +4,8 @@ using System.Reflection;
 using System.Resources.NetStandard;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace LocoMat;
 
@@ -71,7 +73,6 @@ public static class Utilities
             var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
             if (unicodeCategory != UnicodeCategory.NonSpacingMark) stringBuilder.Append(c);
         }
-
         return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
     }
 
@@ -103,7 +104,6 @@ public static class Utilities
         // Return the resulting string as the resource key.
         return value;
     }
-
 
     public static void EnsureFolderExists(string baseFileName)
     {
@@ -168,18 +168,70 @@ public static class Utilities
     {
         if (string.IsNullOrEmpty(email))
             return false;
-
         // RFC 2822 compliant regex pattern for email validation
         var pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-
         return Regex.IsMatch(email, pattern);
     }
 
-    public static string GetProjectFileName()
+    public static string GetProjectFileName(string path = null)
     {
-        //check current dir for csproj file, must be only one, if here more csproj files or does not exists return null
+        // if path is null use current dir
+        path = path ?? Directory.GetCurrentDirectory();
+        //get full path
+        path = Path.GetFullPath(path);
+        if (IsDirectory(path))
+        {
+            //if path is a directory get all csproj files in it
+            var files = Directory.GetFiles(path, "*.csproj");
+            if (files.Length == 1)
+            {
+                path = files[0];
+            }
+        }
+        if (File.Exists(path) && IsValidCSharpProject(path))
+        {
+            return path;
+        }
+        //if path is not a file or directory return null
+        return null;
+    }
 
-        var files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.csproj");
-        return files.Length == 1 ? files[0] : null;
+    public static bool IsDirectory(string path)
+    {
+        var attr = File.GetAttributes(path);
+        return (attr & FileAttributes.Directory) == FileAttributes.Directory;
+    }
+
+    private static bool IsValidCSharpProject(string fileName)
+    {
+        var extension = Path.GetExtension(fileName);
+        if (extension != ".csproj")
+        {
+            return false;
+        }
+        //check if file is a valid xml file and root element is Project
+        var doc = XDocument.Load(fileName);
+        return doc.Root?.Name.LocalName == "Project";
+    }
+
+    public static Dictionary<string, string> GetOrCreateResxFile(string fileName, string language = "")
+    {
+        //Ensure than filename has correct extension
+        fileName = Path.ChangeExtension(fileName, string.IsNullOrEmpty(language) ? ".resx" : $".{language}.resx");
+        if (!File.Exists(fileName)) Utilities.CreateResxFileWithHeaders(fileName);
+        return Utilities.GetExistingResources(fileName);
+    }
+
+    public static string GetResourceKey(this LiteralExpressionSyntax node)
+    {
+        var text = node.Token.ValueText;
+        var key = text.GenerateResourceKey();
+        var invocationExpression = node.Ancestors().OfType<InvocationExpressionSyntax>().FirstOrDefault();
+        var genericArgumentList = invocationExpression?.DescendantNodes().OfType<TypeArgumentListSyntax>().FirstOrDefault();
+        var genericParameterName = genericArgumentList?.Arguments.FirstOrDefault()?.ToString();
+        var classDeclaration = node.Ancestors().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        var className = classDeclaration?.Identifier.ToString();
+        if (!string.IsNullOrEmpty(genericParameterName)) return $"{genericParameterName}.{key}";
+        return $"{className}.{key}";
     }
 }

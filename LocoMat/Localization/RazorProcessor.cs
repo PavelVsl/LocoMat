@@ -7,13 +7,18 @@ namespace LocoMat;
 
 public class RazorProcessor
 {
-    private readonly ILogger<RazorProcessor> _logger;
     private readonly ConfigurationData _config;
     private readonly CustomActions _customActions;
+    private readonly ILogger<RazorProcessor> _logger;
     private readonly bool testMode;
     private BackupService _backupService;
 
-    public RazorProcessor(ILogger<RazorProcessor> logger, ConfigurationData config, CustomActions customActions, ResourceKeys modelKeys, ResourceGenerator resourceGenerator, CsProcessor csProcessor, BackupService backupService)
+    public RazorProcessor(
+        ILogger<RazorProcessor> logger,
+        ConfigurationData config,
+        CustomActions customActions,
+        BackupService backupService
+    )
     {
         _logger = logger;
         _config = config;
@@ -37,13 +42,13 @@ public class RazorProcessor
         // Step 4: Write the modified razor content back to the file
         if (newRazorContent == razorContent)
         {
-            _logger.LogDebug($"No changes to {razorFileName}.");
+            _logger.LogDebug("No changes to {RazorFileName}", razorFileName);
             return;
         }
 
         if (testMode)
         {
-            _logger.LogInformation($"Changes to {razorFileName} not written to disk.");
+            _logger.LogInformation("Changes to {RazorFileName} not written to disk in test mode", razorFileName);
             _logger.LogInformation(newRazorContent);
         }
         else
@@ -69,7 +74,12 @@ public class RazorProcessor
         return localizerInjection + razorContent;
     }
 
-    public string ProcessCustomActions(CustomActions customActions, string razorContent, string className, string fileType = null)
+    public string ProcessCustomActions(
+        CustomActions customActions,
+        string razorContent,
+        string className,
+        string fileType = null
+    )
     {
         customActions.SetVariable("className", className);
 
@@ -84,7 +94,7 @@ public class RazorProcessor
                 var modifiedTag = customAction.Action(match);
                 // check if the tag has been modified
                 if (modifiedTag != originalValue)
-                    _logger.LogDebug($"Replace: {originalValue} -> {modifiedTag}");
+                    _logger.LogDebug("Replace: {OriginalValue} -> {ModifiedTag}", originalValue, modifiedTag);
                 return modifiedTag;
             });
         }
@@ -100,7 +110,7 @@ public class RazorProcessor
 
         //Construct relative project namespace from project file folder and resource file folder
         var projectFolder = Path.GetDirectoryName(config.Project);
-        var resourceFolder = Path.GetDirectoryName(config.ResourcePath);
+        var resourceFolder = Path.GetDirectoryName(config.Resource);
         var relativeFolder = Path.GetRelativePath(projectFolder, resourceFolder);
         var nameSpace = Path.GetFileNameWithoutExtension(config.Project);
         if (rootNamespaceElement != null) nameSpace = rootNamespaceElement.Value;
@@ -112,7 +122,7 @@ public class RazorProcessor
     {
         //change extension to .cs
 
-        var csFilePath = Path.ChangeExtension(_config.ResourcePath, ".cs");
+        var csFilePath = Path.ChangeExtension(_config.Resource, ".cs");
         var className = Path.GetFileNameWithoutExtension(csFilePath);
         var nameSpace = GetProjectNamespace(_config);
         AddUsingDirective(nameSpace);
@@ -167,11 +177,11 @@ public class RazorProcessor
                 if (!_config.TestMode)
                 {
                     File.WriteAllText(importsFilePath, importsFileContent);
-                    _logger.LogInformation($"Added @using {nameSpace} to _Imports.razor");
+                    _logger.LogInformation("Added @using {NameSpace} to _Imports.razor", nameSpace);
                 }
                 else
                 {
-                    _logger.LogInformation($"Added @using {nameSpace} to _Imports.razor");
+                    _logger.LogInformation("Added @using {NameSpace} to _Imports.razor", nameSpace);
                 }
             }
         }

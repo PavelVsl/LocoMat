@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 	ProjectSection(SolutionItems) = preProject
 		readme.md = readme.md
 		LocoMat\release-notes.txt = LocoMat\release-notes.txt
+		NugetPublish.sh = NugetPublish.sh
 	EndProjectSection
 EndProject
 Global

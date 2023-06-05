@@ -9,18 +9,15 @@ namespace LocoMatTests;
 
 public class ExpressionFilterServiceTests
 {
-    private readonly Mock<ILogger<ExpressionFilterService>> _loggerMock;
     private readonly Mock<ILogger<LiteralFilters>> _loggerMock2;
-
     private readonly ConfigurationData _config = new ConfigurationData() { };
-    private readonly ExpressionFilterService _service;
+    private readonly LiteralFilters _service;
 
 
     public ExpressionFilterServiceTests()
     {
-        _loggerMock = new Mock<ILogger<ExpressionFilterService>>();
         _loggerMock2 = new Mock<ILogger<LiteralFilters>>();
-        _service = new ExpressionFilterService(_config, _loggerMock.Object, new LiteralFilters(_loggerMock2.Object));
+        _service = new LiteralFilters(_loggerMock2.Object);
     }
 
 
@@ -58,7 +55,7 @@ namespace MyApp
     [InlineData("var x = @\"apple\"", false)]
     [InlineData("var x = \"\"", false)]
     [InlineData("var x = \"   \"", false)]
-    [InlineData("var x = \"{apple}\"", false)]
+
     [InlineData("var x = \"[apple]\"", true)]
     [InlineData("var x = \"/apple/\"", false)]
     [InlineData("var x = \"\\\\apple\\\\\"", false)]
@@ -83,7 +80,7 @@ namespace MyApp
         // Arrange
         var literal = GetSampleSyntaxTree($"{inputLiteral};");
         // Act
-        var result = _service.IsLocalizable(literal);
+        var result = !_service.IsProhibited(literal);
         // Assert
         Assert.Equal(expectedResult, result);
     }

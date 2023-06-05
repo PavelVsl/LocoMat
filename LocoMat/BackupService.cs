@@ -82,7 +82,7 @@ public class BackupService : IDisposable
         var files = Directory.GetFiles(_backupPath, "*.zip");
         if (files.Length == 0)
         {
-            _logger.LogError("No backup file found.");
+            _logger.LogError("No backup file found");
             return;
         }
 

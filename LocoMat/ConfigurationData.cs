@@ -8,26 +8,26 @@ public class ConfigurationData
 {
     [JsonIgnore] public string Command { get; set; }
     public string Project { get; set; }
-    public string ResourcePath { get; set; }
-    public List<string> ExcludeFiles { get; set; }
+    public string Resource { get; set; }
+    public string Exclude { get; set; }
+    public List<string> ExcludeFiles => Exclude?.Split(',').ToList() ?? new List<string>();
     public string TargetLanguages { get; set; }
     public string Email { get; set; }
-    public string IncludeFiles { get; set; }
+    public string Include { get; set; }
     [JsonIgnore] public bool TestMode { get; set; }
-    [JsonIgnore] public bool VerboseOutput { get; set; }
-    [JsonIgnore] public bool QuietOutput { get; set; }  
-    [JsonIgnore] public LogLevel LogLevel => QuietOutput ? LogLevel.Error : VerboseOutput ? LogLevel.Debug : LogLevel.Information;
+    [JsonIgnore] public LogLevel Verbosity { get; set; }
     [JsonIgnore] public bool Save { get; set; }
     [JsonIgnore] public bool Force { get; set; }
     [JsonIgnore] public bool Backup { get; set; }
 
     public string ExpressionFilter { get; set; }
     public string RadzenSupport { get; set; } = "RadzenSupport";
-    public string OutputPath { get; set; }
+    public string Source { get; set; }
+    public string Output { get; set; }
+    public string BasePath { get; set; }
 
     public ConfigurationData()
     {
-        ExcludeFiles = new List<string>();
     }
 
     public void SaveToJson()

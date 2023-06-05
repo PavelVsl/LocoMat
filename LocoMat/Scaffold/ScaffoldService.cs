@@ -8,22 +8,20 @@ using Radzen;
 
 namespace LocoMat.RadzenComponents;
 
-public class ComponentScaffolder
+public class ScaffoldService : IScaffoldService
 {
     private readonly ConfigurationData _config;
-    private readonly ILogger<ComponentScaffolder> _logger;
-    private readonly ResourceGenerator _resourceGenerator;
+    private readonly ILogger<ScaffoldService> _logger;
 
-    public ComponentScaffolder(
-        ILogger<ComponentScaffolder> logger,
+
+    public ScaffoldService(
+        ILogger<ScaffoldService> logger,
         ConfigurationData config,
-        ResourceGenerator resourceGenerator,
         NamespaceService namespaceService
     )
     {
         _logger = logger;
         _config = config;
-        _resourceGenerator = resourceGenerator;
         _nameSpace = namespaceService.GetNamespace(_config.RadzenSupport);
         _projectFolder = Path.GetDirectoryName(_config.Project);
         _scaffoldFolder = Path.Combine(_projectFolder ?? string.Empty, _config.RadzenSupport);
@@ -41,6 +39,19 @@ public class ComponentScaffolder
     private readonly string _nameSpace;
     private string _projectFolder;
     private readonly string _scaffoldFolder;
+
+    public void Scaffold()
+    {
+        var separator = Path.DirectorySeparatorChar;
+        Utilities.EnsureFolderExists(_scaffoldFolder + separator);
+        ScaffoldComponents();
+        var resource = ScaffoldResources();
+        ScaffoldExtensions();
+        ScaffoldComponentActivator();
+        ScaffoldLocalizer();
+//        _resourceGenerator.TranslateResourceFile(resource).Wait();
+        FinishProgramConfiguration(_projectFolder, _nameSpace);
+    }
 
     private void LoadClasses()
     {
@@ -142,6 +153,7 @@ public class ComponentScaffolder
     }
 
 
+// Method to generate a file containing extension methods for Radzen localization
     private void ScaffoldExtensions()
     {
         var filePath = Path.Combine(_scaffoldFolder, "RadzenLocalizationExtensions.cs");
@@ -250,66 +262,52 @@ public class RadzenLocalizer  :  StringLocalizer<RadzenLocalizer>
         File.WriteAllText(filename, code);
     }
 
-    public void ScaffoldLocalization()
-    {
-        var separator = Path.DirectorySeparatorChar;
-        Utilities.EnsureFolderExists(_scaffoldFolder + separator);
-        ScaffoldComponents();
-        var resource = ScaffoldResources();
-        ScaffoldExtensions();
-        ScaffoldComponentActivator();
-        ScaffoldLocalizer();
-        _resourceGenerator.TranslateResourceFile(resource).Wait();
-        FinishProgramConfiguration(_projectFolder, _nameSpace);
-    }
-
     private void FinishProgramConfiguration(string projectFolder, string nameSpace)
-{
-    var filename = Path.Combine(projectFolder, "Program.cs");
-    var code = File.ReadAllText(filename);
-    //load syntax tree
-    var tree = CSharpSyntaxTree.ParseText(code);
-    //get root node
-    var root = tree.GetRoot();
-
-    //check if already present
-    if (root.DescendantNodes().OfType<GlobalStatementSyntax>().All(i => i.Statement.ToString() != "builder.Services.AddRadzenLocalization()"))
     {
-        //find line with "var app = builder.Build();" and insert service before
-        var app = root.DescendantNodes().OfType<GlobalStatementSyntax>().FirstOrDefault(m => m.Statement.ToString() == "var app = builder.Build();");
-        if (app != null)
+        var filename = Path.Combine(projectFolder, "Program2.cs");
+        var code = File.ReadAllText(filename);
+        //load syntax tree
+        var tree = CSharpSyntaxTree.ParseText(code);
+        //get root node
+        var root = tree.GetRoot();
+        //check if already present
+        if (root.DescendantNodes().OfType<GlobalStatementSyntax>().All(i => i.Statement.ToString() != "builder.Services.AddRadzenLocalization()"))
         {
-            // add service
-            var service = SyntaxFactory.ParseStatement("builder.Services.AddRadzenLocalization();\n");
-            var global = SyntaxFactory.GlobalStatement(service);
-            root = root.InsertNodesBefore(app, new[] { global });
+            //find line with "var app = builder.Build();" and insert service before
+            var app = root.DescendantNodes().OfType<GlobalStatementSyntax>().FirstOrDefault(m => m.Statement.ToString() == "var app = builder.Build();");
+            if (app != null)
+            {
+                // add service
+                var service = SyntaxFactory.ParseStatement("builder.Services.AddRadzenLocalization();\n");
+                var global = SyntaxFactory.GlobalStatement(service);
+                root = root.InsertNodesBefore(app, new[] { global });
+            }
         }
+
+        if (root.DescendantNodes().OfType<UsingDirectiveSyntax>().All(u => u.Name!.ToString() != nameSpace))
+        {
+            // add using if not already present
+            var usingDirective = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName($" {nameSpace}"));
+            //add empty line after last using
+            SyntaxNode lastUsing = root.DescendantNodes().OfType<UsingDirectiveSyntax>().LastOrDefault();
+            if (lastUsing != null)
+            {
+                root = root.InsertNodesAfter(lastUsing, new[] { usingDirective });
+            }
+            else
+            {
+                //if there is no using directive, add new line and using directive at the top of the file
+                var newLine = SyntaxFactory.ParseStatement("");
+                var firstToken = root.DescendantTokens().FirstOrDefault(t => t.IsKind(SyntaxKind.UsingKeyword));
+                //add using directive at the top of the file
+                root = root.InsertNodesBefore(firstToken != default
+                    ?
+                    //add using directive after the last using directive
+                    firstToken.Parent
+                    : root.ChildNodes().First(), new SyntaxNode[] { usingDirective, newLine });
+            }
+        }
+
+        File.WriteAllText(filename, root.ToFullString());
     }
-
-    if (root.DescendantNodes().OfType<UsingDirectiveSyntax>().All(u => u.Name!.ToString() != nameSpace))
-    {
-        // add using if not already present
-        var usingDirective = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName($" {nameSpace}"));
-        //add empty line after last using
-        SyntaxNode lastUsing = root.DescendantNodes().OfType<UsingDirectiveSyntax>().LastOrDefault();
-        if (lastUsing != null)
-        {
-            root = root.InsertNodesAfter(lastUsing, new[] { usingDirective });
-        }
-        else
-        {
-            //if there is no using directive, add new line and using directive at the top of the file
-            var newLine = SyntaxFactory.ParseStatement("");
-            var firstToken = root.DescendantTokens().FirstOrDefault(t => t.IsKind(SyntaxKind.UsingKeyword));
-            //add using directive at the top of the file
-            root = root.InsertNodesBefore(firstToken != default ?
-                //add using directive after the last using directive
-                firstToken.Parent : root.ChildNodes().First(), new SyntaxNode[]{ usingDirective, newLine });
-        }
-    }
-
-    File.WriteAllText(filename, root.ToFullString());
-}
-
-   
 }

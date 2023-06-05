@@ -9,9 +9,10 @@ public class LocalizeStringLiteralsRewriter : CSharpSyntaxRewriter
 {
     private readonly ILogger<LocalizeStringLiteralsRewriter> _logger;
     private readonly ResourceKeys _modelKeys;
-    private readonly ExpressionFilterService _filter;
+    private readonly ILiteralFilter _filter;
+    
 
-    public LocalizeStringLiteralsRewriter(ResourceKeys modelKeys, ExpressionFilterService filter) : base()
+    public LocalizeStringLiteralsRewriter(ResourceKeys modelKeys,  ILiteralFilter filter) : base()
     {
         _logger = new Logger<LocalizeStringLiteralsRewriter>(new LoggerFactory());
         _modelKeys = modelKeys;
@@ -23,7 +24,7 @@ public class LocalizeStringLiteralsRewriter : CSharpSyntaxRewriter
         if (!node.IsKind(SyntaxKind.StringLiteralExpression))
             return base.VisitLiteralExpression(node);
 
-        if (!_filter.IsLocalizable(node))
+        if (!IsLocalizable(node))
         {
             return base.VisitLiteralExpression(node);
         }
@@ -34,5 +35,11 @@ public class LocalizeStringLiteralsRewriter : CSharpSyntaxRewriter
         var invocationExpr = SyntaxFactory.ParseExpression($"D[\"{resourceKey}\"]");
         _modelKeys.TryAdd(resourceKey, text);
         return invocationExpr;
+    }
+    
+    public bool IsLocalizable(LiteralExpressionSyntax literal)
+    {
+        if (literal == null) return false;
+        return !_filter.IsProhibited(literal);
     }
 }
