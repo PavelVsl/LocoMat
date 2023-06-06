@@ -17,18 +17,16 @@ public class FileProcessor
         var inputFolder = inputPath;
         if (!Utilities.IsDirectory(inputPath))
         {
-             inputFolder = Path.GetDirectoryName(inputPath);
-             fileMask = Path.GetFileName(inputPath);
+            inputFolder = Path.GetDirectoryName(inputPath);
+            fileMask = Path.GetFileName(inputPath);
         }
+
         var searchOption = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-        var files = Directory.GetFiles(inputFolder, fileMask , searchOption);
+        var files = Directory.GetFiles(inputFolder, fileMask, searchOption);
         foreach (var inputFile in files)
         {
             var outputFilePath = GetOutputFilePath(inputFile, inputFolder, outputPath);
-            if (createOutputPath)
-            {
-                Directory.CreateDirectory(outputFilePath);
-            }
+            if (createOutputPath) Directory.CreateDirectory(outputFilePath);
 
             await fileAction(inputFile, outputFilePath);
         }
@@ -43,10 +41,8 @@ public class FileProcessor
         }
         else
         {
-            string relativePath = Path.GetRelativePath(inputFolderPath, Path.GetDirectoryName(inputFile));
+            var relativePath = Path.GetRelativePath(inputFolderPath, Path.GetDirectoryName(inputFile));
             return Path.Combine(outputFolderPath, relativePath.Replace(Path.DirectorySeparatorChar, '/'));
         }
     }
-
-
 }

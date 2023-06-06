@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace LocoMat;
+namespace LocoMat.Localization.Filters;
 
 public class MethodCallRegexFilter : BaseLiteralFilter
 {
@@ -11,7 +11,7 @@ public class MethodCallRegexFilter : BaseLiteralFilter
     {
         _regEx = new Regex(regEx, RegexOptions.Compiled);
     }
-        
+
     public override string Name => "Method calls with regex";
     public override string Description => "Literals used as arguments in specific method calls with regex";
 
@@ -20,7 +20,7 @@ public class MethodCallRegexFilter : BaseLiteralFilter
         var invocation = literal.Ancestors().OfType<InvocationExpressionSyntax>().FirstOrDefault();
         var memberAccess = invocation?.Expression as MemberAccessExpressionSyntax;
         var text = memberAccess?.Name.Identifier.Text;
-        var isProhibited = text != null &&  _regEx.IsMatch(text);
+        var isProhibited = text != null && _regEx.IsMatch(text);
         return isProhibited;
     }
 }

@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace LocoMat;
+namespace LocoMat.Localization.Filters;
 
 public class BinaryExpressionFilter : BaseLiteralFilter
 {

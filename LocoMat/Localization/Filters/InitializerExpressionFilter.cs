@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace LocoMat;
+namespace LocoMat.Localization.Filters;
 
 public class InitializerExpressionFilter : BaseLiteralFilter
 {
@@ -9,6 +9,6 @@ public class InitializerExpressionFilter : BaseLiteralFilter
 
     public override bool IsProhibited(LiteralExpressionSyntax literal)
     {
-        return literal.Ancestors().Any( x => x is InitializerExpressionSyntax);
+        return literal.Ancestors().Any(x => x is InitializerExpressionSyntax);
     }
 }

@@ -21,11 +21,7 @@ public class NamespaceService
         XNamespace msbuild = "http://schemas.microsoft.com/developer/msbuild/2003";
         var rootNamespaceElement = csprojFile.Descendants(msbuild + "RootNamespace").FirstOrDefault();
         var nameSpace = rootNamespaceElement?.Value ?? Path.GetFileNameWithoutExtension(projectFilePath);
-        if (projectPath != null)
-        {
-            nameSpace += "." + projectPath.Replace('/', '.').Replace('\\', '.');
-            
-        }
+        if (projectPath != null) nameSpace += "." + projectPath.Replace('/', '.').Replace('\\', '.');
         return nameSpace;
     }
 }

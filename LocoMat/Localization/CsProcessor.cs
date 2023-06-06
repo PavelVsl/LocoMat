@@ -1,8 +1,8 @@
+using LocoMat.Localization.Filters;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 
-namespace LocoMat;
+namespace LocoMat.Localization;
 
 public class CsProcessor
 {

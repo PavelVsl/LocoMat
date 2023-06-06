@@ -80,12 +80,11 @@ public class TranslationService : ITranslationService
 
     public async Task Translate()
     {
-        
-        await FileProcessor.ProcessFilesAsync(_config.Source, _config.Output,true, TranslateResourceFile,true,"*.resx");
+        await FileProcessor.ProcessFilesAsync(_config.Source, _config.Output, true, TranslateResourceFile, true, "*.resx");
     }
-    
 
-       private Task TranslateResourceFile(string baseFileName)
+
+    private Task TranslateResourceFile(string baseFileName)
     {
         return TranslateResourceFile(baseFileName, Path.GetDirectoryName(baseFileName));
     }
@@ -93,14 +92,20 @@ public class TranslationService : ITranslationService
     private async Task TranslateResourceFile(string baseFileName, string outputPath)
     {
         //Check if languages are not empty
-        if (string.IsNullOrEmpty(_config.TargetLanguages)) return;
+        if (string.IsNullOrEmpty(_config.TargetLanguages))
+        {
+            _logger.LogError("No target languages specified");
+            return;
+        }
+
         var existingResources = Utilities.GetExistingResources(baseFileName);
+        _logger.LogInformation($"Translating {existingResources.Count} resources in {baseFileName}");
 
         foreach (var languageCode in _config.TargetLanguages.Split(','))
         {
             var outputFilePath = Path.Combine(outputPath, $"{Path.GetFileNameWithoutExtension(baseFileName)}.{languageCode}.resx");
+            _logger.LogInformation($"Translating to {languageCode} in {outputFilePath}");
             var translatedResources = Utilities.GetOrCreateResxFile(outputFilePath);
-
             var errorCounter = 0;
             foreach (var resource in existingResources)
                 if (!translatedResources.ContainsKey(resource.Key))
@@ -128,6 +133,7 @@ public class TranslationService : ITranslationService
                         {
                             errorCounter++;
                         }
+
                         if (result.IsSuccess)
                         {
                             translate = result.Value;
@@ -136,6 +142,7 @@ public class TranslationService : ITranslationService
                         }
                         else
                         {
+                            _logger.LogError($"Failed to translate resource:({languageCode}) {resource.Key} {translate}");
                             errorCounter++;
                             if (errorCounter > 5)
                             {
@@ -146,7 +153,11 @@ public class TranslationService : ITranslationService
                     }
                 }
 
-            if (!_config.TestMode) Utilities.WriteResourcesToFile(translatedResources, outputFilePath);
+            if (!_config.TestMode)
+            {
+                Utilities.WriteResourcesToFile(translatedResources, outputFilePath);
+                _logger.LogInformation($"Writing: {outputFilePath}");
+            }
         }
     }
 }

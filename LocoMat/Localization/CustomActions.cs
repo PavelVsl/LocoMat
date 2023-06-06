@@ -1,6 +1,4 @@
-using System.Text.RegularExpressions;
-
-namespace LocoMat;
+namespace LocoMat.Localization;
 
 public class CustomActions
 {
@@ -14,7 +12,7 @@ public class CustomActions
 
         Actions = new List<CustomAction>
         {
-            new CustomAction
+            new()
             {
                 // If the tag is existing localizer call, try add the key to the resourceKeys dictionary
                 // and return the tag unchanged
@@ -28,7 +26,7 @@ public class CustomActions
                 },
             },
 
-            new CustomAction
+            new()
             {
                 //Localize the tag content if it is not an existing localizer call
                 ComponentType = "Content",
@@ -45,7 +43,7 @@ public class CustomActions
                 },
             },
 
-            new CustomAction
+            new()
             {
                 //Take class name from TItem attributre of RadzenTemplateForm
                 ComponentType = "RadzenTemplateForm",
@@ -56,19 +54,19 @@ public class CustomActions
                     return tag;
                 },
             },
-            new CustomAction
+            new()
             {
                 //Localize RadzenDropDownDataGridColumn
                 ComponentType = "RadzenDropDownDataGridColumn",
                 Action = match => match.Value.ReplaceGridColumnStrings(_resourceKeys),
             },
-            new CustomAction
+            new()
             {
                 //Localize RadzenDataGridColumn
                 ComponentType = "RadzenDataGridColumn",
                 Action = match => match.Value.ReplaceGridColumnStrings(_resourceKeys),
             },
-            new CustomAction
+            new()
             {
                 //Localize RadzenLabel
                 ComponentType = "RadzenLabel",
@@ -80,8 +78,8 @@ public class CustomActions
                     var key = $"{_vars["TItem"]}.{attributeValue}";
                     return tag.ReplaceAttributeWithKey(_resourceKeys, "Text", key);
                 },
-            },            
-            new CustomAction
+            },
+            new()
             {
                 //Localize RadzenLabel
                 ComponentType = "RadzenFormField",
@@ -94,7 +92,7 @@ public class CustomActions
                     return tag.ReplaceAttributeWithKey(_resourceKeys, "Text", key);
                 },
             },
-            new CustomAction
+            new()
             {
                 //Localize RadzenLabel
                 ComponentType = "RadzenText",
@@ -103,12 +101,12 @@ public class CustomActions
                     var tag = match.Value;
                     var attributeValue = tag.GetAttributeValue("Text").GenerateResourceKey();
                     if (string.IsNullOrEmpty(attributeValue)) return tag;
-                    
+
                     var key = $"{_vars["className"]}.{attributeValue}";
                     return tag.ReplaceAttributeWithKey(_resourceKeys, "Text", key);
                 },
             },
-            new CustomAction
+            new()
             {
                 //Localize RadzenRequiredValidator
                 ComponentType = "RadzenRequiredValidator",
@@ -120,7 +118,7 @@ public class CustomActions
                     return tag.ReplaceAttributeWithKey(_resourceKeys, "Text", key);
                 },
             },
-            new CustomAction
+            new()
             {
                 //Localize RadzenButton
                 ComponentType = "RadzenButton",
@@ -133,7 +131,7 @@ public class CustomActions
                     return tag.ReplaceAttributeWithKey(_resourceKeys, "Text", key);
                 },
             },
-            new CustomAction
+            new()
             {
                 ComponentType = "RadzenPanelMenuItem",
                 Action = match =>
@@ -146,7 +144,7 @@ public class CustomActions
                 },
             },
 
-            new CustomAction
+            new()
             {
                 ComponentType = "RadzenGridColumn",
                 Regex = () => @"NotificationService\.Notify\(new NotificationMessage\s*\{\s*Severity\s*=\s*NotificationSeverity\.Error,\s*Summary\s*=\s*`(?<error>[^`]+)`,\s*Detail\s*=\s*`(?<detail>[^`]+)`\s*\}\);",

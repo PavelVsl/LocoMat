@@ -18,6 +18,7 @@
         <PackageReadmeFile>readme.md</PackageReadmeFile>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <TargetFramework>net7.0</TargetFramework>
+        
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="GitVersion.MsBuild" Version="5.12.0">
@@ -32,13 +33,14 @@
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
         <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
         <PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta4.22272.1" />
         <PackageReference Include="ResXResourceReader.NetStandard" Version="1.1.0" />
-        <PackageReference Include="Radzen.Blazor" Version="4.11.2" />
+        <PackageReference Include="Radzen.Blazor" Version="4.13.0" />
         <None Include="../readme.md" Pack="true" PackagePath="\" />
     </ItemGroup>
     <ItemGroup>
-      <Compile Remove="Program2.cs" />
+        <Compile Remove="Program2.cs" />
     </ItemGroup>
 </Project>

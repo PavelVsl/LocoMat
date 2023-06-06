@@ -1,4 +1,4 @@
-namespace LocoMat.RadzenComponents;
+namespace LocoMat.Scaffold;
 
 public interface IScaffoldService
 {

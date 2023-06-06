@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace LocoMat;
+namespace LocoMat.Localization;
 
 public class CustomAction
 {

@@ -3,3 +3,5 @@ branches: {}
 ignore:
   sha: []
 merge-message-formats: {}
+assembly-informational-format: '{Major}.{Minor}.{Patch}-{NuGetPreReleaseTagV2}'
+

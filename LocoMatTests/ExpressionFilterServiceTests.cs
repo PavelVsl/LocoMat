@@ -1,4 +1,6 @@
 using LocoMat;
+using LocoMat.Localization;
+using LocoMat.Localization.Filters;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -10,7 +12,7 @@ namespace LocoMatTests;
 public class ExpressionFilterServiceTests
 {
     private readonly Mock<ILogger<LiteralFilters>> _loggerMock2;
-    private readonly ConfigurationData _config = new ConfigurationData() { };
+    private readonly ConfigurationData _config = new() { };
     private readonly LiteralFilters _service;
 
 
@@ -42,7 +44,7 @@ namespace MyApp
         var literal = root.DescendantNodes()
             .OfType<LiteralExpressionSyntax>()
             .FirstOrDefault(literal => literal.Kind() == SyntaxKind.StringLiteralExpression);
-        
+
         //write complete tree to file
         File.WriteAllText("/Users/pavel/Library/Application Support/JetBrains/Rider2023.1/scratches/x.cs", root.NormalizeWhitespace().ToFullString());
         return literal;
@@ -55,7 +57,6 @@ namespace MyApp
     [InlineData("var x = @\"apple\"", false)]
     [InlineData("var x = \"\"", false)]
     [InlineData("var x = \"   \"", false)]
-
     [InlineData("var x = \"[apple]\"", true)]
     [InlineData("var x = \"/apple/\"", false)]
     [InlineData("var x = \"\\\\apple\\\\\"", false)]
@@ -74,7 +75,6 @@ namespace MyApp
     [InlineData("DialogService.OpenAsync<EditApplicationUser>(new Dictionary<string, object>{ {\"Title\", \"Edit Application User\"}, {\"Width\", \"800px\"} });", false)]
     [InlineData("DialogService.OpenAsync<EditApplicationUser>(new Dictionary<string, object>{ {\"Titleeee\", \"Edit Application User\"}, {\"Width\", \"800px\"}, {\"Height\", \"600px\"} });", false)]
     [InlineData("var x = \"The {0} jumped over the {1}.\"", true)]
-
     public void IsLocalizable_TestLiterals(string inputLiteral, bool expectedResult)
     {
         // Arrange
@@ -111,7 +111,7 @@ namespace MyApp
 
         Assert.Equal(expectedResult, filter.IsProhibited(literal));
     }
-    
+
     //VerbatimStringFilterTests
     [Theory]
     [InlineData("var x = @\"apple\"", true)]
@@ -124,32 +124,32 @@ namespace MyApp
 
         Assert.Equal(expectedResult, filter.IsProhibited(literal));
     }
-    
- //StringsWithEscapeSequencesFilterTests
- [Theory]
- [InlineData("var x = \"otrhweopthowepr\\n sfahgk\"", false)]
- [InlineData("var x = \"otrhweopthowepr\\ sfahgk\"", false)]
- public  void StringsWithEscapeSequencesFilter(string code, bool expectedResult)
- {
-     var literal = GetSampleSyntaxTree($"{code}");
 
-     var filter = new StringsWithEscapeSequencesFilter();
+    //StringsWithEscapeSequencesFilterTests
+    [Theory]
+    [InlineData("var x = \"otrhweopthowepr\\n sfahgk\"", false)]
+    [InlineData("var x = \"otrhweopthowepr\\ sfahgk\"", false)]
+    public void StringsWithEscapeSequencesFilter(string code, bool expectedResult)
+    {
+        var literal = GetSampleSyntaxTree($"{code}");
 
-     Assert.Equal(expectedResult, filter.IsProhibited(literal));
- }
+        var filter = new StringsWithEscapeSequencesFilter();
 
- //SwitchStatementLabelFilterTests
+        Assert.Equal(expectedResult, filter.IsProhibited(literal));
+    }
+
+    //SwitchStatementLabelFilterTests
     [Theory]
     [InlineData(" switch { case \"apple\": break; }", true)]
-    public void SwitchStatementLabelFilterTests (string code, bool expectedResult)
+    public void SwitchStatementLabelFilterTests(string code, bool expectedResult)
     {
         var literal = GetSampleSyntaxTree($"{code}");
 
         var filter = new SwitchStatementLabelFilter();
 
         Assert.Equal(expectedResult, filter.IsProhibited(literal));
-
     }
+
     //BinaryExpressionFilterTests
     [Theory]
     [InlineData("var x = D[\"apple\"]", false)]
@@ -163,13 +163,13 @@ namespace MyApp
 
         Assert.Equal(expectedResult, filter.IsProhibited(literal));
     }
-    
+
     //MethodCallFilterTests
     [Theory]
-    [InlineData("string.Format(\"Welcome, {0}!\", userName)","Query", false)]
-    [InlineData("SomeClass.Query(\"Welcome, {0}!\", userName)","Query", true)]
-    [InlineData("string.ToString(\"Welcome, {0}!\", userName)",null, true)]
-    [InlineData("await DialogService.OpenAsync<AddApplicationUser>(\"Add Application User\");",null, false)]
+    [InlineData("string.Format(\"Welcome, {0}!\", userName)", "Query", false)]
+    [InlineData("SomeClass.Query(\"Welcome, {0}!\", userName)", "Query", true)]
+    [InlineData("string.ToString(\"Welcome, {0}!\", userName)", null, true)]
+    [InlineData("await DialogService.OpenAsync<AddApplicationUser>(\"Add Application User\");", null, false)]
     public void MethodCallFilterTests(string code, string method, bool expectedResult)
     {
         var literal = GetSampleSyntaxTree($"{code};");
@@ -178,10 +178,8 @@ namespace MyApp
 
         Assert.Equal(expectedResult, filter.IsProhibited(literal));
     }
-    
-    
-    
-    
+
+
     //InitializerExpressionFilter
     [Theory]
     [InlineData("DialogService.OpenAsync<EditApplicationUser>(aaaa, new Dictionary<string, object>{ {\"Id\", user.Id} });", true)]
@@ -194,9 +192,4 @@ namespace MyApp
 
         Assert.Equal(expectedResult, filter.IsProhibited(literal));
     }
-    
-    
-    
- 
- 
 }

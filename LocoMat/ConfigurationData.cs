@@ -6,9 +6,21 @@ namespace LocoMat;
 
 public class ConfigurationData
 {
+    private string _resource;
     [JsonIgnore] public string Command { get; set; }
     public string Project { get; set; }
-    public string Resource { get; set; }
+
+    public string Resource
+    {
+        get
+        {
+            if (Path.IsPathRooted(_resource)) return _resource;
+            var folderPath = Path.GetDirectoryName(Project);
+            return Path.Combine(folderPath, _resource);
+        }
+        set => _resource = value;
+    }
+
     public string Exclude { get; set; }
     public List<string> ExcludeFiles => Exclude?.Split(',').ToList() ?? new List<string>();
     public string TargetLanguages { get; set; }

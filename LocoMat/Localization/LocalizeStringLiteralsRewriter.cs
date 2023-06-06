@@ -1,18 +1,19 @@
+using LocoMat.Localization.Filters;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 
-namespace LocoMat;
+namespace LocoMat.Localization;
 
 public class LocalizeStringLiteralsRewriter : CSharpSyntaxRewriter
 {
     private readonly ILogger<LocalizeStringLiteralsRewriter> _logger;
     private readonly ResourceKeys _modelKeys;
     private readonly ILiteralFilter _filter;
-    
 
-    public LocalizeStringLiteralsRewriter(ResourceKeys modelKeys,  ILiteralFilter filter) : base()
+
+    public LocalizeStringLiteralsRewriter(ResourceKeys modelKeys, ILiteralFilter filter) : base()
     {
         _logger = new Logger<LocalizeStringLiteralsRewriter>(new LoggerFactory());
         _modelKeys = modelKeys;
@@ -24,10 +25,7 @@ public class LocalizeStringLiteralsRewriter : CSharpSyntaxRewriter
         if (!node.IsKind(SyntaxKind.StringLiteralExpression))
             return base.VisitLiteralExpression(node);
 
-        if (!IsLocalizable(node))
-        {
-            return base.VisitLiteralExpression(node);
-        }
+        if (!IsLocalizable(node)) return base.VisitLiteralExpression(node);
         var message = $"Processing literal \"{node.Token.ValueText}\"";
         _logger.LogInformation(message);
         var text = node.Token.ValueText;
@@ -36,7 +34,7 @@ public class LocalizeStringLiteralsRewriter : CSharpSyntaxRewriter
         _modelKeys.TryAdd(resourceKey, text);
         return invocationExpr;
     }
-    
+
     public bool IsLocalizable(LiteralExpressionSyntax literal)
     {
         if (literal == null) return false;

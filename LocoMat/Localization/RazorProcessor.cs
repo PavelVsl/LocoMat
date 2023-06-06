@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
 
-namespace LocoMat;
+namespace LocoMat.Localization;
 
 public class RazorProcessor
 {
@@ -42,13 +42,13 @@ public class RazorProcessor
         // Step 4: Write the modified razor content back to the file
         if (newRazorContent == razorContent)
         {
-            _logger.LogDebug("No changes to {RazorFileName}", razorFileName);
+            _logger.LogDebug($"No changes to {razorFileName}");
             return;
         }
 
         if (testMode)
         {
-            _logger.LogInformation("Changes to {RazorFileName} not written to disk in test mode", razorFileName);
+            _logger.LogInformation($"Changes to {razorFileName} not written to disk in test mode");
             _logger.LogInformation(newRazorContent);
         }
         else
@@ -94,7 +94,7 @@ public class RazorProcessor
                 var modifiedTag = customAction.Action(match);
                 // check if the tag has been modified
                 if (modifiedTag != originalValue)
-                    _logger.LogDebug("Replace: {OriginalValue} -> {ModifiedTag}", originalValue, modifiedTag);
+                    _logger.LogDebug($"Replace: {originalValue} -> {modifiedTag}");
                 return modifiedTag;
             });
         }
@@ -177,11 +177,11 @@ public class RazorProcessor
                 if (!_config.TestMode)
                 {
                     File.WriteAllText(importsFilePath, importsFileContent);
-                    _logger.LogInformation("Added @using {NameSpace} to _Imports.razor", nameSpace);
+                    _logger.LogInformation($"Added @using {nameSpace} to _Imports.razor");
                 }
                 else
                 {
-                    _logger.LogInformation("Added @using {NameSpace} to _Imports.razor", nameSpace);
+                    _logger.LogInformation($"Added @using {nameSpace} to _Imports.razor");
                 }
             }
         }

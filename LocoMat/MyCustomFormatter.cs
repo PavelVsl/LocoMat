@@ -10,8 +10,11 @@ public class MyCustomFormatter : ConsoleFormatter
     {
     }
 
-    public override void Write<TState>(in LogEntry<TState> logEntry, IExternalScopeProvider scopeProvider,
-        TextWriter consoleOutput)
+    public override void Write<TState>(
+        in LogEntry<TState> logEntry,
+        IExternalScopeProvider scopeProvider,
+        TextWriter consoleOutput
+    )
     {
         if (logEntry.State is IReadOnlyList<KeyValuePair<string, object>> values)
         {

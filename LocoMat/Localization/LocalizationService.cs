@@ -1,7 +1,7 @@
 using System.Xml;
 using Microsoft.Extensions.Logging;
 
-namespace LocoMat;
+namespace LocoMat.Localization;
 
 public class LocalizationService : ILocalizationService
 {
@@ -12,11 +12,12 @@ public class LocalizationService : ILocalizationService
     private readonly RazorProcessor _razorProcessor;
 
     public LocalizationService(
-        ILogger<LocalizationService> logger, 
-        ConfigurationData config, 
-        ResourceKeys modelKeys, 
-        CsProcessor csProcessor, 
-        RazorProcessor razorProcessor)
+        ILogger<LocalizationService> logger,
+        ConfigurationData config,
+        ResourceKeys modelKeys,
+        CsProcessor csProcessor,
+        RazorProcessor razorProcessor
+    )
     {
         _logger = logger;
         _config = config;
@@ -24,7 +25,7 @@ public class LocalizationService : ILocalizationService
         _csProcessor = csProcessor;
         _razorProcessor = razorProcessor;
     }
-    
+
     public async Task Localize()
     {
         //if resource at modelPath exists, load it  
@@ -46,27 +47,28 @@ public class LocalizationService : ILocalizationService
             foreach (var file in files)
             {
                 if (_config.ExcludeFiles.Contains(Path.GetFileName(file))) continue;
-                _logger.LogInformation("Processing file: {File}", file);
+                _logger.LogInformation($"Processing file: {file}");
                 await _razorProcessor.ProcessRazorFile(file);
                 //if partial class cs file exists, process it, file name is same as razor file name with .razor.cs extension
                 var csFile = file + ".cs";
                 if (File.Exists(csFile))
                 {
-                    _logger.LogInformation("Processing file: {File}", csFile);
+                    _logger.LogInformation($"Processing file: {csFile}", csFile);
                     await _csProcessor.ProcessFile(csFile);
                 }
             }
         }
+
         Utilities.EnsureFolderExists(_config.Resource);
         _razorProcessor.GenerateResourceStubFile();
         if (_resourceKeys.Count > 0) CreateResxFile(_resourceKeys);
         //await _resourceGenerator.TranslateResourceFile();
     }
-    
+
     public void CreateResxFile(Dictionary<string, string> resourceKeys)
     {
         var filePath = _config.Resource;
-        CreateResxFile(filePath,resourceKeys);
+        CreateResxFile(filePath, resourceKeys);
     }
 
     public void CreateResxFile(string filePath, Dictionary<string, string> resourceKeys)
@@ -78,8 +80,7 @@ public class LocalizationService : ILocalizationService
         if (!_config.TestMode)
         {
             Utilities.WriteResourcesToFile(existingResources, filePath);
-            _logger.LogInformation("Created resource: {FilePath}", filePath);
+            _logger.LogInformation($"Created resource: {filePath}");
         }
     }
-
 }

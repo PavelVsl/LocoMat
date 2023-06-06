@@ -1,16 +1,17 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
-using System.CommandLine;
-using System.CommandLine.Invocation;
+﻿using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
-using LocoMat;
-using LocoMat.RadzenComponents;
+using LocoMat.Localization;
+using LocoMat.Localization.Filters;
+using LocoMat.Scaffold;
 using LocoMat.Translation;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-class Program
+namespace LocoMat;
+
+internal class Program
 {
-    static int Main(string[] args)
+    private static int Main(string[] args)
     {
         var projectOption = new Option<string>(
             new[] { "--project", "-p" },
@@ -18,61 +19,71 @@ class Program
             isDefault: true,
             parseArgument: result =>
             {
-                var value = result.Tokens.Single().Value;
+                var value = result.Tokens.SingleOrDefault()?.Value;
                 value = Utilities.GetProjectFileName(value);
-                if (value == null)
-                {
-                    result.ErrorMessage = "No .csproj file found in the current directory.";
-                }
-
-                return (value);
+                if (value == null) result.ErrorMessage = $"No .csproj file found {value}.";
+                return value;
             }
         );
-        
-        var localizeCommand = new Command("localize")
+
+        var resourceOption = new Option<string>(
+            new[] { "--resource", "-r" },
+            description: "Path to the resource file.",
+            getDefaultValue: () => "Resources/SharedResources.resx"
+        );
+        var excludeOption = new Option<string>(
+            new[] { "--exclude", "-x" },
+            description: "Comma-separated list of file names to exclude from localization.",
+            getDefaultValue: () => "App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor"
+        );
+        var includeOption = new Option<string>(
+            new[] { "--include", "-i" },
+            description: "File name pattern to include in localization.",
+            getDefaultValue: () => "*.razor"
+        );
+        var testOption = new Option<bool>(new[] { "--test-mode", "-t" }, "Runs in test mode without actually changing any files.");
+        var sourceOption = new Option<string>(
+            new[] { "--source", "-s" },
+            "Optional source directory for locating the resource files. Defaults to the current directory."
+        );
+        var outputOption = new Option<string>(new[] { "--output", "-o" }, "Optional output directory for storing translated files. Defaults to the current directory.");
+        var targetLangOption = new Option<string>(new[] { "--target-languages", "-t" }, "Comma-separated list of target languages for translation. Defaults to empty (i.e., no translation).");
+        var emailOption = new Option<string>(new[] { "--email", "-e" }, "Email address. Required for translation service.");
+        var forceOption = new Option<bool>(new[] { "--force", "-f" }, "Forces overwrite existing files when restoring from backup.");
+
+        var verbosityOption = new Option<LogLevel>(
+            new[] { "--verbosity", "-v" },
+            () => LogLevel.Information,
+            "Sets the verbosity level."
+        );
+        var localizeCommand = new Command("localize", "Localizes the project.")
         {
             projectOption,
-
-            new Option<string>(
-                new[] { "--resource", "-r" },
-                description: "Path to the resource file. Defaults to 'Resources/SharedResources.resx'.",
-                getDefaultValue: () => "Resources/SharedResources.resx"
-            ),
-            new Option<string>(
-                new[] { "--exclude", "-x" },
-                description: "Comma-separated list of file names to exclude from localization. Defaults to 'App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor'.",
-                getDefaultValue: () => "App.razor,_Imports.razor,RedirectToLogin.razor,CulturePicker.razor"
-            ),
-
-            new Option<string>(
-                new[] { "--include", "-i" },
-                description: "File name pattern to include in localization. Defaults to '*.razor'.",
-                getDefaultValue: () => "*.razor"
-            ),
-
-            new Option<bool>(new[] { "--test-mode", "-t" }, description: "Runs in test mode without actually changing any files.")
+            resourceOption,
+            excludeOption,
+            includeOption,
+            testOption,
+            verbosityOption,
         };
+
         var scaffoldCommand = new Command("scaffold", "Scaffolds localization of Radzen.Blazor components.")
         {
             projectOption,
+            verbosityOption,
         };
-        var translateCommand = new Command("translate")
+        var translateCommand = new Command("translate", "Translates resource files.")
         {
-            new Option<string>(
-                new[] { "--source", "-s" },
-                description: "Optional source directory for locating the resource files. Defaults to the current directory."
-            ),
-            new Option<string>(new[] { "--output", "-o" }, description: "Optional output directory for storing translated files. Defaults to the current directory."),
-            new Option<string>(new[] { "--target-languages", "-t" }, description: "Comma-separated list of target languages for translation. Defaults to empty (i.e., no translation)."),
-            new Option<string>(new[] { "--email", "-e" }, description: "Email address. Required for translation service."),
-            //new Option<string>(new[] { "--file-pattern" }, description: "Optional file pattern for selecting specific files to translate. Defaults to '*.resx' (all .resx files)."),
+            sourceOption,
+            outputOption,
+            targetLangOption,
+            emailOption,
+            verbosityOption,
         };
-        var restoreCommand = new Command("restore")
+        var restoreCommand = new Command("restore", "Restores the original files from backup.")
         {
-            new Option<bool>(new[] { "--force", "-f" }, description: "Forces overwrite existing files when restoring from backup.")
+            forceOption,
+            verbosityOption,
         };
-        // var settingsCommand = new Command("settings");
-        // var helpCommand = new Command("help");
 
         var rootCommand = new RootCommand
         {
@@ -80,21 +91,9 @@ class Program
             translateCommand,
             scaffoldCommand,
             restoreCommand,
-            // settingsCommand,
-            // helpCommand
-
-            //Test mode switch
-            new Option<bool>(new[] { "--test-mode", "-t" }, description: "Runs in test mode without actually changing any files."),
-            //Verbosity switch like dotnet CLI, implement parsing
-            new Option<LogLevel>(
-                new[] { "--verbosity", "-v" },
-                getDefaultValue: () => LogLevel.Information,
-                description: "Sets the verbosity level. Supported values: Trace, Debug, Information, Warning, Error, Critical, None."
-            ),
         };
 
-        rootCommand.Description = "Localization Tool";
-       // rootCommand.Handler = CommandHandler.Create<ConfigurationData>((config) => { Console.WriteLine("Please specify a command. Use 'help' for more information."); });
+        rootCommand.Description = $"LocoMat version {Utilities.GetVersion()}";
 
         // Register command handlers
         localizeCommand.Handler = CommandHandler.Create<ConfigurationData>(async (configData) =>
@@ -150,16 +149,6 @@ class Program
             var backupService = services.GetRequiredService<BackupService>();
             backupService.RestoreAsync().Wait();
         });
-
-        // settingsCommand.Handler = CommandHandler.Create(() =>
-        // {
-        //     // Handle the settings command
-        // });
-        //
-        // helpCommand.Handler = CommandHandler.Create(() =>
-        // {
-        //     // Handle the help command
-        // });
 
         return rootCommand.InvokeAsync(args).Result;
     }

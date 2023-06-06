@@ -1,8 +1,9 @@
 using System.Reflection;
+using LocoMat.Localization.Filters;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 
-namespace LocoMat;
+namespace LocoMat.Localization;
 
 public class LiteralFilters : List<ILiteralFilter>, ILiteralFilter
 {
@@ -43,13 +44,11 @@ public class LiteralFilters : List<ILiteralFilter>, ILiteralFilter
     public bool IsProhibited(LiteralExpressionSyntax literal)
     {
         foreach (var filter in this)
-        {
             if (filter.IsProhibited(literal))
             {
                 _logger.LogDebug($"Literal '{literal}' is not localizable because of filter '{filter.Name}'");
                 return true;
             }
-        }
 
         return false;
     }

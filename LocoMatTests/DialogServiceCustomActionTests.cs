@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using LocoMat;
+using LocoMat.Localization;
 
 namespace LocoMatTests;
 

@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace LocoMat;
+namespace LocoMat.Localization.Filters;
 
 public class MethodCallFilter : BaseLiteralFilter
 {
@@ -8,22 +8,18 @@ public class MethodCallFilter : BaseLiteralFilter
 
     public MethodCallFilter()
     {
-        
     }
-    
+
     public MethodCallFilter(string[] methodNames)
     {
-        if (methodNames != null)
-        {
-            _methodNames = methodNames;    
-        }
+        if (methodNames != null) _methodNames = methodNames;
     }
-    
+
     public MethodCallFilter(string methodName)
     {
         if (methodName != null) _methodNames = new string[] { methodName };
-    } 
-        
+    }
+
     public override string Name => "Method calls";
     public override string Description => "Literals used as arguments in specific method calls";
 

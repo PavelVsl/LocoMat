@@ -1,4 +1,4 @@
-namespace LocoMat;
+namespace LocoMat.Localization;
 
 public interface ILocalizationService
 {

@@ -1,5 +1,6 @@
 using System.IO.Compression;
 using System.Security.Cryptography;
+using LocoMat.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace LocoMat;
@@ -45,6 +46,7 @@ public class BackupService : IDisposable
             _logger.LogDebug("Skipping unchanged file " + path);
             return;
         }
+
         // Create a relative path for the file in the zip archive
         var relativePath = Path.GetRelativePath(_basePath, path);
         // Create a new entry in the zip archive

@@ -1,10 +1,12 @@
 using System.Collections;
+using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Resources.NetStandard;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using LocoMat.Translation;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace LocoMat;
@@ -43,7 +45,12 @@ public static class Utilities
         return tag.SetAttributeValue(attributeName, key);
     }
 
-    public static string ReplaceAttributeWithKey(this string tag, ResourceKeys modelKeys, string attributeName, string key)
+    public static string ReplaceAttributeWithKey(
+        this string tag,
+        ResourceKeys modelKeys,
+        string attributeName,
+        string key
+    )
     {
         if (DoNotReplace(tag, attributeName)) return tag;
         var value = GetAttributeValue(tag, attributeName);
@@ -73,6 +80,7 @@ public static class Utilities
             var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
             if (unicodeCategory != UnicodeCategory.NonSpacingMark) stringBuilder.Append(c);
         }
+
         return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
     }
 
@@ -157,7 +165,7 @@ public static class Utilities
         if (text.Contains(" ")) return text;
         return Regex.Replace(text, "(?<=[a-z])([A-Z])", " $1", RegexOptions.Compiled).Trim();
     }
-    
+
     public static bool IsLocalizable(this PropertyInfo p)
     {
         return (p.Name.EndsWith("Text") && p.Name != "Text" && p.Name != "SearchText") ||
@@ -179,25 +187,23 @@ public static class Utilities
         path = path ?? Directory.GetCurrentDirectory();
         //get full path
         path = Path.GetFullPath(path);
-        if (IsDirectory(path))
+        if (Directory.Exists(path))
         {
             //if path is a directory get all csproj files in it
             var files = Directory.GetFiles(path, "*.csproj");
-            if (files.Length == 1)
-            {
-                path = files[0];
-            }
+            if (files.Length == 1) path = files[0];
         }
-        if (File.Exists(path) && IsValidCSharpProject(path))
-        {
-            return path;
-        }
+
+        if (File.Exists(path) && IsValidCSharpProject(path)) return path;
         //if path is not a file or directory return null
         return null;
     }
 
     public static bool IsDirectory(string path)
     {
+        //check if path is a existing directory
+        if (Directory.Exists(path)) return true;
+
         var attr = File.GetAttributes(path);
         return (attr & FileAttributes.Directory) == FileAttributes.Directory;
     }
@@ -205,10 +211,7 @@ public static class Utilities
     private static bool IsValidCSharpProject(string fileName)
     {
         var extension = Path.GetExtension(fileName);
-        if (extension != ".csproj")
-        {
-            return false;
-        }
+        if (extension != ".csproj") return false;
         //check if file is a valid xml file and root element is Project
         var doc = XDocument.Load(fileName);
         return doc.Root?.Name.LocalName == "Project";
@@ -218,8 +221,8 @@ public static class Utilities
     {
         //Ensure than filename has correct extension
         fileName = Path.ChangeExtension(fileName, string.IsNullOrEmpty(language) ? ".resx" : $".{language}.resx");
-        if (!File.Exists(fileName)) Utilities.CreateResxFileWithHeaders(fileName);
-        return Utilities.GetExistingResources(fileName);
+        if (!File.Exists(fileName)) CreateResxFileWithHeaders(fileName);
+        return GetExistingResources(fileName);
     }
 
     public static string GetResourceKey(this LiteralExpressionSyntax node)
@@ -233,5 +236,12 @@ public static class Utilities
         var className = classDeclaration?.Identifier.ToString();
         if (!string.IsNullOrEmpty(genericParameterName)) return $"{genericParameterName}.{key}";
         return $"{className}.{key}";
+    }
+
+    public static string GetVersion()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+        return fvi.FileVersion;
     }
 }

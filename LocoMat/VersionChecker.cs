@@ -15,11 +15,12 @@ public class VersionChecker
         var latestVersion = JsonSerializer.Deserialize<LatestVersion>(json);
         return latestVersion.Versions.Contains(Assembly.GetExecutingAssembly().GetName().Version.ToString());
     }
+
     public class LatestVersion
     {
         public List<string> Versions { get; set; }
     }
-    
+
     // Self-update the application
     // from dotnet-script:
     //

@@ -1,4 +1,3 @@
-using System.Reflection;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -6,7 +5,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 using Radzen;
 
-namespace LocoMat.RadzenComponents;
+namespace LocoMat.Scaffold;
 
 public class ScaffoldService : IScaffoldService
 {
@@ -35,7 +34,7 @@ public class ScaffoldService : IScaffoldService
         public Dictionary<string, string> Properties { get; set; }
     }
 
-    private List<ClassInfo> _classes = new List<ClassInfo>();
+    private List<ClassInfo> _classes = new();
     private readonly string _nameSpace;
     private string _projectFolder;
     private readonly string _scaffoldFolder;
@@ -55,8 +54,8 @@ public class ScaffoldService : IScaffoldService
 
     private void LoadClasses()
     {
-        Assembly rb = typeof(RadzenComponent).Assembly;
-        foreach (Type type in rb.GetTypes().Where(x => x.IsSubclassOf(typeof(RadzenComponent)) && x.GetProperties().Any(p => p.IsLocalizable())))
+        var rb = typeof(RadzenComponent).Assembly;
+        foreach (var type in rb.GetTypes().Where(x => x.IsSubclassOf(typeof(RadzenComponent)) && x.GetProperties().Any(p => p.IsLocalizable())))
         {
             var ci = new ClassInfo();
             ci.Name = type.Name.Replace("`1", "");
@@ -103,12 +102,8 @@ public class ScaffoldService : IScaffoldService
         // concat all _classes.Properties to dictionary
         var dict = new Dictionary<string, string>();
         foreach (var type in _classes)
-        {
-            foreach (var property in type.Properties)
-            {
-                dict.TryAdd($"{type.Name}.{property.Key}", property.Value);
-            }
-        }
+        foreach (var property in type.Properties)
+            dict.TryAdd($"{type.Name}.{property.Key}", property.Value);
 
         Utilities.WriteResourcesToFile(dict, filename);
         return filename;
@@ -136,19 +131,16 @@ public class ScaffoldService : IScaffoldService
             sb.AppendLine("    [Inject] RadzenLocalizer L { get; set; }");
             sb.AppendLine("    protected override void OnInitialized()");
             sb.AppendLine("    {");
-            foreach (var property in type.Properties)
-            {
-                sb.AppendLine($"      {property.Key} = L[\"{name}.{property.Key}\"] ?? {property.Key};");
-            }
+            foreach (var property in type.Properties) sb.AppendLine($"      {property.Key} = L[\"{name}.{property.Key}\"] ?? {property.Key};");
 
             sb.AppendLine("        base.OnInitialized();");
             sb.AppendLine("    }");
             sb.AppendLine("}");
             sb.AppendLine();
-            _logger.LogDebug("Scaffolded {Name}", name);
+            _logger.LogDebug($"Scaffolding {name}");
         }
 
-        _logger.LogInformation("Writing {Filename}", filename);
+        _logger.LogInformation($"Writing {filename}");
         File.WriteAllText(filename, sb.ToString());
     }
 
@@ -188,7 +180,7 @@ public class ScaffoldService : IScaffoldService
         sb.AppendLine("    }");
         sb.AppendLine("}");
 
-        _logger.LogInformation("Writing {FilePath}", filePath);
+        _logger.LogInformation($"Writing {filePath}");
         File.WriteAllText(filePath, sb.ToString());
     }
 
@@ -238,7 +230,7 @@ public class OverridableComponentActivator : IComponentActivator
 }}
 ";
         var filename = Path.Combine(_scaffoldFolder, "OverridableComponentActivator.cs");
-        _logger.LogInformation("Writing {Filename}", filename);
+        _logger.LogInformation($"Writing {filename}");
         File.WriteAllText(filename, code);
     }
 
@@ -258,13 +250,20 @@ public class RadzenLocalizer  :  StringLocalizer<RadzenLocalizer>
 }}";
 
         var filename = Path.Combine(_scaffoldFolder, "RadzenLocalizer.cs");
-        _logger.LogInformation("Writing {Filename}", filename);
+        _logger.LogInformation($"Writing {filename}");
         File.WriteAllText(filename, code);
     }
 
     private void FinishProgramConfiguration(string projectFolder, string nameSpace)
     {
-        var filename = Path.Combine(projectFolder, "Program2.cs");
+        var filename = Path.Combine(projectFolder, "Program.cs");
+        // check file exists
+        if (!File.Exists(filename))
+        {
+            _logger.LogError($"File {filename} not found");
+            return;
+        }
+
         var code = File.ReadAllText(filename);
         //load syntax tree
         var tree = CSharpSyntaxTree.ParseText(code);
@@ -308,6 +307,7 @@ public class RadzenLocalizer  :  StringLocalizer<RadzenLocalizer>
             }
         }
 
+        _logger.LogInformation($"Writing {filename}");
         File.WriteAllText(filename, root.ToFullString());
     }
 }
