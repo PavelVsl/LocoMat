@@ -42,6 +42,9 @@ internal class Program
             getDefaultValue: () => "*.razor"
         );
         var testOption = new Option<bool>(new[] { "--test-mode", "-t" }, "Runs in test mode without actually changing any files.");
+        
+        var backupOption = new Option<bool>(new[] { "--backup", "-b" }, "Creates a backup of the original files before modifying them.");
+        
         var sourceOption = new Option<string>(
             new[] { "--source", "-s" },
             "Optional source directory for locating the resource files. Defaults to the current directory."
@@ -64,6 +67,7 @@ internal class Program
             includeOption,
             testOption,
             verbosityOption,
+            backupOption,
         };
 
         var scaffoldCommand = new Command("scaffold", "Scaffolds localization of Radzen.Blazor components.")

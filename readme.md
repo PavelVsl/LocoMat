@@ -55,6 +55,7 @@ Localizes the project.
 - `--include`, `-i`: File name pattern to include in localization. Defaults to `*.razor`.
 - `--test-mode`, `-t`: Runs in test mode without actually changing any files.
 - `--verbosity`, `-v`: Sets the verbosity level. Options are `Debug`, `Information` and `Error`.
+- `--backup`, `-b`: Creates a backup of the modified files in a zip file located in the ./LocalizerBackup folder. The file name is generated using the current date and time, formatted as backup{DateTime.Now:yyyy-MM-ddTHH-mm-ss}.zip.
 
 ### `scaffold`
 
