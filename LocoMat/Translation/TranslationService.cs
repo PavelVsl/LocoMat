@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
@@ -84,9 +85,14 @@ public class TranslationService : ITranslationService
     }
 
 
-    private Task TranslateResourceFile(string baseFileName)
+    private Task TranslateResourceFile(string fileName)
     {
-        return TranslateResourceFile(baseFileName, Path.GetDirectoryName(baseFileName));
+        return TranslateResourceFile(fileName, Path.GetDirectoryName(fileName));
+    }
+    
+    private bool IsValidCultureCode(string cultureCode)
+    {
+        return CultureInfo.GetCultures(CultureTypes.AllCultures).Any(c => c.Name.Equals(cultureCode, StringComparison.OrdinalIgnoreCase));
     }
 
     private async Task TranslateResourceFile(string baseFileName, string outputPath)
@@ -97,6 +103,17 @@ public class TranslationService : ITranslationService
             _logger.LogError("No target languages specified");
             return;
         }
+        //Check if fileName do not contain any culture code in the name before extension e.g. "file.name.cs-CZ.resx"
+        //1. get culture code from file name
+        //2. If culture code is not empty, skip translation
+        //3. If culture code is empty (base resource), translate file
+        var lc = Path.GetFileNameWithoutExtension(baseFileName).Split('.').LastOrDefault();
+        if (!string.IsNullOrEmpty(lc) && IsValidCultureCode(lc))
+        {
+            _logger.LogDebug($"Skipping translation of {baseFileName} because it is already translated");
+            return;
+        }
+        
 
         var existingResources = Utilities.GetExistingResources(baseFileName);
         _logger.LogInformation($"Translating {existingResources.Count} resources in {baseFileName}");
@@ -106,6 +123,7 @@ public class TranslationService : ITranslationService
             var outputFilePath = Path.Combine(outputPath, $"{Path.GetFileNameWithoutExtension(baseFileName)}.{languageCode}.resx");
             _logger.LogInformation($"Translating to {languageCode} in {outputFilePath}");
             var translatedResources = Utilities.GetOrCreateResxFile(outputFilePath);
+            var translationCounter = 0;
             var errorCounter = 0;
             foreach (var resource in existingResources)
                 if (!translatedResources.ContainsKey(resource.Key))
@@ -137,7 +155,7 @@ public class TranslationService : ITranslationService
                         if (result.IsSuccess)
                         {
                             translate = result.Value;
-                            translatedResources.TryAdd(resource.Key, translate);
+                            if (translatedResources.TryAdd(resource.Key, translate)) translationCounter++;
                             errorCounter = 0;
                         }
                         else
@@ -153,7 +171,7 @@ public class TranslationService : ITranslationService
                     }
                 }
 
-            if (!_config.TestMode)
+            if (!_config.TestMode && translationCounter > 0)
             {
                 Utilities.WriteResourcesToFile(translatedResources, outputFilePath);
                 _logger.LogInformation($"Writing: {outputFilePath}");

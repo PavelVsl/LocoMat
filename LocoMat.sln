@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		LocoMat\release-notes.txt = LocoMat\release-notes.txt
 		NugetPublish.sh = NugetPublish.sh
 		GitVersion.yml = GitVersion.yml
+		NugetLocalInstall.sh = NugetLocalInstall.sh
 	EndProjectSection
 EndProject
 Global

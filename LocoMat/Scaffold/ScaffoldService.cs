@@ -55,7 +55,8 @@ public class ScaffoldService : IScaffoldService
     private void LoadClasses()
     {
         var rb = typeof(RadzenComponent).Assembly;
-        foreach (var type in rb.GetTypes().Where(x => x.IsSubclassOf(typeof(RadzenComponent)) && x.GetProperties().Any(p => p.IsLocalizable())))
+        foreach (var type in rb.GetTypes().Where(x =>
+                     x.IsSubclassOf(typeof(RadzenComponent)) && x.GetProperties().Any(p => p.IsLocalizable())))
         {
             var ci = new ClassInfo();
             ci.Name = type.Name.Replace("`1", "");
@@ -131,7 +132,8 @@ public class ScaffoldService : IScaffoldService
             sb.AppendLine("    [Inject] RadzenLocalizer L { get; set; }");
             sb.AppendLine("    protected override void OnInitialized()");
             sb.AppendLine("    {");
-            foreach (var property in type.Properties) sb.AppendLine($"      {property.Key} = L[\"{name}.{property.Key}\"] ?? {property.Key};");
+            foreach (var property in type.Properties)
+                sb.AppendLine($"      {property.Key} = L[\"{name}.{property.Key}\"] ?? {property.Key};");
 
             sb.AppendLine("        base.OnInitialized();");
             sb.AppendLine("    }");
@@ -144,44 +146,41 @@ public class ScaffoldService : IScaffoldService
         File.WriteAllText(filename, sb.ToString());
     }
 
-
-// Method to generate a file containing extension methods for Radzen localization
+    // Method to generate a file containing extension methods for Radzen localization
     private void ScaffoldExtensions()
     {
         var filePath = Path.Combine(_scaffoldFolder, "RadzenLocalizationExtensions.cs");
 
-        var sb = new StringBuilder();
-        sb.AppendLine($"namespace {_nameSpace};");
-        sb.AppendLine();
-        sb.AppendLine("using Microsoft.Extensions.DependencyInjection;");
-        sb.AppendLine("using Microsoft.AspNetCore.Components;");
-        sb.AppendLine("using Radzen;");
-        sb.AppendLine("using Radzen.Blazor;");
-        sb.AppendLine();
-        sb.AppendLine("public static class RadzenLocalizationExtensions");
-        sb.AppendLine("{");
-        sb.AppendLine("    public static IServiceCollection AddRadzenLocalization(this IServiceCollection services)");
-        sb.AppendLine("    {");
-        sb.AppendLine("        var componentActivator = new OverridableComponentActivator();");
-        sb.AppendLine();
+        string content = $@"
+namespace {_nameSpace};
 
-        foreach (var type in _classes)
-        {
-            var name = type.Name;
-            var p = type.GenericType != null ? "<>" : "";
-            sb.AppendLine($"        componentActivator.RegisterOverride(typeof({name}{p}), typeof({name}Localized{p}));");
-        }
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Components;
+using Radzen;
+using Radzen.Blazor;
 
-        sb.AppendLine();
-        sb.AppendLine("        services.AddSingleton<RadzenLocalizer>();");
-        sb.AppendLine("        services.AddSingleton<IComponentActivator>(componentActivator);");
-        sb.AppendLine();
-        sb.AppendLine("        return services;");
-        sb.AppendLine("    }");
-        sb.AppendLine("}");
+public static class RadzenLocalizationExtensions
+{{
+    public static IServiceCollection AddRadzenLocalization(this IServiceCollection services)
+    {{
+        var componentActivator = new OverridableComponentActivator();
+
+{(string.Join(Environment.NewLine, _classes.Select(type =>
+{
+    var name = type.Name;
+    var p = type.GenericType != null ? "<>" : "";
+    return $"        componentActivator.RegisterOverride(typeof({name}{p}), typeof({name}Localized{p}));";
+})))}
+
+        services.AddSingleton<RadzenLocalizer>();
+        services.AddSingleton<IComponentActivator>(componentActivator);
+
+        return services;
+    }}
+}}";
 
         _logger.LogInformation($"Writing {filePath}");
-        File.WriteAllText(filePath, sb.ToString());
+        File.WriteAllText(filePath, content);
     }
 
 
@@ -270,10 +269,12 @@ public class RadzenLocalizer  :  StringLocalizer<RadzenLocalizer>
         //get root node
         var root = tree.GetRoot();
         //check if already present
-        if (root.DescendantNodes().OfType<GlobalStatementSyntax>().All(i => i.Statement.ToString() != "builder.Services.AddRadzenLocalization()"))
+        if (root.DescendantNodes().OfType<GlobalStatementSyntax>()
+            .All(i => i.Statement.ToString() != "builder.Services.AddRadzenLocalization()"))
         {
             //find line with "var app = builder.Build();" and insert service before
-            var app = root.DescendantNodes().OfType<GlobalStatementSyntax>().FirstOrDefault(m => m.Statement.ToString() == "var app = builder.Build();");
+            var app = root.DescendantNodes().OfType<GlobalStatementSyntax>()
+                .FirstOrDefault(m => m.Statement.ToString() == "var app = builder.Build();");
             if (app != null)
             {
                 // add service

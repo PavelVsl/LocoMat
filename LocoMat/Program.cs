@@ -1,5 +1,6 @@
 ﻿using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
+using System.CommandLine.Parsing;
 using LocoMat.Localization;
 using LocoMat.Localization.Filters;
 using LocoMat.Scaffold;
@@ -47,8 +48,18 @@ internal class Program
         
         var sourceOption = new Option<string>(
             new[] { "--source", "-s" },
-            "Optional source directory for locating the resource files. Defaults to the current directory."
+            description: "Optional source directory for locating the resource files. Defaults to the current directory.",
+            isDefault: true,
+            parseArgument: result =>
+                {
+                    var value = result.Tokens.SingleOrDefault()?.Value;
+                    // if parameter is not specified, use current directory, else check if directory exists
+                    if (value == null) value = Directory.GetCurrentDirectory();
+                    else if (!Directory.Exists(value)) result.ErrorMessage = $"Directory {value} does not exist.";
+                    return value;
+                }
         );
+        
         var outputOption = new Option<string>(new[] { "--output", "-o" }, "Optional output directory for storing translated files. Defaults to the current directory.");
         var targetLangOption = new Option<string>(new[] { "--target-languages", "-t" }, "Comma-separated list of target languages for translation. Defaults to empty (i.e., no translation).");
         var emailOption = new Option<string>(new[] { "--email", "-e" }, "Email address. Required for translation service.");

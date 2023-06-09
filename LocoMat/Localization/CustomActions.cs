@@ -108,13 +108,14 @@ public class CustomActions
             },
             new()
             {
-                //Localize RadzenRequiredValidator
-                ComponentType = "RadzenRequiredValidator",
+                //Localize Radzen Validators
+                ComponentType = "Radzen(?<type>\\w+)Validator",
                 Action = match =>
                 {
                     var tag = match.Value;
+                    var type = match.Groups["type"].Value;
                     var component = tag.GetAttributeValue("Component");
-                    var key = $"{_vars["TItem"]}.{component}.RequiredValidator";
+                    var key = $"{_vars["TItem"]}.{component}.{type}Validator";
                     return tag.ReplaceAttributeWithKey(_resourceKeys, "Text", key);
                 },
             },
