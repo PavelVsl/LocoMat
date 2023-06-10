@@ -98,7 +98,6 @@ public class RazorProcessor
                 return modifiedTag;
             });
         }
-
         return razorContent;
     }
 

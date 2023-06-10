@@ -1,4 +1,6 @@
 Release notes
+0.1.28 - RadzenButton fix 
+0.1.27 - Translation bug fix
 0.1.26 - Added backup option to localize command 
 0.1.25 - Redesigned cli interface to use System.CommandLine, 
 0.1.22 - experimental support for Radzen Blazor components localization

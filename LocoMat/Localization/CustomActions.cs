@@ -105,6 +105,20 @@ public class CustomActions
                     var key = $"{_vars["className"]}.{attributeValue}";
                     return tag.ReplaceAttributeWithKey(_resourceKeys, "Text", key);
                 },
+            },            
+            new()
+            {
+                //Localize RadzenAlert
+                ComponentType = "RadzenAlert",
+                Action = match =>
+                {
+                    var tag = match.Value;
+                    var attributeValue = tag.GetAttributeValue("Title").GenerateResourceKey();
+                    if (string.IsNullOrEmpty(attributeValue)) return tag;
+
+                    var key = $"{_vars["className"]}.{attributeValue}";
+                    return tag.ReplaceAttributeWithKey(_resourceKeys, "Title", key);
+                },
             },
             new()
             {
@@ -123,6 +137,7 @@ public class CustomActions
             {
                 //Localize RadzenButton
                 ComponentType = "RadzenButton",
+                Regex = () => $@"<(?<tag>RadzenButton)(\s+\S+)*/?>",
                 Action = match =>
                 {
                     var tag = match.Value;
@@ -144,20 +159,19 @@ public class CustomActions
                     return tag.ReplaceAttributeWithKey(_resourceKeys, "Text", key);
                 },
             },
-
             new()
             {
-                ComponentType = "RadzenGridColumn",
-                Regex = () => @"NotificationService\.Notify\(new NotificationMessage\s*\{\s*Severity\s*=\s*NotificationSeverity\.Error,\s*Summary\s*=\s*`(?<error>[^`]+)`,\s*Detail\s*=\s*`(?<detail>[^`]+)`\s*\}\);",
+                ComponentType = "RadzenProfileMenuItem",
                 Action = match =>
                 {
                     var tag = match.Value;
-                    var text = tag.GetAttributeValue("Title");
+                    var text = tag.GetAttributeValue("Text");
                     if (string.IsNullOrEmpty(text)) return tag;
-                    var key = $"{_vars["TItem"]}.{text}";
-                    return tag.ReplaceAttributeWithKey(_resourceKeys, "Title", key);
+                    var key = $"Menu.{text}";
+                    return tag.ReplaceAttributeWithKey(_resourceKeys, "Text", key);
                 },
             },
+
         };
     }
 

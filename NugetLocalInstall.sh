@@ -1,14 +1,7 @@
 #!/bin/bash
 
-# This script is used to publish a .nupkg file to a NuGet feed.
-# It is intended to be used in a build pipeline.
-
-# Usage:
-# ./NugetPublish.sh <nupkg_file> 
-
 # build
 dotnet build -c Release
-
 # package file to publish
 dotnet pack -c Release
 # get the latest nupkg file in the .nupkg directory
