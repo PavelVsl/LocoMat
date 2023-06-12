@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		NugetLocalInstall.sh = NugetLocalInstall.sh
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRMBlazorServerRBS", "CRMBlazorServerRBSSample\CRMBlazorServerRBS.csproj", "{A98B589E-73BA-4290-959B-DC4CD28B8357}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,5 +29,9 @@ Global
 		{27AAAAA4-88A5-41FD-A8DD-710316E03803}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27AAAAA4-88A5-41FD-A8DD-710316E03803}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27AAAAA4-88A5-41FD-A8DD-710316E03803}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A98B589E-73BA-4290-959B-DC4CD28B8357}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A98B589E-73BA-4290-959B-DC4CD28B8357}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A98B589E-73BA-4290-959B-DC4CD28B8357}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A98B589E-73BA-4290-959B-DC4CD28B8357}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
