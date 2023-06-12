@@ -9,6 +9,6 @@ public class VariableDeclarationFilter : BaseLiteralFilter
 
     public override bool IsProhibited(LiteralExpressionSyntax literal)
     {
-        return literal.Parent is VariableDeclaratorSyntax;
+        return literal.Ancestors().Any(x => x is VariableDeclaratorSyntax);
     }
 }

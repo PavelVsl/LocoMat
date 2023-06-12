@@ -30,7 +30,8 @@ public class CustomActions
             {
                 //Localize the tag content if it is not an existing localizer call
                 ComponentType = "Content",
-                Regex = () => @"(?<=<\w+>(?![^<]*?@)[^<]*?)\b(?:\w+\s*)+\b(?=[^>]*</\w+>)",
+                //Regex = () => @"(?<=<\w+>(?![^<]*?@)[^<]*?)\b(?:\w+\s*)+\b(?=[^>]*</\w+>)",
+                Regex = () => @"(?<=<\w+>[^@<>]*?)\b(?:\w+\s*)+\b(?=[^<>]*?</\w+>)",
                 Action = match =>
                 {
                     var tag = match.Value;
@@ -95,7 +96,7 @@ public class CustomActions
             new()
             {
                 //Localize RadzenLabel
-                ComponentType = "RadzenText",
+                ComponentType = "Radzen[Text|Heading]",
                 Action = match =>
                 {
                     var tag = match.Value;
