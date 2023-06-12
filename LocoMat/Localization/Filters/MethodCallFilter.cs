@@ -4,7 +4,7 @@ namespace LocoMat.Localization.Filters;
 
 public class MethodCallFilter : BaseLiteralFilter
 {
-    private readonly string[] _methodNames = { "ToString", "Format" };
+    private readonly string[] _methodNames = { "ToString", "Format", "Get" };
 
     public MethodCallFilter()
     {

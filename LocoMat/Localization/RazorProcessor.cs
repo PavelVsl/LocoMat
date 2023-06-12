@@ -27,18 +27,25 @@ public class RazorProcessor
         testMode = config.TestMode;
     }
 
-    public async Task ProcessRazorFile(string razorFileName)
+    public async Task ProcessRazorFile(string razorFileName, bool injectLocalizer)
     {
         // Step 1: Open razor file
         var razorContent = await File.ReadAllTextAsync(razorFileName);
         var className = Path.GetFileNameWithoutExtension(razorFileName);
 
-        // Step 2: Add localizer injection                                                                                                                      
-        var newRazorContent = AddLocalizerInjection(razorContent, razorFileName);
 
-        // Step 3: Search localizable strings and replace them with localizer calls
-        newRazorContent = ProcessCustomActions(_customActions, newRazorContent, className);
+        // Step 2: Search localizable strings and replace them with localizer calls
+        var newRazorContent = ProcessCustomActions(_customActions, razorContent, className);
 
+        if(newRazorContent != razorContent)
+        {
+            injectLocalizer = true;
+        }
+        if (injectLocalizer)
+        {
+            // Step 3: Add localizer injection                                                                                                                      
+            newRazorContent = AddLocalizerInjection(newRazorContent, razorFileName);
+        }
         // Step 4: Write the modified razor content back to the file
         if (newRazorContent == razorContent)
         {
@@ -53,6 +60,7 @@ public class RazorProcessor
         }
         else
         {
+            _logger.LogInformation($"Writing changes to {razorFileName}");
             await _backupService.WriteAllTextWithBackup(razorFileName, newRazorContent);
         }
     }
@@ -94,7 +102,9 @@ public class RazorProcessor
                 var modifiedTag = customAction.Action(match);
                 // check if the tag has been modified
                 if (modifiedTag != originalValue)
-                    _logger.LogDebug($"Replace: {originalValue} -> {modifiedTag}");
+                    _logger.LogDebug($"Matched: {customAction.ComponentType}\n" +
+                                     $"Replace: {originalValue}\n" +
+                                     $"   ->    {modifiedTag}");
                 return modifiedTag;
             });
         }

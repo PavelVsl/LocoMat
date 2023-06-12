@@ -46,16 +46,17 @@ public class LocalizationService : ILocalizationService
             var files = Directory.GetFiles(folderPath, _config.Include, SearchOption.AllDirectories);
             foreach (var file in files)
             {
-                if (_config.ExcludeFiles.Contains(Path.GetFileName(file))) continue;
-                _logger.LogInformation($"Processing file: {file}");
-                await _razorProcessor.ProcessRazorFile(file);
+                var changed = false;
                 //if partial class cs file exists, process it, file name is same as razor file name with .razor.cs extension
                 var csFile = file + ".cs";
                 if (File.Exists(csFile))
                 {
-                    _logger.LogInformation($"Processing file: {csFile}", csFile);
-                    await _csProcessor.ProcessFile(csFile);
+                    _logger.LogDebug($"Processing file: {csFile}", csFile);
+                    changed = await _csProcessor.ProcessFile(csFile);
                 }
+                if (_config.ExcludeFiles.Contains(Path.GetFileName(file))) continue;
+                _logger.LogDebug($"Processing file: {file}");
+                await _razorProcessor.ProcessRazorFile(file,changed);
             }
         }
 

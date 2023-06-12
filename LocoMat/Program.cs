@@ -123,6 +123,7 @@ internal class Program
                 .AddSingleton<CsProcessor>()
                 .AddSingleton<BackupService>()
                 .AddSingleton<ILiteralFilter, LiteralFilters>()
+                .AddSingleton<LocalizeStringLiteralsRewriter>()
                 .AddSingleton<NamespaceService>()
                 .BuildServiceProvider();
 

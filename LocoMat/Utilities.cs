@@ -25,7 +25,7 @@ public static class Utilities
 
     public static string GetAttributeValue(this string tag, string attributeName)
     {
-        // Find attributes ending with Text or Title
+        // Find attribute
         var attributePattern = @$"(?<={attributeName}\s*=\s*"")([^""]*)";
         var attributeRegex = new Regex(attributePattern);
         // Handle attribute values
@@ -37,10 +37,11 @@ public static class Utilities
     {
         var attributeName = "Title";
         if (DoNotReplace(tag, attributeName)) return tag;
+        var attributeValue = tag.GetAttributeValue(attributeName);
         var className = GetClassNameFromTag(tag, "TItem");
         var property = tag.GetAttributeValue("Property");
+        if (string.IsNullOrEmpty(property)) property = attributeValue.GenerateResourceKey();
         var key = $"{className}.{property}";
-        var attributeValue = tag.GetAttributeValue(attributeName);
         modelKeys.TryAdd(key, attributeValue);
         return tag.SetAttributeValue(attributeName, key);
     }

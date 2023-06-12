@@ -47,7 +47,7 @@ public class LiteralFilters : List<ILiteralFilter>, ILiteralFilter
         foreach (var filter in this)
             if (filter.IsProhibited(literal))
             {
-                _logger.LogDebug($"Literal '{literal}' is not localizable because of filter '{filter.Name}'");
+                _logger.LogTrace($"Literal '{literal}' is not localizable because of filter '{filter.Name}'");
                 return true;
             }
 
