@@ -17,6 +17,7 @@ public class LiteralFilters : List<ILiteralFilter>, ILiteralFilter
 
         Add(new MethodCallFilter("NavigateTo"));
         Add(new MethodCallRegexFilter("Export*"));
+        Add(new MethodCallRegexFilter("Invoke*"));
     }
 
     //Load filters using reflection

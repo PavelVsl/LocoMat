@@ -13,6 +13,6 @@ if [ -z "$latest_nupkg" ]; then
 fi
 
 # install package as global tool
-dotnet tool update --global --add-source .nupkg/ locomat
+dotnet tool update --global --prerelease --add-source .nupkg/ locomat
 
 echo "Done"
