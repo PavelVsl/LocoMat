@@ -1,46 +1,47 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> D
 @page "/edit-contact"
 
 @attribute [Authorize]
 @inject Microsoft.Extensions.Localization.IStringLocalizer<EditContact> L
 
-<PageTitle>Edit Contact</PageTitle>
+<PageTitle>@D["EditContact.EditContact"]</PageTitle>
 
     <RadzenColumn SizeMD=12>
         <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save Contact</RadzenAlert>
         <RadzenTemplateForm TItem="CRMBlazorServerRBS.Models.RadzenCRM.Contact" Data="@contact" Visible="@(contact != null)" Submit="@FormSubmit">
           <RadzenStack>
-            <RadzenFormField Text="Email" Variant="Variant.Filled">
+            <RadzenFormField Text="@D["Contact.Email"]" Variant="Variant.Filled">
                   <ChildContent>
                     <RadzenTextBox style="display: block; width: 100%" @bind-Value="@contact.Email" Name="Email" />
                   </ChildContent>    
                   <Helper>
-                    <RadzenRequiredValidator Component="Email" Text="Email is required" />
+                    <RadzenRequiredValidator Component="Email" Text="@D["Contact.Email.RequiredValidator"]" />
                   </Helper>
             </RadzenFormField>
-            <RadzenFormField Text="Company" Variant="Variant.Filled">
+            <RadzenFormField Text="@D["Contact.Company"]" Variant="Variant.Filled">
                   <ChildContent>
                     <RadzenTextBox style="display: block; width: 100%" @bind-Value="@contact.Company" Name="Company" />
               </ChildContent>
             </RadzenFormField>
-            <RadzenFormField Text="Last Name" Variant="Variant.Filled">
+            <RadzenFormField Text="@D["Contact.LastName"]" Variant="Variant.Filled">
                   <ChildContent>
                     <RadzenTextBox style="display: block; width: 100%" @bind-Value="@contact.LastName" Name="LastName" />
               </ChildContent>
             </RadzenFormField>
-            <RadzenFormField Text="First Name" Variant="Variant.Filled">
+            <RadzenFormField Text="@D["Contact.FirstName"]" Variant="Variant.Filled">
                   <ChildContent>
                     <RadzenTextBox style="display: block; width: 100%" @bind-Value="@contact.FirstName" Name="FirstName" />
               </ChildContent>
             </RadzenFormField>
-            <RadzenFormField Text="Phone" Variant="Variant.Filled">
+            <RadzenFormField Text="@D["Contact.Phone"]" Variant="Variant.Filled">
                   <ChildContent>
                     <RadzenTextBox style="display: block; width: 100%" @bind-Value="@contact.Phone" Name="Phone" />
               </ChildContent>
             </RadzenFormField>
           </RadzenStack>
           <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
-                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
-                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="@D["Button.Save"]" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="@D["Button.Save"]" Variant="Variant.Flat" Click="@CancelButtonClick"  />
           </RadzenStack>
         </RadzenTemplateForm>
     </RadzenColumn>

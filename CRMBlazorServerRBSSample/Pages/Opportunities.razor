@@ -1,13 +1,14 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> D
 @page "/opportunities"
 
 @attribute [Authorize]
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Opportunities> L
 
-<PageTitle>Opportunities</PageTitle>
+<PageTitle>@D["Opportunities.Opportunities"]</PageTitle>
 <RadzenStack>
     <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="12" SizeMD="6">
-            <RadzenText Text="Opportunities" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+            <RadzenText Text="@D["Opportunities.Opportunities"]" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
         </RadzenColumn>
         <RadzenColumn Size="12" SizeMD="6">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
@@ -15,7 +16,7 @@
                     <RadzenSplitButtonItem Text="Excel" Value="xlsx" />
                     <RadzenSplitButtonItem Text="CSV" Value="csv" />
                 </RadzenSplitButton>
-                <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddButtonClick" Variant="Variant.Flat" />
+                <RadzenButton Icon="add_circle_outline" Text="@D["Button.Add"]" Click="@AddButtonClick" Variant="Variant.Flat" />
             </RadzenStack>
         </RadzenColumn>
     </RadzenRow>
@@ -25,22 +26,22 @@
         <RadzenDataGrid @ref="grid0" ColumnWidth="200px"  AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
             Data="@opportunities"    TItem="CRMBlazorServerRBS.Models.RadzenCRM.Opportunity" RowSelect="@EditRow" >
             <Columns>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Opportunity" Property="Id" Title="Id">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Opportunity" Property="Id" Title="@D["Opportunity.Id"]">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Opportunity" Property="Amount" Title="Amount">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Opportunity" Property="Amount" Title="@D["Opportunity.Amount"]">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Opportunity" Property="Name" Title="Name">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Opportunity" Property="Name" Title="@D["Opportunity.Name"]">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Opportunity" Property="User.FirstName" SortProperty="User.FirstName" FilterProperty="User.FirstName" Title="User">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Opportunity" Property="User.FirstName" SortProperty="User.FirstName" FilterProperty="User.FirstName" Title="@D["Opportunity.User.FirstName"]">
                     <Template Context="opportunity">
                         <RadzenLabel Text="@opportunity.User?.FirstName" /> <RadzenLabel Text="@opportunity.User?.LastName" />
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Opportunity" Property="CloseDate" Title="Close Date">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Opportunity" Property="CloseDate" Title="@D["Opportunity.CloseDate"]">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Opportunity" Property="Contact.Email" Title="Contact">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Opportunity" Property="Contact.Email" Title="@D["Opportunity.Contact.Email"]">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Opportunity" Property="OpportunityStatus.Name" Title="Opportunity Status">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Opportunity" Property="OpportunityStatus.Name" Title="@D["Opportunity.OpportunityStatus.Name"]">
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Opportunity" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
                     <Template Context="opportunity">

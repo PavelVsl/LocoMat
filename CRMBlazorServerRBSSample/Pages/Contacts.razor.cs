@@ -57,20 +57,20 @@ namespace CRMBlazorServerRBS.Pages
 
         protected async Task AddButtonClick(MouseEventArgs args)
         {
-            await DialogService.OpenAsync<AddContact>("Add Contact", null);
+            await DialogService.OpenAsync<AddContact>(D["AddContact.AddContact"], null);
             await grid0.Reload();
         }
 
         protected async Task EditRow(CRMBlazorServerRBS.Models.RadzenCRM.Contact args)
         {
-            await DialogService.OpenAsync<EditContact>("Edit Contact", new Dictionary<string, object> { {"Id", args.Id} });
+            await DialogService.OpenAsync<EditContact>(D["EditContact.EditContact"], new Dictionary<string, object> { {"Id", args.Id} });
         }
 
         protected async Task GridDeleteButtonClick(MouseEventArgs args, CRMBlazorServerRBS.Models.RadzenCRM.Contact contact)
         {
             try
             {
-                if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
+                if (await DialogService.Confirm(D["Contacts.AreYouSureYouWantToDeleteThisRecord"]) == true)
                 {
                     var deleteResult = await RadzenCRMService.DeleteContact(contact.Id);
 

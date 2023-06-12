@@ -1,0 +1,457 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="LoginLayout.Welcome" xml:space="preserve">
+    <value>Vítejte! </value>
+  </data>
+  <data name="LoginLayout.CrmblazorserverrbsV100Copyright2023" xml:space="preserve">
+    <value>CRMBlazorServerRBS v.1.0.0, Copyright © 2023</value>
+  </data>
+  <data name="MainLayout.Crmblazorserverrbs" xml:space="preserve">
+    <value>CRMBlazor Server RBS</value>
+  </data>
+  <data name="MainLayout.CrmblazorserverrbsV100" xml:space="preserve">
+    <value>CRMBlazorServerRBS v1.0.0</value>
+  </data>
+  <data name="MainLayout.Copyright2023" xml:space="preserve">
+    <value>Autorská práva 2023</value>
+  </data>
+  <data name="Menu.Dashboard" xml:space="preserve">
+    <value>Nástěnka</value>
+  </data>
+  <data name="Menu.Contacts" xml:space="preserve">
+    <value>Kontakty</value>
+  </data>
+  <data name="Menu.Tasks" xml:space="preserve">
+    <value>Úkoly</value>
+  </data>
+  <data name="Menu.Opportunities" xml:space="preserve">
+    <value>Příležitosti</value>
+  </data>
+  <data name="Menu.Settings" xml:space="preserve">
+    <value>Nastavení</value>
+  </data>
+  <data name="Menu.OpportunityStatuses" xml:space="preserve">
+    <value>Stavy příležitostí</value>
+  </data>
+  <data name="Menu.TaskStatuses" xml:space="preserve">
+    <value>Stavy úkolů</value>
+  </data>
+  <data name="Menu.TaskTypes" xml:space="preserve">
+    <value>Typy úkolů</value>
+  </data>
+  <data name="Menu.Profile" xml:space="preserve">
+    <value>Profil</value>
+  </data>
+  <data name="Menu.Users" xml:space="preserve">
+    <value>Uživatelé</value>
+  </data>
+  <data name="Menu.Roles" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="Menu.Logout" xml:space="preserve">
+    <value>Odhlásit</value>
+  </data>
+  <data name="TaskTypes.Tasktypes" xml:space="preserve">
+    <value>Typy úkolů</value>
+  </data>
+  <data name="TaskType.Id" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="TaskType.Name" xml:space="preserve">
+    <value>Jméno</value>
+  </data>
+  <data name="Button.Add" xml:space="preserve">
+    <value>Přidat</value>
+  </data>
+  <data name="AddTaskType.AddTasktype" xml:space="preserve">
+    <value>Přidat typ úlohy</value>
+  </data>
+  <data name="EditTaskType.EditTasktype" xml:space="preserve">
+    <value>Upravit typ úlohy</value>
+  </data>
+  <data name="TaskTypes.AreYouSureYouWantToDeleteThisRecord" xml:space="preserve">
+    <value>Určitě to chcete smazat?</value>
+  </data>
+  <data name="EditOpportunityStatus.EditOpportunitystatus" xml:space="preserve">
+    <value>Upravit OpportunityStatus</value>
+  </data>
+  <data name="OpportunityStatus.Name" xml:space="preserve">
+    <value>Jméno</value>
+  </data>
+  <data name="Button.Save" xml:space="preserve">
+    <value>Uložit</value>
+  </data>
+  <data name="EditOpportunity.EditOpportunity" xml:space="preserve">
+    <value>Upravit příležitost</value>
+  </data>
+  <data name="Opportunity.Amount" xml:space="preserve">
+    <value>Částka</value>
+  </data>
+  <data name="Opportunity.Name" xml:space="preserve">
+    <value>Jméno</value>
+  </data>
+  <data name="Opportunity.CloseDate" xml:space="preserve">
+    <value>Datum ukončení</value>
+  </data>
+  <data name="Opportunity.Contact" xml:space="preserve">
+    <value>Kontakt</value>
+  </data>
+  <data name="Opportunity.OpportunityStatus" xml:space="preserve">
+    <value>Stav příležitosti</value>
+  </data>
+  <data name="Opportunity.Amount.RequiredValidator" xml:space="preserve">
+    <value>Je požadována částka</value>
+  </data>
+  <data name="Opportunity.Name.RequiredValidator" xml:space="preserve">
+    <value>Je vyžadováno jméno</value>
+  </data>
+  <data name="Opportunity.CloseDate.RequiredValidator" xml:space="preserve">
+    <value>CloseDate je vyžadováno</value>
+  </data>
+  <data name="ApplicationUsers.Users" xml:space="preserve">
+    <value>Uživatelé</value>
+  </data>
+  <data name="ApplicationUser.UserName" xml:space="preserve">
+    <value>Uživatelské jméno</value>
+  </data>
+  <data name="ApplicationUser.Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="ApplicationUser.FirstName" xml:space="preserve">
+    <value>Meno</value>
+  </data>
+  <data name="ApplicationUser.LastName" xml:space="preserve">
+    <value>Priezvisko</value>
+  </data>
+  <data name="ApplicationUsers.CannotDeleteUser" xml:space="preserve">
+    <value>Nelze odstranit uživatele</value>
+  </data>
+  <data name="AddApplicationUser.AddApplicationUser" xml:space="preserve">
+    <value>Přidat uživatele aplikace</value>
+  </data>
+  <data name="EditApplicationUser.EditApplicationUser" xml:space="preserve">
+    <value>Upravit uživatele aplikace</value>
+  </data>
+  <data name="ApplicationUsers.AreYouSureYouWantToDeleteThisUser" xml:space="preserve">
+    <value>Jste si jisti, že chcete smazat tohoto uživatele?</value>
+  </data>
+  <data name="Unauthorized.Unauthorized" xml:space="preserve">
+    <value>Neautorizované</value>
+  </data>
+  <data name="Unauthorized.YouAreNotAuthorizedToViewThisPage" xml:space="preserve">
+    <value>Nejste oprávněni zobrazit tento</value>
+  </data>
+  <data name="ApplicationRole.Name" xml:space="preserve">
+    <value>Jméno</value>
+  </data>
+  <data name="AddApplicationRole.CannotCreateRole" xml:space="preserve">
+    <value>Nelze vytvořit roli</value>
+  </data>
+  <data name="ApplicationRole.Name.RequiredValidator" xml:space="preserve">
+    <value>Je vyžadováno jméno</value>
+  </data>
+  <data name="ApplicationRoles.Roles" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="ApplicationRoles.CannotDeleteRole" xml:space="preserve">
+    <value>Roli nelze odstranit</value>
+  </data>
+  <data name="AddApplicationRole.AddApplicationRole" xml:space="preserve">
+    <value>Přidat roli aplikace</value>
+  </data>
+  <data name="ApplicationRoles.AreYouSureYouWantToDeleteThisRole" xml:space="preserve">
+    <value>Opravdu chcete smazat tuto roli?</value>
+  </data>
+  <data name="ApplicationUser.Roles" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="ApplicationUser.Password" xml:space="preserve">
+    <value>Heslo</value>
+  </data>
+  <data name="ApplicationUser.ConfirmPassword" xml:space="preserve">
+    <value>Potvrdit heslo</value>
+  </data>
+  <data name="AddApplicationUser.CannotCreateUser" xml:space="preserve">
+    <value>Nelze vytvořit uživatele</value>
+  </data>
+  <data name="ApplicationUser.Email.RequiredValidator" xml:space="preserve">
+    <value>Je vyžadována e-mailová adresa</value>
+  </data>
+  <data name="ApplicationUser.FirstName.RequiredValidator" xml:space="preserve">
+    <value>Křestní jméno je povinné</value>
+  </data>
+  <data name="ApplicationUser.LastName.RequiredValidator" xml:space="preserve">
+    <value>Příjmení je povinné</value>
+  </data>
+  <data name="ApplicationUser.Picture.RequiredValidator" xml:space="preserve">
+    <value>Obrázek je povinný</value>
+  </data>
+  <data name="ApplicationUser.Password.RequiredValidator" xml:space="preserve">
+    <value>Heslo je vyžadováno</value>
+  </data>
+  <data name="ApplicationUser.ConfirmPassword.RequiredValidator" xml:space="preserve">
+    <value>PotvrditPassword is required</value>
+  </data>
+  <data name="ApplicationUser.ConfirmPassword.CompareValidator" xml:space="preserve">
+    <value>Hesla se musí shodovat.</value>
+  </data>
+  <data name="EditTaskStatus.EditTaskstatus" xml:space="preserve">
+    <value>Upravit TaskStatus</value>
+  </data>
+  <data name="TaskStatus.Name" xml:space="preserve">
+    <value>Jméno</value>
+  </data>
+  <data name="AddTask.AddTask" xml:space="preserve">
+    <value>Přidat úlohu</value>
+  </data>
+  <data name="Task.Title" xml:space="preserve">
+    <value>Název</value>
+  </data>
+  <data name="Task.DueDate" xml:space="preserve">
+    <value>Termín splnění</value>
+  </data>
+  <data name="Task.Opportunity" xml:space="preserve">
+    <value>Příležitost</value>
+  </data>
+  <data name="Task.TaskStatus" xml:space="preserve">
+    <value>Stav úlohy</value>
+  </data>
+  <data name="Task.TaskType" xml:space="preserve">
+    <value>Typ úkolu</value>
+  </data>
+  <data name="Task.DueDate.RequiredValidator" xml:space="preserve">
+    <value>Termín je povinný</value>
+  </data>
+  <data name="Tasks.Tasks" xml:space="preserve">
+    <value>Úkoly</value>
+  </data>
+  <data name="Task.Id" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Task.Opportunity.Name" xml:space="preserve">
+    <value>Příležitost</value>
+  </data>
+  <data name="Task.TaskStatus.Name" xml:space="preserve">
+    <value>Stav úlohy</value>
+  </data>
+  <data name="Task.TaskType.Name" xml:space="preserve">
+    <value>Typ úkolu</value>
+  </data>
+  <data name="EditTask.EditTask" xml:space="preserve">
+    <value>Upravit úkol</value>
+  </data>
+  <data name="Tasks.AreYouSureYouWantToDeleteThisRecord" xml:space="preserve">
+    <value>Určitě to chcete smazat?</value>
+  </data>
+  <data name="AddOpportunity.AddOpportunity" xml:space="preserve">
+    <value>Přidat příležitost</value>
+  </data>
+  <data name="Index.Index" xml:space="preserve">
+    <value>Rejstřík</value>
+  </data>
+  <data name="Opportunity.Contact.FirstName" xml:space="preserve">
+    <value>Kontakt</value>
+  </data>
+  <data name="Opportunity.OpportunityStatus.Name" xml:space="preserve">
+    <value>Stav</value>
+  </data>
+  <data name="Task.Opportunity.User.FirstName" xml:space="preserve">
+    <value>Zaměstnanec</value>
+  </data>
+  <data name="AddOpportunityStatus.AddOpportunitystatus" xml:space="preserve">
+    <value>Přidat OpportunityStatus</value>
+  </data>
+  <data name="EditContact.EditContact" xml:space="preserve">
+    <value>Upravit kontakt</value>
+  </data>
+  <data name="Contact.Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="Contact.Company" xml:space="preserve">
+    <value>Společnost</value>
+  </data>
+  <data name="Contact.LastName" xml:space="preserve">
+    <value>Priezvisko</value>
+  </data>
+  <data name="Contact.FirstName" xml:space="preserve">
+    <value>Meno</value>
+  </data>
+  <data name="Contact.Phone" xml:space="preserve">
+    <value>Telefon</value>
+  </data>
+  <data name="Contact.Email.RequiredValidator" xml:space="preserve">
+    <value>Je vyžadována e-mailová adresa</value>
+  </data>
+  <data name="Login.Login" xml:space="preserve">
+    <value>Přihlášení</value>
+  </data>
+  <data name="Login.Error" xml:space="preserve">
+    <value>chyba</value>
+  </data>
+  <data name="Login.Info" xml:space="preserve">
+    <value>info</value>
+  </data>
+  <data name="Login.Redirecturl" xml:space="preserve">
+    <value>Přesměrování URL</value>
+  </data>
+  <data name="Login.DocumentForms0" xml:space="preserve">
+    <value>formuláře[0]</value>
+  </data>
+  <data name="Login.SalesmanagerDemoRadzenCom" xml:space="preserve">
+    <value>salesmanager@demo.radzen.com</value>
+  </data>
+  <data name="Login.Salesmanager1" xml:space="preserve">
+    <value>Manažer prodeje1@</value>
+  </data>
+  <data name="Login.SalesrepDemoRadzenCom" xml:space="preserve">
+    <value>salesrep@demo.radzen.com</value>
+  </data>
+  <data name="Login.Salesrep1" xml:space="preserve">
+    <value>Obchodní zástupce1@</value>
+  </data>
+  <data name="Login.Eval" xml:space="preserve">
+    <value>hodnocení</value>
+  </data>
+  <data name="AddContact.AddContact" xml:space="preserve">
+    <value>Přidat do kontaktů</value>
+  </data>
+  <data name="AddTaskStatus.AddTaskstatus" xml:space="preserve">
+    <value>Přidat TaskStatus</value>
+  </data>
+  <data name="OpportunityStatuses.Opportunitystatuses" xml:space="preserve">
+    <value>Stavy příležitostí</value>
+  </data>
+  <data name="OpportunityStatus.Id" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="OpportunityStatuses.AreYouSureYouWantToDeleteThisRecord" xml:space="preserve">
+    <value>Určitě to chcete smazat?</value>
+  </data>
+  <data name="Profile.Profile" xml:space="preserve">
+    <value>Profil</value>
+  </data>
+  <data name="ApplicationUser.TextBox1" xml:space="preserve">
+    <value>Meno</value>
+  </data>
+  <data name="ApplicationUser.TextBox2" xml:space="preserve">
+    <value>Priezvisko</value>
+  </data>
+  <data name="ApplicationUser.FileInput1" xml:space="preserve">
+    <value>Obrázek</value>
+  </data>
+  <data name="ApplicationUser.OldPassword" xml:space="preserve">
+    <value>Staré heslo</value>
+  </data>
+  <data name="ApplicationUser.NewPassword" xml:space="preserve">
+    <value>Nové heslo</value>
+  </data>
+  <data name="Profile.CannotChangePassword" xml:space="preserve">
+    <value>Heslo nelze změnit</value>
+  </data>
+  <data name="ApplicationUser.TextBox1.RequiredValidator" xml:space="preserve">
+    <value>Jméno je potřeba vyplnit</value>
+  </data>
+  <data name="ApplicationUser.TextBox2.RequiredValidator" xml:space="preserve">
+    <value>Příjmení požadováno.</value>
+  </data>
+  <data name="ApplicationUser.FileInput1.RequiredValidator" xml:space="preserve">
+    <value>Obrázek je povinný</value>
+  </data>
+  <data name="ApplicationUser.OldPassword.RequiredValidator" xml:space="preserve">
+    <value>Vložte aktualní heslo</value>
+  </data>
+  <data name="ApplicationUser.NewPassword.RequiredValidator" xml:space="preserve">
+    <value>Zadejte nové heslo</value>
+  </data>
+  <data name="Contacts.Contacts" xml:space="preserve">
+    <value>Kontakty</value>
+  </data>
+  <data name="Contacts.AreYouSureYouWantToDeleteThisRecord" xml:space="preserve">
+    <value>Určitě to chcete smazat?</value>
+  </data>
+  <data name="TaskStatuses.Taskstatuses" xml:space="preserve">
+    <value>Stavy úkolů</value>
+  </data>
+  <data name="TaskStatus.Id" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="TaskStatuses.AreYouSureYouWantToDeleteThisRecord" xml:space="preserve">
+    <value>Určitě to chcete smazat?</value>
+  </data>
+  <data name="Opportunities.Opportunities" xml:space="preserve">
+    <value>Příležitosti</value>
+  </data>
+  <data name="Opportunity.Id" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Opportunity.User.FirstName" xml:space="preserve">
+    <value>Uživatel</value>
+  </data>
+  <data name="Opportunity.Contact.Email" xml:space="preserve">
+    <value>Kontakt</value>
+  </data>
+  <data name="Opportunities.AreYouSureYouWantToDeleteThisRecord" xml:space="preserve">
+    <value>Určitě to chcete smazat?</value>
+  </data>
+  <data name="EditApplicationUser.CannotUpdateUser" xml:space="preserve">
+    <value>Nelze aktualizovat uživatele</value>
+  </data>
+</root>

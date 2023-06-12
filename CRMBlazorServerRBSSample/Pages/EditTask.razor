@@ -1,41 +1,42 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> D
 @page "/edit-task"
 @attribute [Authorize]
 @inject Microsoft.Extensions.Localization.IStringLocalizer<EditTask> L
 
-<PageTitle>Edit Task</PageTitle>
+<PageTitle>@D["EditTask.EditTask"]</PageTitle>
 
     <RadzenColumn SizeMD=12>
         <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save Task</RadzenAlert>
         <RadzenTemplateForm TItem="CRMBlazorServerRBS.Models.RadzenCRM.Task" Data="@task" Visible="@(task != null)" Submit="@FormSubmit">
           <RadzenStack>
-            <RadzenFormField Text="Title" Variant="Variant.Filled">
+            <RadzenFormField Text="@D["Task.Title"]" Variant="Variant.Filled">
                   <ChildContent>
                     <RadzenTextBox style="display: block; width: 100%" @bind-Value="@task.Title" Name="Title" />
               </ChildContent>
             </RadzenFormField>
-            <RadzenFormField Text="Due Date" Variant="Variant.Filled">
+            <RadzenFormField Text="@D["Task.DueDate"]" Variant="Variant.Filled">
                   <ChildContent>
                     <RadzenDatePicker DateFormat="MM/dd/yyyy" style="display: block; width: 100%" @bind-Value="@task.DueDate" Name="DueDate" />
                   </ChildContent>    
                   <Helper>
-                    <RadzenRequiredValidator Component="DueDate" Text="DueDate is required" />
+                    <RadzenRequiredValidator Component="DueDate" Text="@D["Task.DueDate.RequiredValidator"]" />
                   </Helper>
             </RadzenFormField>
-            <RadzenFormField Text="Opportunity" Variant="Variant.Filled">
+            <RadzenFormField Text="@D["Task.Opportunity"]" Variant="Variant.Filled">
                   <ChildContent>
                     <RadzenDropDownDataGrid Data="@opportunitiesForOpportunityId" TextProperty="Name" ValueProperty="Id" AllowClear=true
                           style="display: block; width: 100%" @bind-Value="@task.OpportunityId" Name="OpportunityId"
                            />
               </ChildContent>
             </RadzenFormField>
-            <RadzenFormField Text="Task Status" Variant="Variant.Filled">
+            <RadzenFormField Text="@D["Task.TaskStatus"]" Variant="Variant.Filled">
                   <ChildContent>
                     <RadzenDropDownDataGrid Data="@taskStatusesForStatusId" TextProperty="Name" ValueProperty="Id" AllowClear=true
                           style="display: block; width: 100%" @bind-Value="@task.StatusId" Name="StatusId"
                            />
               </ChildContent>
             </RadzenFormField>
-            <RadzenFormField Text="Task Type" Variant="Variant.Filled">
+            <RadzenFormField Text="@D["Task.TaskType"]" Variant="Variant.Filled">
                   <ChildContent>
                     <RadzenDropDownDataGrid Data="@taskTypesForTypeId" TextProperty="Name" ValueProperty="Id" AllowClear=true
                           style="display: block; width: 100%" @bind-Value="@task.TypeId" Name="TypeId"
@@ -44,8 +45,8 @@
             </RadzenFormField>
           </RadzenStack>
           <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
-                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
-                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="@D["Button.Save"]" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="@D["Button.Save"]" Variant="Variant.Flat" Click="@CancelButtonClick"  />
           </RadzenStack>
         </RadzenTemplateForm>
     </RadzenColumn>

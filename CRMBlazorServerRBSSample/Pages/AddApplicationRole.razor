@@ -1,3 +1,4 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> D
 @page "/add-application-role"
 @attribute [Authorize(Roles="Sales Manager")]
 @inject Microsoft.Extensions.Localization.IStringLocalizer<AddApplicationRole> L
@@ -5,21 +6,21 @@
 <RadzenRow>
     <RadzenColumn SizeMD="12">
         <RadzenTemplateForm TItem="CRMBlazorServerRBS.Models.ApplicationRole" Data="@role" Visible="@(role != null)" Submit="@FormSubmit">
-            <RadzenAlert Title="Cannot create role" Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">@error</RadzenAlert>
+            <RadzenAlert Title="@D["AddApplicationRole.CannotCreateRole"]" Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">@error</RadzenAlert>
 
             <RadzenStack style="margin-bottom: 1rem;">
-                <RadzenFormField Text="Name" Variant="Variant.Filled">
+                <RadzenFormField Text="@D["ApplicationRole.Name"]" Variant="Variant.Filled">
                     <ChildContent>
                         <RadzenTextBox style="width: 100%" @bind-Value="@(role.Name)" Name="Name" />
                     </ChildContent>
                     <Helper>
-                        <RadzenRequiredValidator Component="Name" Text="Name is required" />
+                        <RadzenRequiredValidator Component="Name" Text="@D["ApplicationRole.Name.RequiredValidator"]" />
                     </Helper>
                 </RadzenFormField>
             </RadzenStack>
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
-                    <RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
-                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Click="@CancelClick" Variant="Variant.Flat" />
+                    <RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="@D["Button.Save"]" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="@D["Button.Save"]" Click="@CancelClick" Variant="Variant.Flat" />
             </RadzenStack>
         </RadzenTemplateForm>
     </RadzenColumn>

@@ -1,13 +1,14 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> D
 @page "/contacts"
 
 @attribute [Authorize]
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Contacts> L
 
-<PageTitle>Contacts</PageTitle>
+<PageTitle>@D["Contacts.Contacts"]</PageTitle>
 <RadzenStack>
     <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="12" SizeMD="6">
-            <RadzenText Text="Contacts" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+            <RadzenText Text="@D["Contacts.Contacts"]" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
         </RadzenColumn>
         <RadzenColumn Size="12" SizeMD="6">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
@@ -15,7 +16,7 @@
                     <RadzenSplitButtonItem Text="Excel" Value="xlsx" />
                     <RadzenSplitButtonItem Text="CSV" Value="csv" />
                 </RadzenSplitButton>
-                <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddButtonClick" Variant="Variant.Flat" />
+                <RadzenButton Icon="add_circle_outline" Text="@D["Button.Add"]" Click="@AddButtonClick" Variant="Variant.Flat" />
             </RadzenStack>
         </RadzenColumn>
     </RadzenRow>
@@ -25,15 +26,15 @@
         <RadzenDataGrid @ref="grid0" ColumnWidth="200px"  AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
             Data="@contacts"    TItem="CRMBlazorServerRBS.Models.RadzenCRM.Contact" RowSelect="@EditRow" >
             <Columns>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Contact" Property="Email" Title="Email">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Contact" Property="Email" Title="@D["Contact.Email"]">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Contact" Property="Company" Title="Company">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Contact" Property="Company" Title="@D["Contact.Company"]">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Contact" Property="LastName" Title="Last Name">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Contact" Property="LastName" Title="@D["Contact.LastName"]">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Contact" Property="FirstName" Title="First Name">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Contact" Property="FirstName" Title="@D["Contact.FirstName"]">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Contact" Property="Phone" Title="Phone">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Contact" Property="Phone" Title="@D["Contact.Phone"]">
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Contact" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
                     <Template Context="contact">

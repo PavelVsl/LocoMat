@@ -1,13 +1,14 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> D
 @page "/tasks"
 
 @attribute [Authorize]
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Tasks> L
 
-<PageTitle>Tasks</PageTitle>
+<PageTitle>@D["Tasks.Tasks"]</PageTitle>
 <RadzenStack>
     <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="12" SizeMD="6">
-            <RadzenText Text="Tasks" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+            <RadzenText Text="@D["Tasks.Tasks"]" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
         </RadzenColumn>
         <RadzenColumn Size="12" SizeMD="6">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
@@ -15,7 +16,7 @@
                     <RadzenSplitButtonItem Text="Excel" Value="xlsx" />
                     <RadzenSplitButtonItem Text="CSV" Value="csv" />
                 </RadzenSplitButton>
-                <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddButtonClick" Variant="Variant.Flat" />
+                <RadzenButton Icon="add_circle_outline" Text="@D["Button.Add"]" Click="@AddButtonClick" Variant="Variant.Flat" />
             </RadzenStack>
         </RadzenColumn>
     </RadzenRow>
@@ -25,15 +26,15 @@
         <RadzenDataGrid @ref="grid0" ColumnWidth="200px"  AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
             Data="@tasks"    TItem="CRMBlazorServerRBS.Models.RadzenCRM.Task" RowSelect="@EditRow" >
             <Columns>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Task" Property="Id" Title="Id">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Task" Property="Id" Title="@D["Task.Id"]">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Task" Property="Title" Title="Title">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Task" Property="Title" Title="@D["Task.Title"]">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Task" Property="DueDate" Title="Due Date">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Task" Property="DueDate" Title="@D["Task.DueDate"]">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Task" Property="Opportunity.Name" Title="Opportunity">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Task" Property="Opportunity.Name" Title="@D["Task.Opportunity.Name"]">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Task" Property="TaskStatus.Name" Title="Task Status">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Task" Property="TaskStatus.Name" Title="@D["Task.TaskStatus.Name"]">
                     <Template Context="task">
                         <RadzenLabel Text="@task.TaskStatus.Name" />
                         <RadzenIcon Icon="check_circle" Visible="@(task.TaskStatus.Name == "Complete")" Style="vertical-align: middle" />
@@ -41,7 +42,7 @@
                         <RadzenIcon Icon="autorenew" Visible="@(task.TaskStatus.Name == "In Progress")" Style="vertical-align: middle" />
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Task" Property="TaskType.Name" Title="Task Type">
+                <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.RadzenCRM.Task" Property="TaskType.Name" Title="@D["Task.TaskType.Name"]">
                     <Template Context="task">
                         <RadzenLabel Text="@task.TaskType.Name" />
                         <RadzenIcon Icon="settings_phone" Visible="@(task.TaskType.Name == "Call")" Style="vertical-align: middle" />

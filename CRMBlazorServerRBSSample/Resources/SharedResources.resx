@@ -1,0 +1,457 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="LoginLayout.Welcome" xml:space="preserve">
+    <value>Welcome!</value>
+  </data>
+  <data name="LoginLayout.CrmblazorserverrbsV100Copyright2023" xml:space="preserve">
+    <value>CRMBlazorServerRBS v.1.0.0, Copyright Ⓒ 2023</value>
+  </data>
+  <data name="MainLayout.Crmblazorserverrbs" xml:space="preserve">
+    <value>CRMBlazor Server RBS</value>
+  </data>
+  <data name="MainLayout.CrmblazorserverrbsV100" xml:space="preserve">
+    <value>CRMBlazorServerRBS v1.0.0</value>
+  </data>
+  <data name="MainLayout.Copyright2023" xml:space="preserve">
+    <value>Copyright Ⓒ 2023</value>
+  </data>
+  <data name="Menu.Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Menu.Contacts" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="Menu.Tasks" xml:space="preserve">
+    <value>Tasks</value>
+  </data>
+  <data name="Menu.Opportunities" xml:space="preserve">
+    <value>Opportunities</value>
+  </data>
+  <data name="Menu.Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Menu.OpportunityStatuses" xml:space="preserve">
+    <value>Opportunity Statuses</value>
+  </data>
+  <data name="Menu.TaskStatuses" xml:space="preserve">
+    <value>Task Statuses</value>
+  </data>
+  <data name="Menu.TaskTypes" xml:space="preserve">
+    <value>Task Types</value>
+  </data>
+  <data name="Menu.Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="Menu.Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="Menu.Roles" xml:space="preserve">
+    <value>Roles</value>
+  </data>
+  <data name="Menu.Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="TaskTypes.Tasktypes" xml:space="preserve">
+    <value>Task Types</value>
+  </data>
+  <data name="TaskType.Id" xml:space="preserve">
+    <value>Id</value>
+  </data>
+  <data name="TaskType.Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Button.Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="AddTaskType.AddTasktype" xml:space="preserve">
+    <value>Add TaskType</value>
+  </data>
+  <data name="EditTaskType.EditTasktype" xml:space="preserve">
+    <value>Edit TaskType</value>
+  </data>
+  <data name="TaskTypes.AreYouSureYouWantToDeleteThisRecord" xml:space="preserve">
+    <value>Are you sure you want to delete this record?</value>
+  </data>
+  <data name="EditOpportunityStatus.EditOpportunitystatus" xml:space="preserve">
+    <value>Edit OpportunityStatus</value>
+  </data>
+  <data name="OpportunityStatus.Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Button.Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="EditOpportunity.EditOpportunity" xml:space="preserve">
+    <value>Edit Opportunity</value>
+  </data>
+  <data name="Opportunity.Amount" xml:space="preserve">
+    <value>Amount</value>
+  </data>
+  <data name="Opportunity.Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Opportunity.CloseDate" xml:space="preserve">
+    <value>Close Date</value>
+  </data>
+  <data name="Opportunity.Contact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="Opportunity.OpportunityStatus" xml:space="preserve">
+    <value>Opportunity Status</value>
+  </data>
+  <data name="Opportunity.Amount.RequiredValidator" xml:space="preserve">
+    <value>Amount is required</value>
+  </data>
+  <data name="Opportunity.Name.RequiredValidator" xml:space="preserve">
+    <value>Name is required</value>
+  </data>
+  <data name="Opportunity.CloseDate.RequiredValidator" xml:space="preserve">
+    <value>CloseDate is required</value>
+  </data>
+  <data name="ApplicationUsers.Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="ApplicationUser.UserName" xml:space="preserve">
+    <value>User Name</value>
+  </data>
+  <data name="ApplicationUser.Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="ApplicationUser.FirstName" xml:space="preserve">
+    <value>First Name</value>
+  </data>
+  <data name="ApplicationUser.LastName" xml:space="preserve">
+    <value>Last Name</value>
+  </data>
+  <data name="ApplicationUsers.CannotDeleteUser" xml:space="preserve">
+    <value>Cannot delete user</value>
+  </data>
+  <data name="AddApplicationUser.AddApplicationUser" xml:space="preserve">
+    <value>Add Application User</value>
+  </data>
+  <data name="EditApplicationUser.EditApplicationUser" xml:space="preserve">
+    <value>Edit Application User</value>
+  </data>
+  <data name="ApplicationUsers.AreYouSureYouWantToDeleteThisUser" xml:space="preserve">
+    <value>Are you sure you want to delete this user?</value>
+  </data>
+  <data name="Unauthorized.Unauthorized" xml:space="preserve">
+    <value>Unauthorized</value>
+  </data>
+  <data name="Unauthorized.YouAreNotAuthorizedToViewThisPage" xml:space="preserve">
+    <value>You are not authorized to view this page.</value>
+  </data>
+  <data name="ApplicationRole.Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="AddApplicationRole.CannotCreateRole" xml:space="preserve">
+    <value>Cannot create role</value>
+  </data>
+  <data name="ApplicationRole.Name.RequiredValidator" xml:space="preserve">
+    <value>Name is required</value>
+  </data>
+  <data name="ApplicationRoles.Roles" xml:space="preserve">
+    <value>Roles</value>
+  </data>
+  <data name="ApplicationRoles.CannotDeleteRole" xml:space="preserve">
+    <value>Cannot delete role</value>
+  </data>
+  <data name="AddApplicationRole.AddApplicationRole" xml:space="preserve">
+    <value>Add Application Role</value>
+  </data>
+  <data name="ApplicationRoles.AreYouSureYouWantToDeleteThisRole" xml:space="preserve">
+    <value>Are you sure you want to delete this role?</value>
+  </data>
+  <data name="ApplicationUser.Roles" xml:space="preserve">
+    <value>Roles</value>
+  </data>
+  <data name="ApplicationUser.Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="ApplicationUser.ConfirmPassword" xml:space="preserve">
+    <value>Confirm Password</value>
+  </data>
+  <data name="AddApplicationUser.CannotCreateUser" xml:space="preserve">
+    <value>Cannot create user</value>
+  </data>
+  <data name="ApplicationUser.Email.RequiredValidator" xml:space="preserve">
+    <value>Email is required</value>
+  </data>
+  <data name="ApplicationUser.FirstName.RequiredValidator" xml:space="preserve">
+    <value>FirstName is required</value>
+  </data>
+  <data name="ApplicationUser.LastName.RequiredValidator" xml:space="preserve">
+    <value>LastName is required</value>
+  </data>
+  <data name="ApplicationUser.Picture.RequiredValidator" xml:space="preserve">
+    <value>Picture is required</value>
+  </data>
+  <data name="ApplicationUser.Password.RequiredValidator" xml:space="preserve">
+    <value>Password is required</value>
+  </data>
+  <data name="ApplicationUser.ConfirmPassword.RequiredValidator" xml:space="preserve">
+    <value>ConfirmPassword is required</value>
+  </data>
+  <data name="ApplicationUser.ConfirmPassword.CompareValidator" xml:space="preserve">
+    <value>Passwords must match</value>
+  </data>
+  <data name="EditTaskStatus.EditTaskstatus" xml:space="preserve">
+    <value>Edit TaskStatus</value>
+  </data>
+  <data name="TaskStatus.Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="AddTask.AddTask" xml:space="preserve">
+    <value>Add Task</value>
+  </data>
+  <data name="Task.Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Task.DueDate" xml:space="preserve">
+    <value>Due Date</value>
+  </data>
+  <data name="Task.Opportunity" xml:space="preserve">
+    <value>Opportunity</value>
+  </data>
+  <data name="Task.TaskStatus" xml:space="preserve">
+    <value>Task Status</value>
+  </data>
+  <data name="Task.TaskType" xml:space="preserve">
+    <value>Task Type</value>
+  </data>
+  <data name="Task.DueDate.RequiredValidator" xml:space="preserve">
+    <value>DueDate is required</value>
+  </data>
+  <data name="Tasks.Tasks" xml:space="preserve">
+    <value>Tasks</value>
+  </data>
+  <data name="Task.Id" xml:space="preserve">
+    <value>Id</value>
+  </data>
+  <data name="Task.Opportunity.Name" xml:space="preserve">
+    <value>Opportunity</value>
+  </data>
+  <data name="Task.TaskStatus.Name" xml:space="preserve">
+    <value>Task Status</value>
+  </data>
+  <data name="Task.TaskType.Name" xml:space="preserve">
+    <value>Task Type</value>
+  </data>
+  <data name="EditTask.EditTask" xml:space="preserve">
+    <value>Edit Task</value>
+  </data>
+  <data name="Tasks.AreYouSureYouWantToDeleteThisRecord" xml:space="preserve">
+    <value>Are you sure you want to delete this record?</value>
+  </data>
+  <data name="AddOpportunity.AddOpportunity" xml:space="preserve">
+    <value>Add Opportunity</value>
+  </data>
+  <data name="Index.Index" xml:space="preserve">
+    <value>Index</value>
+  </data>
+  <data name="Opportunity.Contact.FirstName" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="Opportunity.OpportunityStatus.Name" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Task.Opportunity.User.FirstName" xml:space="preserve">
+    <value>Employee</value>
+  </data>
+  <data name="AddOpportunityStatus.AddOpportunitystatus" xml:space="preserve">
+    <value>Add OpportunityStatus</value>
+  </data>
+  <data name="EditContact.EditContact" xml:space="preserve">
+    <value>Edit Contact</value>
+  </data>
+  <data name="Contact.Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Contact.Company" xml:space="preserve">
+    <value>Company</value>
+  </data>
+  <data name="Contact.LastName" xml:space="preserve">
+    <value>Last Name</value>
+  </data>
+  <data name="Contact.FirstName" xml:space="preserve">
+    <value>First Name</value>
+  </data>
+  <data name="Contact.Phone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="Contact.Email.RequiredValidator" xml:space="preserve">
+    <value>Email is required</value>
+  </data>
+  <data name="Login.Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Login.Error" xml:space="preserve">
+    <value>error</value>
+  </data>
+  <data name="Login.Info" xml:space="preserve">
+    <value>info</value>
+  </data>
+  <data name="Login.Redirecturl" xml:space="preserve">
+    <value>redirect Url</value>
+  </data>
+  <data name="Login.DocumentForms0" xml:space="preserve">
+    <value>document.forms[0]</value>
+  </data>
+  <data name="Login.SalesmanagerDemoRadzenCom" xml:space="preserve">
+    <value>salesmanager@demo.radzen.com</value>
+  </data>
+  <data name="Login.Salesmanager1" xml:space="preserve">
+    <value>Sales Manager1@</value>
+  </data>
+  <data name="Login.SalesrepDemoRadzenCom" xml:space="preserve">
+    <value>salesrep@demo.radzen.com</value>
+  </data>
+  <data name="Login.Salesrep1" xml:space="preserve">
+    <value>Sales Rep1@</value>
+  </data>
+  <data name="Login.Eval" xml:space="preserve">
+    <value>eval</value>
+  </data>
+  <data name="AddContact.AddContact" xml:space="preserve">
+    <value>Add Contact</value>
+  </data>
+  <data name="AddTaskStatus.AddTaskstatus" xml:space="preserve">
+    <value>Add TaskStatus</value>
+  </data>
+  <data name="OpportunityStatuses.Opportunitystatuses" xml:space="preserve">
+    <value>Opportunity Statuses</value>
+  </data>
+  <data name="OpportunityStatus.Id" xml:space="preserve">
+    <value>Id</value>
+  </data>
+  <data name="OpportunityStatuses.AreYouSureYouWantToDeleteThisRecord" xml:space="preserve">
+    <value>Are you sure you want to delete this record?</value>
+  </data>
+  <data name="Profile.Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="ApplicationUser.TextBox1" xml:space="preserve">
+    <value>First Name</value>
+  </data>
+  <data name="ApplicationUser.TextBox2" xml:space="preserve">
+    <value>Last Name</value>
+  </data>
+  <data name="ApplicationUser.FileInput1" xml:space="preserve">
+    <value>Picture</value>
+  </data>
+  <data name="ApplicationUser.OldPassword" xml:space="preserve">
+    <value>Old Password</value>
+  </data>
+  <data name="ApplicationUser.NewPassword" xml:space="preserve">
+    <value>New Password</value>
+  </data>
+  <data name="Profile.CannotChangePassword" xml:space="preserve">
+    <value>Cannot change password</value>
+  </data>
+  <data name="ApplicationUser.TextBox1.RequiredValidator" xml:space="preserve">
+    <value>First Name is required</value>
+  </data>
+  <data name="ApplicationUser.TextBox2.RequiredValidator" xml:space="preserve">
+    <value>Last Name is required</value>
+  </data>
+  <data name="ApplicationUser.FileInput1.RequiredValidator" xml:space="preserve">
+    <value>Picture is required</value>
+  </data>
+  <data name="ApplicationUser.OldPassword.RequiredValidator" xml:space="preserve">
+    <value>Enter your current password</value>
+  </data>
+  <data name="ApplicationUser.NewPassword.RequiredValidator" xml:space="preserve">
+    <value>Enter your new password</value>
+  </data>
+  <data name="Contacts.Contacts" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="Contacts.AreYouSureYouWantToDeleteThisRecord" xml:space="preserve">
+    <value>Are you sure you want to delete this record?</value>
+  </data>
+  <data name="TaskStatuses.Taskstatuses" xml:space="preserve">
+    <value>Task Statuses</value>
+  </data>
+  <data name="TaskStatus.Id" xml:space="preserve">
+    <value>Id</value>
+  </data>
+  <data name="TaskStatuses.AreYouSureYouWantToDeleteThisRecord" xml:space="preserve">
+    <value>Are you sure you want to delete this record?</value>
+  </data>
+  <data name="Opportunities.Opportunities" xml:space="preserve">
+    <value>Opportunities</value>
+  </data>
+  <data name="Opportunity.Id" xml:space="preserve">
+    <value>Id</value>
+  </data>
+  <data name="Opportunity.User.FirstName" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="Opportunity.Contact.Email" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="Opportunities.AreYouSureYouWantToDeleteThisRecord" xml:space="preserve">
+    <value>Are you sure you want to delete this record?</value>
+  </data>
+  <data name="EditApplicationUser.CannotUpdateUser" xml:space="preserve">
+    <value>Cannot update user</value>
+  </data>
+</root>

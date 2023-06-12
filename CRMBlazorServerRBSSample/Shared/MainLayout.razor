@@ -1,3 +1,4 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> D
 @inherits LayoutComponentBase
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MainLayout> L
 <RadzenDialog />
@@ -13,14 +14,13 @@
             </RadzenColumn>
             <RadzenColumn Size="7">
                 <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
-                    <CulturePicker />
                     <RadzenProfileMenu Visible="@Security.IsAuthenticated()" Click="@ProfileMenuClick">
                         <ChildContent>
 
-                            <RadzenProfileMenuItem Path="profile" Icon="settings" Text="Profile" />
-                            <RadzenProfileMenuItem Path="application-users" Icon="person" Text="Users" Visible="@Security.IsInRole("Sales Manager")"/>
-                            <RadzenProfileMenuItem Path="application-roles" Icon="security" Text="Roles" Visible="@Security.IsInRole("Sales Manager")"/>
-                            <RadzenProfileMenuItem Text="Logout" Value="Logout" Icon="power_settings_new" />
+                            <RadzenProfileMenuItem Path="profile" Icon="settings" Text="@D["Menu.Profile"]" />
+                            <RadzenProfileMenuItem Path="application-users" Icon="person" Text="@D["Menu.Users"]" Visible="@Security.IsInRole("Sales Manager")"/>
+                            <RadzenProfileMenuItem Path="application-roles" Icon="security" Text="@D["Menu.Roles"]" Visible="@Security.IsInRole("Sales Manager")"/>
+                            <RadzenProfileMenuItem Text="@D["Menu.Logout"]" Value="Logout" Icon="power_settings_new" />
                         </ChildContent>
                         <Template>
                             <RadzenLabel Text="@Security.User.FirstName" />
@@ -45,14 +45,14 @@
             <RadzenText Text="CRMBlazorServerRBS" TextStyle="Radzen.Blazor.TextStyle.Subtitle1" class="rz-mb-0" style="color: var(--rz-primary-light);" />
         </RadzenStack>
         <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Dashboard" Path="" Icon="home" />
-            <RadzenPanelMenuItem Text="Contacts" Path="contacts" Icon="perm_contact_calendar" />
-            <RadzenPanelMenuItem Text="Tasks" Path="tasks" Icon="work" />
-            <RadzenPanelMenuItem Text="Opportunities" Path="opportunities" Icon="shopping_cart" />
-            <RadzenPanelMenuItem Text="Settings" Visible="@Security.IsInRole("Sales Manager")">
-                <RadzenPanelMenuItem Text="OpportunityStatuses" Path="opportunity-statuses" />
-                <RadzenPanelMenuItem Text="TaskStatuses" Path="task-statuses" />
-                <RadzenPanelMenuItem Text="TaskTypes" Path="task-types" />
+            <RadzenPanelMenuItem Text="@D["Menu.Dashboard"]" Path="" Icon="home" />
+            <RadzenPanelMenuItem Text="@D["Menu.Contacts"]" Path="contacts" Icon="perm_contact_calendar" />
+            <RadzenPanelMenuItem Text="@D["Menu.Tasks"]" Path="tasks" Icon="work" />
+            <RadzenPanelMenuItem Text="@D["Menu.Opportunities"]" Path="opportunities" Icon="shopping_cart" />
+            <RadzenPanelMenuItem Text="@D["Menu.Settings"]" Visible="@Security.IsInRole("Sales Manager")">
+                <RadzenPanelMenuItem Text="@D["Menu.OpportunityStatuses"]" Path="opportunity-statuses" />
+                <RadzenPanelMenuItem Text="@D["Menu.TaskStatuses"]" Path="task-statuses" />
+                <RadzenPanelMenuItem Text="@D["Menu.TaskTypes"]" Path="task-types" />
             </RadzenPanelMenuItem>
         </RadzenPanelMenu>
         <RadzenStack AlignItems="Radzen.AlignItems.Center" Gap="0" class="rz-py-4 rz-py-lg-6" Style="padding: var(--rz-panel-menu-item-padding);">

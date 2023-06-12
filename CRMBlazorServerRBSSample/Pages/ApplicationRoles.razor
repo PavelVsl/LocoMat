@@ -1,25 +1,26 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> D
 @page "/application-roles"
 @attribute [Authorize(Roles="Sales Manager")]
 @inject Microsoft.Extensions.Localization.IStringLocalizer<ApplicationRoles> L
 
-<PageTitle>Roles</PageTitle>
+<PageTitle>@D["ApplicationRoles.Roles"]</PageTitle>
 <RadzenStack>
     <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="12" SizeMD="6">
-            <RadzenText Text="Roles" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+            <RadzenText Text="@D["ApplicationRoles.Roles"]" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
         </RadzenColumn>
         <RadzenColumn Size="12" SizeMD="6">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
-                <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddClick" Variant="Variant.Flat" />
+                <RadzenButton Icon="add_circle_outline" Text="@D["Button.Add"]" Click="@AddClick" Variant="Variant.Flat" />
             </RadzenStack>
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow>
         <RadzenColumn SizeMD="12">
-            <RadzenAlert Size="AlertSize.Large" Shade="Shade.Light" AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Title="Cannot delete role" Visible="@errorVisible">@error</RadzenAlert>
+            <RadzenAlert Size="AlertSize.Large" Shade="Shade.Light" AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Title="@D["ApplicationRoles.CannotDeleteRole"]" Visible="@errorVisible">@error</RadzenAlert>
             <RadzenDataGrid @ref="grid0" AllowFiltering="true" AllowPaging="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30}) AllowSorting="true" Data="@roles" TItem="CRMBlazorServerRBS.Models.ApplicationRole">
                 <Columns>
-                    <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.ApplicationRole" Property="Name" Title="Name" />
+                    <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.ApplicationRole" Property="Name" Title="@D["ApplicationRole.Name"]" />
                     <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.ApplicationRole" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="70px">
                         <Template Context="role">
                             <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small"

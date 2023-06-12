@@ -43,11 +43,11 @@ namespace CRMBlazorServerRBS.Pages
         {
             var query = System.Web.HttpUtility.ParseQueryString(new Uri(NavigationManager.ToAbsoluteUri(NavigationManager.Uri).ToString()).Query);
 
-            error = query.Get("error");
+            error = query.Get(@"error");
 
-            info = query.Get("info");
+            info = query.Get(@"info");
 
-            redirectUrl = query.Get("redirectUrl");
+            redirectUrl = query.Get(@"redirectUrl");
 
             errorVisible = !string.IsNullOrEmpty(error);
 
@@ -56,15 +56,16 @@ namespace CRMBlazorServerRBS.Pages
 
         string theForm = "document.forms[0]";
 
-        protected async System.Threading.Tasks.Task SplitButton0Click(Radzen.Blazor.RadzenSplitButtonItem args)
+        protected async System.Threading.Tasks.Task
+            SplitButton0Click(Radzen.Blazor.RadzenSplitButtonItem args)
         {
             if(args?.Text == "Sales Manager")
             {
-                await SetLoginCredentials("salesmanager@demo.radzen.com", "SalesManager1@");
+                await SetLoginCredentials(D["Login.SalesmanagerDemoRadzenCom"], D["Login.Salesmanager1"]);
             }
             else if(args?.Text == "Sales Representative")
             {
-                await SetLoginCredentials("salesrep@demo.radzen.com", "SalesRep1@");
+                await SetLoginCredentials(D["Login.SalesrepDemoRadzenCom"], D["Login.Salesrep1"]);
             }
 
             await JSRuntime.InvokeVoidAsync("eval", $@"{theForm}.submit()");

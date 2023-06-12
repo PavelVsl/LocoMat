@@ -45,7 +45,7 @@ namespace CRMBlazorServerRBS.Pages
 
         protected async Task AddClick()
         {
-            await DialogService.OpenAsync<AddApplicationRole>("Add Application Role");
+            await DialogService.OpenAsync<AddApplicationRole>(D["AddApplicationRole.AddApplicationRole"]);
 
             roles = await Security.GetRoles();
         }
@@ -54,7 +54,7 @@ namespace CRMBlazorServerRBS.Pages
         {
             try
             {
-                if (await DialogService.Confirm("Are you sure you want to delete this role?") == true)
+                if (await DialogService.Confirm(D["ApplicationRoles.AreYouSureYouWantToDeleteThisRole"]) == true)
                 {
                     await Security.DeleteRole($"{role.Id}");
 

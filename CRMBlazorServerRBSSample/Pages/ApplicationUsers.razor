@@ -1,30 +1,31 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> D
 @page "/application-users"
 @attribute [Authorize(Roles="Sales Manager")]
 @inject Microsoft.Extensions.Localization.IStringLocalizer<ApplicationUsers> L
 
-<PageTitle>Users</PageTitle>
+<PageTitle>@D["ApplicationUsers.Users"]</PageTitle>
 <RadzenStack>
     <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="12" SizeMD="6">
-            <RadzenText Text="Users" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+            <RadzenText Text="@D["ApplicationUsers.Users"]" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
         </RadzenColumn>
         <RadzenColumn Size="12" SizeMD="6">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
-                <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddClick" Variant="Variant.Flat" />
+                <RadzenButton Icon="add_circle_outline" Text="@D["Button.Add"]" Click="@AddClick" Variant="Variant.Flat" />
             </RadzenStack>
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow>
         <RadzenColumn SizeMD="12">
-            <RadzenAlert Size="AlertSize.Large" Shade="Shade.Light" AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Title="Cannot delete user" Visible="@errorVisible">@error</RadzenAlert>
+            <RadzenAlert Size="AlertSize.Large" Shade="Shade.Light" AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Title="@D["ApplicationUsers.CannotDeleteUser"]" Visible="@errorVisible">@error</RadzenAlert>
             <RadzenDataGrid @ref="grid0" AllowFiltering="true" AllowPaging="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30}) AllowSorting="true" Data="@users"
                 TItem="CRMBlazorServerRBS.Models.ApplicationUser" RowSelect="@RowSelect">
                 <Columns>
-                    <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.ApplicationUser" Property="UserName" Title="User Name" />
-                    <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.ApplicationUser" Property="Email" Title="Email" />
-                    <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.ApplicationUser" Property="FirstName" Title="FirstName" />
-                    <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.ApplicationUser" Property="LastName" Title="LastName" />
-                    <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.ApplicationUser" Title="Picture" Filterable="false" Sortable="false">
+                    <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.ApplicationUser" Property="UserName" Title="@D["ApplicationUser.UserName"]" />
+                    <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.ApplicationUser" Property="Email" Title="@D["ApplicationUser.Email"]" />
+                    <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.ApplicationUser" Property="FirstName" Title="@D["ApplicationUser.FirstName"]" />
+                    <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.ApplicationUser" Property="LastName" Title="@D["ApplicationUser.LastName"]" />
+                    <RadzenDataGridColumn TItem="CRMBlazorServerRBS.Models.ApplicationUser" Title="@D["ApplicationUser."]" Filterable="false" Sortable="false">
                         <Template Context="user">
                             <RadzenImage Path="@user.Picture" Style="width: 30px; height: 30px" />
                         </Template>

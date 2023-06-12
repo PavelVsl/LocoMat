@@ -45,14 +45,14 @@ namespace CRMBlazorServerRBS.Pages
 
         protected async Task AddClick()
         {
-            await DialogService.OpenAsync<AddApplicationUser>("Add Application User");
+            await DialogService.OpenAsync<AddApplicationUser>(D["AddApplicationUser.AddApplicationUser"]);
 
             users = await Security.GetUsers();
         }
 
         protected async Task RowSelect(CRMBlazorServerRBS.Models.ApplicationUser user)
         {
-            await DialogService.OpenAsync<EditApplicationUser>("Edit Application User", new Dictionary<string, object>{ {"Id", user.Id} });
+            await DialogService.OpenAsync<EditApplicationUser>(D["EditApplicationUser.EditApplicationUser"], new Dictionary<string, object>{ {"Id", user.Id} });
 
             users = await Security.GetUsers();
         }
@@ -61,7 +61,7 @@ namespace CRMBlazorServerRBS.Pages
         {
             try
             {
-                if (await DialogService.Confirm("Are you sure you want to delete this user?") == true)
+                if (await DialogService.Confirm(D["ApplicationUsers.AreYouSureYouWantToDeleteThisUser"]) == true)
                 {
                     await Security.DeleteUser($"{user.Id}");
 

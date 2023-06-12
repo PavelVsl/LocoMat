@@ -1,8 +1,9 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> D
 @page "/"
 
 @attribute [Authorize]
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Index> L
-<PageTitle>Index</PageTitle>
+<PageTitle>@D["Index.Index"]</PageTitle>
 <RadzenRow Gap="5" RowGap="5">
     <RadzenColumn SizeLG="6" SizeXL="3">
         <RadzenCard Style="margin: 16px">
@@ -93,19 +94,19 @@
             <RadzenHeading Text="Text"></RadzenHeading>
             <RadzenDataGrid TItem="Models.RadzenCRM.Opportunity" Data="getOpportunitiesResult" AllowSorting="true">
                 <Columns>
-                    <RadzenDataGridColumn TItem="Models.RadzenCRM.Opportunity" Title="Contact" SortProperty="Contact.FirstName">
+                    <RadzenDataGridColumn TItem="Models.RadzenCRM.Opportunity" Title="@D["Opportunity.Contact.FirstName"]" SortProperty="Contact.FirstName">
                         <Template>
                             <RadzenLabel Text="@context.Contact.FirstName" />
                             <RadzenLabel Text="@context.Contact.LastName" />
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Models.RadzenCRM.Opportunity" Title="Amount" Property="Amount">
+                    <RadzenDataGridColumn TItem="Models.RadzenCRM.Opportunity" Title="@D["Opportunity.Amount"]" Property="Amount">
                         <Template>
                             <RadzenLabel Text="@context.Amount.ToString("C")" />
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Models.RadzenCRM.Opportunity" Title="Status" Property="OpportunityStatus.Name" />
-                    <RadzenDataGridColumn TItem="Models.RadzenCRM.Opportunity" Title="CloseDate" Property="CloseDate" />
+                    <RadzenDataGridColumn TItem="Models.RadzenCRM.Opportunity" Title="@D["Opportunity.OpportunityStatus.Name"]" Property="OpportunityStatus.Name" />
+                    <RadzenDataGridColumn TItem="Models.RadzenCRM.Opportunity" Title="@D["Opportunity.CloseDate"]" Property="CloseDate" />
                 </Columns>
             </RadzenDataGrid>
         </RadzenCard>
@@ -115,21 +116,21 @@
             <RadzenHeading Text="Active Tasks"></RadzenHeading>
             <RadzenDataGrid TItem="Models.RadzenCRM.Task" Data="@getTasksResult" AllowSorting="true">
                 <Columns>
-                    <RadzenDataGridColumn TItem="Models.RadzenCRM.Task" Title="Employee" SortProperty="Opportunity.User.FirstName">
+                    <RadzenDataGridColumn TItem="Models.RadzenCRM.Task" Title="@D["Task.Opportunity.User.FirstName"]" SortProperty="Opportunity.User.FirstName">
                         <Template>
                             <RadzenImage Path="@context.Opportunity.User.Picture" style="width:30px;height:30px;border-radius:15px;" />
                             <RadzenLabel Text="@context.Opportunity.User.FirstName" />
                             <RadzenLabel Text="@context.Opportunity.User.LastName" />
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Models.RadzenCRM.Task" Title="Title" Property="Title" SortProperty="Opportunity.Name">
+                    <RadzenDataGridColumn TItem="Models.RadzenCRM.Task" Title="@D["Task.Title"]" Property="Title" SortProperty="Opportunity.Name">
                         <Template>
                             <RadzenLabel Text="@context.Opportunity.Name" style="display: block" />
                             <RadzenLabel Text="@context.Opportunity.Contact.FirstName" />
                             <RadzenLabel Text="@context.Opportunity.Contact.LastName" />
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Models.RadzenCRM.Task" Title="DueDate" Property="DueDate" />
+                    <RadzenDataGridColumn TItem="Models.RadzenCRM.Task" Title="@D["Task.DueDate"]" Property="DueDate" />
                 </Columns>
             </RadzenDataGrid>
         </RadzenCard>

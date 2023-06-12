@@ -11,7 +11,7 @@ using CRMBlazorServerRBS.Models;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
 using Microsoft.AspNetCore.Components.Authorization;
-
+using CRMBlazorServerRBS.RadzenSupport;
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -50,6 +50,7 @@ builder.Services.AddControllers().AddOData(o =>
 });
 builder.Services.AddScoped<AuthenticationStateProvider, CRMBlazorServerRBS.ApplicationAuthenticationStateProvider>();
 builder.Services.AddLocalization();
+builder.Services.AddRadzenLocalization();
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

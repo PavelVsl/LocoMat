@@ -1,9 +1,10 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> D
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Login> L
 @layout LoginLayout
 @page "/login"
 
-<PageTitle>Login</PageTitle>
-<RadzenText Text="Login" TextStyle="Radzen.Blazor.TextStyle.H5" class="mb-4" TagName="Radzen.Blazor.TagName.H2" />
+<PageTitle>@D["Login.Login"]</PageTitle>
+<RadzenText Text="@D["Login.Login"]" TextStyle="Radzen.Blazor.TextStyle.H5" class="mb-4" TagName="Radzen.Blazor.TagName.H2" />
 <RadzenRow>
     <RadzenColumn SizeMD="12">
         <RadzenTemplateForm Action="@($"account/login?redirectUrl={redirectUrl}")" Data="@("login")" Method="post">

@@ -57,20 +57,20 @@ namespace CRMBlazorServerRBS.Pages
 
         protected async Task AddButtonClick(MouseEventArgs args)
         {
-            await DialogService.OpenAsync<AddOpportunity>("Add Opportunity", null);
+            await DialogService.OpenAsync<AddOpportunity>(D["AddOpportunity.AddOpportunity"], null);
             await grid0.Reload();
         }
 
         protected async Task EditRow(CRMBlazorServerRBS.Models.RadzenCRM.Opportunity args)
         {
-            await DialogService.OpenAsync<EditOpportunity>("Edit Opportunity", new Dictionary<string, object> { {"Id", args.Id} });
+            await DialogService.OpenAsync<EditOpportunity>(D["EditOpportunity.EditOpportunity"], new Dictionary<string, object> { {"Id", args.Id} });
         }
 
         protected async Task GridDeleteButtonClick(MouseEventArgs args, CRMBlazorServerRBS.Models.RadzenCRM.Opportunity opportunity)
         {
             try
             {
-                if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
+                if (await DialogService.Confirm(D["Opportunities.AreYouSureYouWantToDeleteThisRecord"]) == true)
                 {
                     var deleteResult = await RadzenCRMService.DeleteOpportunity(opportunity.Id);
 

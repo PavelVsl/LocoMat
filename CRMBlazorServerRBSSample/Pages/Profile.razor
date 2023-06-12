@@ -1,12 +1,13 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> D
 @page "/profile"
 @attribute [Authorize]
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Profile> L
 
-<PageTitle>Profile</PageTitle>
+<PageTitle>@D["Profile.Profile"]</PageTitle>
 <RadzenStack>
     <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="12">
-            <RadzenText Text="Profile" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+            <RadzenText Text="@D["Profile.Profile"]" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
         </RadzenColumn>
     </RadzenRow>
 </RadzenStack>
@@ -17,74 +18,74 @@
                 <RadzenStack>
                     <RadzenRow>
                         <RadzenColumn Size="12" SizeMD="3">
-                            <RadzenLabel Component="TextBox1" style="width: 100%" Text="First Name"></RadzenLabel>
+                            <RadzenLabel Component="TextBox1" style="width: 100%" Text="@D["ApplicationUser.TextBox1"]"></RadzenLabel>
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="9">
                             <RadzenTextBox style="display: block; width: 100%" Name="TextBox1" @bind-Value="@user.FirstName"></RadzenTextBox>
-                            <RadzenRequiredValidator Component="TextBox1" style="position: absolute" Text="First Name is required"></RadzenRequiredValidator>
+                            <RadzenRequiredValidator Component="TextBox1" style="position: absolute" Text="@D["ApplicationUser.TextBox1.RequiredValidator"]"></RadzenRequiredValidator>
                         </RadzenColumn>
                     </RadzenRow>
                     <RadzenRow>
                         <RadzenColumn Size="12" SizeMD="3">
-                            <RadzenLabel Component="TextBox2" style="width: 100%" Text="Last Name"></RadzenLabel>
+                            <RadzenLabel Component="TextBox2" style="width: 100%" Text="@D["ApplicationUser.TextBox2"]"></RadzenLabel>
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="9">
                             <RadzenTextBox style="display: block; width: 100%" Name="TextBox2" @bind-Value="@user.LastName"></RadzenTextBox>
-                            <RadzenRequiredValidator Component="TextBox2" style="position: absolute" Text="Last Name is required"></RadzenRequiredValidator>
+                            <RadzenRequiredValidator Component="TextBox2" style="position: absolute" Text="@D["ApplicationUser.TextBox2.RequiredValidator"]"></RadzenRequiredValidator>
                         </RadzenColumn>
                     </RadzenRow>
                     <RadzenRow>
                         <RadzenColumn Size="12" SizeMD="3">
-                            <RadzenLabel Component="FileInput1" style="width: 100%" Text="Picture"></RadzenLabel>
+                            <RadzenLabel Component="FileInput1" style="width: 100%" Text="@D["ApplicationUser.FileInput1"]"></RadzenLabel>
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="9">
                             <RadzenFileInput style="display: block; " Name="FileInput1" @bind-Value="@user.Picture"></RadzenFileInput>
-                            <RadzenRequiredValidator Component="FileInput1" style="position: absolute" Text="Picture is required"></RadzenRequiredValidator>
+                            <RadzenRequiredValidator Component="FileInput1" style="position: absolute" Text="@D["ApplicationUser.FileInput1.RequiredValidator"]"></RadzenRequiredValidator>
                         </RadzenColumn>
                     </RadzenRow>
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
-                        <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                        <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="@D["Button.Save"]" Variant="Variant.Flat" />
                     </RadzenStack>
                 </RadzenStack>
             </RadzenTemplateForm>
         </RadzenTabsItem>
-        <RadzenTabsItem Text="Password" Selected="false">
+        <RadzenTabsItem Text="@D["Button.Save"]" Selected="false">
             <RadzenTemplateForm Method="post" Submit="@FormSubmit" TItem="CRMBlazorServerRBS.Models.ApplicationUser" Data="@user"
                 Visible="@(user != null)">
-                <RadzenAlert Size="AlertSize.Large" Shade="Shade.Light" AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Title="Cannot change password" Visible="@errorVisible">@error</RadzenAlert>
+                <RadzenAlert Size="AlertSize.Large" Shade="Shade.Light" AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Title="@D["Profile.CannotChangePassword"]" Visible="@errorVisible">@error</RadzenAlert>
                 <RadzenAlert Size="AlertSize.Large" Shade="Shade.Light" AlertStyle="AlertStyle.Success" Variant="Variant.Flat" Visible="@successVisible">
                     Your password has been changed.
                 </RadzenAlert>
             
                 <RadzenStack style="margin-bottom: 1rem;">
-                    <RadzenFormField Text="Old Password" Variant="Variant.Filled">
+                    <RadzenFormField Text="@D["ApplicationUser.OldPassword"]" Variant="Variant.Filled">
                         <ChildContent>
                             <RadzenPassword @bind-Value="@oldPassword" style="display: block; width: 100%" Name="OldPassword" />
                         </ChildContent>
                         <Helper>
-                            <RadzenRequiredValidator Component="OldPassword" Text="Enter your current password" />
+                            <RadzenRequiredValidator Component="OldPassword" Text="@D["ApplicationUser.OldPassword.RequiredValidator"]" />
                         </Helper>
                     </RadzenFormField>
-                    <RadzenFormField Text="New Password" Variant="Variant.Filled">
+                    <RadzenFormField Text="@D["ApplicationUser.NewPassword"]" Variant="Variant.Filled">
                         <ChildContent>
                             <RadzenPassword @bind-Value="@newPassword" style="display: block; width: 100%" Name="NewPassword" />
                         </ChildContent>
                         <Helper>
-                            <RadzenRequiredValidator Component="NewPassword" Text="Enter your new password" />
+                            <RadzenRequiredValidator Component="NewPassword" Text="@D["ApplicationUser.NewPassword.RequiredValidator"]" />
                         </Helper>
                     </RadzenFormField>
-                    <RadzenFormField Text="Confirm Password" Variant="Variant.Filled">
+                    <RadzenFormField Text="@D["ApplicationUser.ConfirmPassword"]" Variant="Variant.Filled">
                         <ChildContent>
                             <RadzenPassword @bind-Value="@confirmPassword" style="display: block; width: 100%" Name="ConfirmPassword" />
                         </ChildContent>
                         <Helper>
-                            <RadzenRequiredValidator Component="ConfirmPassword" Text="Confirm your new password" />
-                            <RadzenCompareValidator Component="ConfirmPassword" Text="Passwords should be the same" Value="@newPassword" />
+                            <RadzenRequiredValidator Component="ConfirmPassword" Text="@D["ApplicationUser.ConfirmPassword.RequiredValidator"]" />
+                            <RadzenCompareValidator Component="ConfirmPassword" Text="@D["ApplicationUser.ConfirmPassword.CompareValidator"]" Value="@newPassword" />
                         </Helper>
                     </RadzenFormField>
                 </RadzenStack>
                 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
-                        <RadzenButton ButtonType="ButtonType.Submit" Text="Change password" Variant="Variant.Flat" />
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="@D["Button.Save"]" Variant="Variant.Flat" />
                 </RadzenStack>
             </RadzenTemplateForm>
         </RadzenTabsItem>

@@ -1,0 +1,346 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PagedDataBoundComponent.PageSizeText" xml:space="preserve">
+    <value>Položek na stránku</value>
+  </data>
+  <data name="PagedDataBoundComponent.PagingSummaryFormat" xml:space="preserve">
+    <value>Strana {0} z {1} ({2} položek)</value>
+  </data>
+  <data name="RadzenColorPicker.HexText" xml:space="preserve">
+    <value>Hex</value>
+  </data>
+  <data name="RadzenColorPicker.RedText" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="RadzenColorPicker.GreenText" xml:space="preserve">
+    <value>G</value>
+  </data>
+  <data name="RadzenColorPicker.BlueText" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="RadzenColorPicker.AlphaText" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="RadzenColorPicker.ButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="RadzenDataFilter.FilterText" xml:space="preserve">
+    <value>Filtr</value>
+  </data>
+  <data name="RadzenDataFilter.EnumFilterSelectText" xml:space="preserve">
+    <value>Vybrat...</value>
+  </data>
+  <data name="RadzenDataFilter.AndOperatorText" xml:space="preserve">
+    <value>A </value>
+  </data>
+  <data name="RadzenDataFilter.OrOperatorText" xml:space="preserve">
+    <value>Nebo</value>
+  </data>
+  <data name="RadzenDataFilter.ApplyFilterText" xml:space="preserve">
+    <value>Použít</value>
+  </data>
+  <data name="RadzenDataFilter.ClearFilterText" xml:space="preserve">
+    <value>Vymazat vše</value>
+  </data>
+  <data name="RadzenDataFilter.AddFilterText" xml:space="preserve">
+    <value>Přidat filtr</value>
+  </data>
+  <data name="RadzenDataFilter.RemoveFilterText" xml:space="preserve">
+    <value>Odebrat filtr</value>
+  </data>
+  <data name="RadzenDataFilter.AddFilterGroupText" xml:space="preserve">
+    <value>Skupina filtrů</value>
+  </data>
+  <data name="RadzenDataFilter.EqualsText" xml:space="preserve">
+    <value>Je rovno</value>
+  </data>
+  <data name="RadzenDataFilter.NotEqualsText" xml:space="preserve">
+    <value>není rovno</value>
+  </data>
+  <data name="RadzenDataFilter.LessThanText" xml:space="preserve">
+    <value>Méně než</value>
+  </data>
+  <data name="RadzenDataFilter.LessThanOrEqualsText" xml:space="preserve">
+    <value>Méně než nebo rovno</value>
+  </data>
+  <data name="RadzenDataFilter.GreaterThanText" xml:space="preserve">
+    <value>Větší než</value>
+  </data>
+  <data name="RadzenDataFilter.GreaterThanOrEqualsText" xml:space="preserve">
+    <value>Větší nebo rovno</value>
+  </data>
+  <data name="RadzenDataFilter.EndsWithText" xml:space="preserve">
+    <value>Končí na</value>
+  </data>
+  <data name="RadzenDataFilter.ContainsText" xml:space="preserve">
+    <value>Obsahuje</value>
+  </data>
+  <data name="RadzenDataFilter.DoesNotContainText" xml:space="preserve">
+    <value>Neobsahuje</value>
+  </data>
+  <data name="RadzenDataFilter.StartsWithText" xml:space="preserve">
+    <value>Začíná na</value>
+  </data>
+  <data name="RadzenDataFilter.IsNotNullText" xml:space="preserve">
+    <value>Není NULL</value>
+  </data>
+  <data name="RadzenDataFilter.IsNullText" xml:space="preserve">
+    <value>Je NULL</value>
+  </data>
+  <data name="RadzenDataFilter.IsEmptyText" xml:space="preserve">
+    <value>Je prázdné</value>
+  </data>
+  <data name="RadzenDataFilter.IsNotEmptyText" xml:space="preserve">
+    <value>Není prázdný</value>
+  </data>
+  <data name="RadzenDataGrid.FilterText" xml:space="preserve">
+    <value>Filtr</value>
+  </data>
+  <data name="RadzenDataGrid.EnumFilterSelectText" xml:space="preserve">
+    <value>Vybrat...</value>
+  </data>
+  <data name="RadzenDataGrid.AndOperatorText" xml:space="preserve">
+    <value>A </value>
+  </data>
+  <data name="RadzenDataGrid.OrOperatorText" xml:space="preserve">
+    <value>Nebo</value>
+  </data>
+  <data name="RadzenDataGrid.ApplyFilterText" xml:space="preserve">
+    <value>Použít</value>
+  </data>
+  <data name="RadzenDataGrid.ClearFilterText" xml:space="preserve">
+    <value>Smazat filtr</value>
+  </data>
+  <data name="RadzenDataGrid.EqualsText" xml:space="preserve">
+    <value>Je rovno</value>
+  </data>
+  <data name="RadzenDataGrid.NotEqualsText" xml:space="preserve">
+    <value>není rovno</value>
+  </data>
+  <data name="RadzenDataGrid.LessThanText" xml:space="preserve">
+    <value>Méně než</value>
+  </data>
+  <data name="RadzenDataGrid.LessThanOrEqualsText" xml:space="preserve">
+    <value>Méně než nebo rovno</value>
+  </data>
+  <data name="RadzenDataGrid.GreaterThanText" xml:space="preserve">
+    <value>Větší než</value>
+  </data>
+  <data name="RadzenDataGrid.GreaterThanOrEqualsText" xml:space="preserve">
+    <value>Větší nebo rovno</value>
+  </data>
+  <data name="RadzenDataGrid.EndsWithText" xml:space="preserve">
+    <value>Končí na</value>
+  </data>
+  <data name="RadzenDataGrid.ContainsText" xml:space="preserve">
+    <value>Obsahuje</value>
+  </data>
+  <data name="RadzenDataGrid.DoesNotContainText" xml:space="preserve">
+    <value>Neobsahuje</value>
+  </data>
+  <data name="RadzenDataGrid.StartsWithText" xml:space="preserve">
+    <value>Začíná na</value>
+  </data>
+  <data name="RadzenDataGrid.IsNotNullText" xml:space="preserve">
+    <value>Není NULL</value>
+  </data>
+  <data name="RadzenDataGrid.IsNullText" xml:space="preserve">
+    <value>Je NULL</value>
+  </data>
+  <data name="RadzenDataGrid.IsEmptyText" xml:space="preserve">
+    <value>Je prázdné</value>
+  </data>
+  <data name="RadzenDataGrid.IsNotEmptyText" xml:space="preserve">
+    <value>Není prázdný</value>
+  </data>
+  <data name="RadzenDataGrid.EmptyText" xml:space="preserve">
+    <value>Žádné záznamy k zobrazení.</value>
+  </data>
+  <data name="RadzenDataGrid.ColumnsShowingText" xml:space="preserve">
+    <value>sloupce zobrazující</value>
+  </data>
+  <data name="RadzenDataGrid.AllColumnsText" xml:space="preserve">
+    <value>Vše</value>
+  </data>
+  <data name="RadzenDataGrid.ColumnsText" xml:space="preserve">
+    <value>Sloupce</value>
+  </data>
+  <data name="RadzenDataGrid.GroupPanelText" xml:space="preserve">
+    <value>Chcete-li seskupit podle tohoto sloupce, přetáhněte hlavičku sloupce</value>
+  </data>
+  <data name="RadzenDataGrid.PageSizeText" xml:space="preserve">
+    <value>Položek na stránku</value>
+  </data>
+  <data name="RadzenDataGrid.PagingSummaryFormat" xml:space="preserve">
+    <value>Strana {0} z {1} ({2} položek)</value>
+  </data>
+  <data name="RadzenDataList.PageSizeText" xml:space="preserve">
+    <value>Položek na stránku</value>
+  </data>
+  <data name="RadzenDataList.PagingSummaryFormat" xml:space="preserve">
+    <value>Strana {0} z {1} ({2} položek)</value>
+  </data>
+  <data name="RadzenDropDown.SelectedItemsText" xml:space="preserve">
+    <value>vybrané položky</value>
+  </data>
+  <data name="RadzenDropDownDataGrid.PagingSummaryFormat" xml:space="preserve">
+    <value>Strana {0} z {1} ({2} položek)</value>
+  </data>
+  <data name="RadzenDropDownDataGrid.EmptyText" xml:space="preserve">
+    <value>Žádné záznamy k zobrazení.</value>
+  </data>
+  <data name="RadzenDropDownDataGrid.SelectedItemsText" xml:space="preserve">
+    <value>vybrané položky</value>
+  </data>
+  <data name="RadzenFileInput.ChooseText" xml:space="preserve">
+    <value>Vybrat</value>
+  </data>
+  <data name="RadzenGrid.FilterText" xml:space="preserve">
+    <value>Filtr</value>
+  </data>
+  <data name="RadzenGrid.AndOperatorText" xml:space="preserve">
+    <value>A </value>
+  </data>
+  <data name="RadzenGrid.OrOperatorText" xml:space="preserve">
+    <value>Nebo</value>
+  </data>
+  <data name="RadzenGrid.ApplyFilterText" xml:space="preserve">
+    <value>Použít</value>
+  </data>
+  <data name="RadzenGrid.ClearFilterText" xml:space="preserve">
+    <value>Smazat filtr</value>
+  </data>
+  <data name="RadzenGrid.EqualsText" xml:space="preserve">
+    <value>Je rovno</value>
+  </data>
+  <data name="RadzenGrid.NotEqualsText" xml:space="preserve">
+    <value>není rovno</value>
+  </data>
+  <data name="RadzenGrid.LessThanText" xml:space="preserve">
+    <value>Méně než</value>
+  </data>
+  <data name="RadzenGrid.LessThanOrEqualsText" xml:space="preserve">
+    <value>Méně než nebo rovno</value>
+  </data>
+  <data name="RadzenGrid.GreaterThanText" xml:space="preserve">
+    <value>Větší než</value>
+  </data>
+  <data name="RadzenGrid.GreaterThanOrEqualsText" xml:space="preserve">
+    <value>Větší nebo rovno</value>
+  </data>
+  <data name="RadzenGrid.EndsWithText" xml:space="preserve">
+    <value>Končí na</value>
+  </data>
+  <data name="RadzenGrid.ContainsText" xml:space="preserve">
+    <value>Obsahuje</value>
+  </data>
+  <data name="RadzenGrid.StartsWithText" xml:space="preserve">
+    <value>Začíná na</value>
+  </data>
+  <data name="RadzenGrid.EmptyText" xml:space="preserve">
+    <value>Žádné záznamy k zobrazení.</value>
+  </data>
+  <data name="RadzenGrid.PageSizeText" xml:space="preserve">
+    <value>Položek na stránku</value>
+  </data>
+  <data name="RadzenGrid.PagingSummaryFormat" xml:space="preserve">
+    <value>Strana {0} z {1} ({2} položek)</value>
+  </data>
+  <data name="RadzenLogin.LoginText" xml:space="preserve">
+    <value>Přihlášení</value>
+  </data>
+  <data name="RadzenLogin.RegisterText" xml:space="preserve">
+    <value>Zaregistrujte se</value>
+  </data>
+  <data name="RadzenLogin.RememberMeText" xml:space="preserve">
+    <value>Pamatovat si mě</value>
+  </data>
+  <data name="RadzenLogin.RegisterMessageText" xml:space="preserve">
+    <value>Ještě nemáte účet?</value>
+  </data>
+  <data name="RadzenLogin.ResetPasswordText" xml:space="preserve">
+    <value>Zapomněli jste heslo?</value>
+  </data>
+  <data name="RadzenLogin.UserText" xml:space="preserve">
+    <value>Uživatelské jméno</value>
+  </data>
+  <data name="RadzenLogin.PasswordText" xml:space="preserve">
+    <value>Heslo</value>
+  </data>
+  <data name="RadzenPager.PageSizeText" xml:space="preserve">
+    <value>Položek na stránku</value>
+  </data>
+  <data name="RadzenPager.PagingSummaryFormat" xml:space="preserve">
+    <value>Strana {0} z {1} ({2} položek)</value>
+  </data>
+  <data name="RadzenScheduler.TodayText" xml:space="preserve">
+    <value>Dnes</value>
+  </data>
+  <data name="RadzenSteps.NextText" xml:space="preserve">
+    <value>Následující</value>
+  </data>
+  <data name="RadzenSteps.PreviousText" xml:space="preserve">
+    <value>Předchozí</value>
+  </data>
+  <data name="RadzenUpload.ChooseText" xml:space="preserve">
+    <value>Vybrat</value>
+  </data>
+</root>
