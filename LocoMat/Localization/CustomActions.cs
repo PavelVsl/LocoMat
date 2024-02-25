@@ -15,7 +15,10 @@ namespace LocoMat.Localization
             Action = match =>
             {
                 var tag = match.Value;
-                _resourceKeys.TryAdd(tag, "# " + tag.SplitCamelCase());
+                
+                //take part of tag after '.'
+                var value = tag.Split('.').Last();
+                _resourceKeys.TryAdd(tag, value.SplitCamelCase());
                 return tag;
             },
         };

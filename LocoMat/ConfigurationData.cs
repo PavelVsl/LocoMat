@@ -32,6 +32,8 @@ public class ConfigurationData
     [JsonIgnore] public bool Force { get; set; }
     [JsonIgnore] public bool Backup { get; set; }
 
+    public bool Nullables { get; set; }
+    
     public string ExpressionFilter { get; set; }
     public string RadzenSupport { get; set; } = "RadzenSupport";
     public string Source { get; set; }

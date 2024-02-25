@@ -123,13 +123,15 @@ public class ScaffoldService : IScaffoldService
         foreach (var type in _classes)
         {
             var name = type.Name;
+            var nullable = _config.Nullables ? " = null!;" : "";
+            
             var classHeader = type.GenericType != null
                 ? $"public class {name}Localized<{type.GenericType}> : {name}<{type.GenericType}>"
                 : $"public class {name}Localized : {name}";
 
             sb.AppendLine(classHeader);
             sb.AppendLine("{");
-            sb.AppendLine("    [Inject] RadzenLocalizer L { get; set; }");
+            sb.AppendLine($"    [Inject] RadzenLocalizer L {{ get; set; }}{nullable}");
             sb.AppendLine("    protected override void OnInitialized()");
             sb.AppendLine("    {");
             foreach (var property in type.Properties)

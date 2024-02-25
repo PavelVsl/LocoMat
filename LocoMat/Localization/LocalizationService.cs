@@ -3,47 +3,33 @@ using Microsoft.Extensions.Logging;
 
 namespace LocoMat.Localization;
 
-public class LocalizationService : ILocalizationService
+public class LocalizationService(
+    ILogger<LocalizationService> logger,
+    ConfigurationData config,
+    ResourceKeys modelKeys,
+    CsProcessor csProcessor,
+    RazorProcessor razorProcessor
+)
+    : ILocalizationService
 {
-    private readonly ILogger<LocalizationService> _logger;
-    private readonly ConfigurationData _config;
-    private readonly ResourceKeys _resourceKeys;
-    private readonly CsProcessor _csProcessor;
-    private readonly RazorProcessor _razorProcessor;
-
-    public LocalizationService(
-        ILogger<LocalizationService> logger,
-        ConfigurationData config,
-        ResourceKeys modelKeys,
-        CsProcessor csProcessor,
-        RazorProcessor razorProcessor
-    )
-    {
-        _logger = logger;
-        _config = config;
-        _resourceKeys = modelKeys;
-        _csProcessor = csProcessor;
-        _razorProcessor = razorProcessor;
-    }
-
     public async Task Localize()
     {
         //if resource at modelPath exists, load it  
-        if (File.Exists(_config.Resource))
+        if (File.Exists(config.Resource))
         {
             var doc = new XmlDocument();
-            doc.Load(_config.Resource);
+            doc.Load(config.Resource);
             var elemList = doc.GetElementsByTagName("data");
-            foreach (XmlNode node in elemList) _resourceKeys.TryAdd(node.Attributes["name"].Value, node.InnerText);
+            foreach (XmlNode node in elemList) modelKeys.TryAdd(node.Attributes["name"].Value, node.InnerText);
         }
 
         //get folderPath folder name  from config.Project project file name
-        var folderPath = Path.GetDirectoryName(_config.Project);
+        var folderPath = Path.GetDirectoryName(config.Project);
 
         // recurse through the directory folderPath   
         if (Directory.Exists(folderPath))
         {
-            var files = Directory.GetFiles(folderPath, _config.Include, SearchOption.AllDirectories);
+            var files = Directory.GetFiles(folderPath, config.Include, SearchOption.AllDirectories);
             foreach (var file in files)
             {
                 var changed = false;
@@ -51,37 +37,37 @@ public class LocalizationService : ILocalizationService
                 var csFile = file + ".cs";
                 if (File.Exists(csFile))
                 {
-                    _logger.LogDebug($"Processing file: {csFile}", csFile);
-                    changed = await _csProcessor.ProcessFile(csFile);
+                    logger.LogDebug($"Processing file: {csFile}", csFile);
+                    changed = await csProcessor.ProcessFile(csFile);
                 }
-                if (_config.ExcludeFiles.Contains(Path.GetFileName(file))) continue;
-                _logger.LogDebug($"Processing file: {file}");
-                await _razorProcessor.ProcessRazorFile(file,changed);
+                if (config.ExcludeFiles.Contains(Path.GetFileName(file))) continue;
+                logger.LogDebug($"Processing file: {file}");
+                await razorProcessor.ProcessRazorFile(file,changed);
             }
         }
 
-        Utilities.EnsureFolderExists(_config.Resource);
-        _razorProcessor.GenerateResourceStubFile();
-        if (_resourceKeys.Count > 0) CreateResxFile(_resourceKeys);
+        Utilities.EnsureFolderExists(config.Resource);
+        razorProcessor.GenerateResourceStubFile();
+        if (modelKeys.Count > 0) CreateResxFile(modelKeys);
         //await _resourceGenerator.TranslateResourceFile();
     }
 
     public void CreateResxFile(Dictionary<string, string> resourceKeys)
     {
-        var filePath = _config.Resource;
+        var filePath = config.Resource;
         CreateResxFile(filePath, resourceKeys);
     }
 
     public void CreateResxFile(string filePath, Dictionary<string, string> resourceKeys)
     {
-        Utilities.EnsureFolderExists(_config.Resource);
+        Utilities.EnsureFolderExists(config.Resource);
         var existingResources = Utilities.GetOrCreateResxFile(filePath);
         foreach (var resource in resourceKeys)
             existingResources.TryAdd(resource.Key, resource.Value);
-        if (!_config.TestMode)
+        if (!config.TestMode)
         {
             Utilities.WriteResourcesToFile(existingResources, filePath);
-            _logger.LogInformation($"Created resource: {filePath}");
+            logger.LogInformation($"Created resource: {filePath}");
         }
     }
 }

@@ -64,6 +64,7 @@ internal class Program
         var targetLangOption = new Option<string>(new[] { "--target-languages", "-t" }, "Comma-separated list of target languages for translation. Defaults to empty (i.e., no translation).");
         var emailOption = new Option<string>(new[] { "--email", "-e" }, "Email address. Required for translation service.");
         var forceOption = new Option<bool>(new[] { "--force", "-f" }, "Forces overwrite existing files when restoring from backup.");
+        var nullablesOption = new Option<bool>(new[] { "--nullable", "-n" }, "Generates nullable reference types code in scaffolded code.");
 
         var verbosityOption = new Option<LogLevel>(
             new[] { "--verbosity", "-v" },
@@ -85,6 +86,7 @@ internal class Program
         {
             projectOption,
             verbosityOption,
+            nullablesOption,
         };
         var translateCommand = new Command("translate", "Translates resource files.")
         {
